@@ -1,0 +1,298 @@
+import SwiftUI
+import StreamProtocol
+
+// The tactile decks' trackpad well and the two decks built around it (Slice 1, the tactile
+// rebuild): the phone's pull-up Control Deck and the iPad's floating trackpad pad. The well is
+// recessed anodized hardware — TactileTokens.trackpadWell, an inner-shadow rim, an etched
+// micro-dot grid, a specular bottom lip — wrapped straight around the engine's own TrackpadView,
+// so the pad's gesture math, cursor and pointer feed are untouched (the wiring below is the old
+// laptop layout's, verbatim). Slice 0's contract (TactileTokens, TactileSurfaceRole,
+// .tactileSurface/.tactileButton, WorkspacePoint) arrives with Wave 2's merge.
+
+// MARK: - Trackpad well
+
+/// The recessed hardware well the tactile decks put the trackpad in: anodized dark, an inner-shadow
+/// rim so the surface reads as sunk into the chassis, a delicate etched dot grid (the "drag here"
+/// texture), and a specular lip catching light along the bottom edge. The live surface inside is the
+/// engine's own TrackpadView with the laptop layout's exact wiring — sendInput for events,
+/// setOwnPointer(.trackpad) for the cursor sprite, pointerFeedState for the anchor and re-seeds,
+/// trackpadFingers for Q1's flip, `latched` for modified clicks (consumed by a click as before) and
+/// sendGesture for the Mac's three- and four-finger gestures.
+struct TactileTrackpadWell: View {
+    @ObservedObject var client: StreamClient
+    @Binding var latched: KeyModifiers
+    /// What the pad's vertical motion is measured against (nil: its own height), as the laptop
+    /// layout passed it — a stroke then moves the pointer as far down as across on a 16:10 picture.
+    var verticalSpan: CGFloat? = nil
+    var cornerRadius: CGFloat = 22
+    var showsHint: Bool = true
+
+    private var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
+    }
+
+    var body: some View {
+        ZStack {
+            TactileTokens.trackpadWell
+            EtchedDotGrid()
+            TrackpadView(send: { client.sendInput($0) },
+                         setPointer: { client.setOwnPointer($0, from: .trackpad) },
+                         feed: { let f = client.pointerFeedState; return (f.anchor, f.reseeds) },
+                         onFingers: { client.trackpadFingers($0) },
+                         latched: latched,
+                         onModifiersConsumed: { latched = [] },
+                         verticalSpan: verticalSpan,
+                         sendGesture: { client.sendGesture($0, fingers: $1) })
+            if showsHint {
+                VStack {
+                    Spacer(minLength: 0)
+                    Text("Drag to move the pointer. Tap to click, two fingers to scroll.")
+                        .font(.system(size: 13))
+                        .foregroundStyle(TactileTokens.textSecondary)
+                        .multilineTextAlignment(.center)
+                }
+                .padding(18)
+                .allowsHitTesting(false)
+            }
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .clipShape(shape)
+        // The recessed rim: a dark inner shadow at the top falling off to the bottom edge's
+        // specular line, so the well reads as sunk into the chassis rather than laid on it.
+        .overlay(shape.strokeBorder(
+            LinearGradient(colors: [Color.black.opacity(0.65), Color.black.opacity(0.2),
+                                    TactileTokens.specularRimBottom],
+                           startPoint: .top, endPoint: .bottom),
+            lineWidth: 1.5))
+        // The specular lip: a hair of light just inside the bottom edge, kept to the flat run so it
+        // never pokes past the corner's curve (the overlay draws outside the clip).
+        .overlay(alignment: .bottom) {
+            Rectangle()
+                .fill(TactileTokens.specularRimTop.opacity(0.35))
+                .frame(height: 1)
+                .padding(.horizontal, cornerRadius)
+                .padding(.bottom, 2)
+                .allowsHitTesting(false)
+        }
+    }
+}
+
+/// 1 pt dots on an 18 pt grid, etched into the anodized well: the board texture that says "this
+/// surface is the one you drag on", a touch dimmer than the old well's for the machined look.
+private struct EtchedDotGrid: View {
+    var body: some View {
+        Canvas { context, size in
+            let step: CGFloat = 18
+            let radius: CGFloat = 1
+            let shading = GraphicsContext.Shading.color(.white.opacity(0.05))
+            var y = step / 2
+            while y < size.height {
+                var x = step / 2
+                while x < size.width {
+                    context.fill(Path(ellipseIn: CGRect(x: x - radius, y: y - radius,
+                                                        width: radius * 2, height: radius * 2)),
+                                 with: shading)
+                    x += step
+                }
+                y += step
+            }
+        }
+        .allowsHitTesting(false)
+    }
+}
+
+// MARK: - Phone Control Deck
+
+/// The phone's pull-up Control Deck: a physical hardware chassis (chassisDark, recessedHardware,
+/// a chamfered top rim) with a draggable grab handle, a compact header naming what streams and a
+/// stow key, the six-key tactile key row and the trackpad well.
+///
+/// The handle's drag is reported, not acted on: `onDragChanged(progress)` gives the drag as a
+/// fraction of the deck's own height, positive while the deck is pulled up (open) and negative while
+/// dragged down toward the stow; `onDragEnded(progress, velocityY)` ends a drag with the same
+/// progress and the gesture's projected vertical velocity in pt/s (positive upward). The parent
+/// decides where the deck settles.
+struct PhoneControlDeckView: View {
+    @ObservedObject var client: StreamClient
+    @Binding var latched: KeyModifiers
+    let onDragChanged: (_ progress: Double) -> Void
+    let onDragEnded: (_ progress: Double, _ velocityY: Double) -> Void
+    let onClose: () -> Void
+
+    /// The deck's own height, so a drag reports as a fraction of it; 1 until measured.
+    @State private var deckHeight: CGFloat = 1
+
+    var body: some View {
+        VStack(spacing: 0) {
+            grabber
+            header
+            TactileKeycapRow(style: .deckSix, latched: $latched,
+                             send: { client.sendFromKeyRow($0) })
+                .padding(.horizontal, 12)
+                .padding(.top, 4)
+            TactileTrackpadWell(client: client, latched: $latched)
+                .padding(.horizontal, 12)
+                .padding(.top, 8)
+                .padding(.bottom, 12)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
+        .tactileSurface(.recessedHardware, shape: .rounded(24))
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: {
+            deckHeight = max(1, $0)
+        }
+    }
+
+    /// The pull handle: a machined grab bar, the deck's drag reported up.
+    private var grabber: some View {
+        Capsule()
+            .fill(TactileTokens.textSecondary.opacity(0.45))
+            .frame(width: 40, height: 5)
+            .frame(maxWidth: .infinity)
+            .padding(.top, 8)
+            .padding(.bottom, 6)
+            .contentShape(Rectangle())
+            .gesture(deckDrag)
+            .accessibilityLabel("Deck handle")
+            .accessibilityHint("Drag to pull the deck up or down, flick down to stow it")
+    }
+
+    /// What streams, and the stow key: the active window's title (its app's name when the window
+    /// names nothing), "Desktop" for the whole display.
+    private var header: some View {
+        HStack(spacing: 10) {
+            Text(activeTitle)
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(TactileTokens.textSecondary)
+                .lineLimit(1)
+                .truncationMode(.middle)
+            Spacer(minLength: 8)
+            Button(action: onClose) {
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 13, weight: .bold))
+                    .frame(width: 30, height: 30)
+            }
+            .tactileButton(.secondary, shape: .circle)
+            .accessibilityLabel("Stow the control deck")
+        }
+        .padding(.horizontal, 14)
+    }
+
+    private var activeTitle: String {
+        switch client.active {
+        case .window(let id):
+            guard let window = client.windows.first(where: { $0.id == id }) else { return "Window" }
+            return window.title.isEmpty ? window.appName : window.title
+        case .desktop:
+            return "Desktop"
+        case .none:
+            return "Sill"
+        }
+    }
+
+    /// A drag on the handle: the translation as a fraction of the deck's height, positive while
+    /// pulled up; on release the same plus the projected velocity, positive upward.
+    private var deckDrag: some Gesture {
+        DragGesture(minimumDistance: 2)
+            .onChanged { value in
+                onDragChanged(progress(for: value.translation.height))
+            }
+            .onEnded { value in
+                onDragEnded(progress(for: value.translation.height),
+                            velocityY(for: value))
+            }
+    }
+
+    private func progress(for translationY: CGFloat) -> Double {
+        max(-1, min(1, Double(-translationY) / Double(deckHeight)))
+    }
+
+    /// The flick's projected velocity in pt/s, positive upward: how far the gesture predicts the
+    /// drag continues past the lift, over the ~0.3 s the prediction spans.
+    private func velocityY(for value: DragGesture.Value) -> Double {
+        Double(-(value.predictedEndTranslation.height - value.translation.height)) / 0.3
+    }
+}
+
+// MARK: - iPad floating trackpad
+
+/// A compact tactile hardware pad that floats over the stream on an iPad: a draggable anodized
+/// title/grip strip (with the close key), the six-key row and a small trackpad well, ~320×260 pt —
+/// enough pad to aim and click while the picture keeps most of the screen on a handheld 10.5" iPad.
+///
+/// `anchor` is the pad's centre in the container's points, `containerSize` the space it floats in;
+/// dragging the grip reports the would-be centre through `onMoveAnchor`, clamped so the pad can
+/// never be pushed off screen.
+struct PadFloatingTrackpadView: View {
+    @ObservedObject var client: StreamClient
+    @Binding var latched: KeyModifiers
+    let containerSize: CGSize
+    let anchor: WorkspacePoint
+    let onMoveAnchor: (WorkspacePoint) -> Void
+    let onClose: () -> Void
+
+    /// The pad's footprint: compact, so the stream stays the screen on a handheld iPad.
+    static let padSize = CGSize(width: 320, height: 260)
+
+    var body: some View {
+        VStack(spacing: 8) {
+            gripStrip
+            TactileKeycapRow(style: .deckSix, latched: $latched,
+                             send: { client.sendFromKeyRow($0) })
+            TactileTrackpadWell(client: client, latched: $latched,
+                                cornerRadius: 14, showsHint: false)
+        }
+        .padding(10)
+        .frame(width: Self.padSize.width, height: Self.padSize.height)
+        .tactileSurface(.floatingChrome, shape: .rounded(20))
+        .position(x: anchor.x, y: anchor.y)
+    }
+
+    /// The anodized title strip and grip: its drag moves the pad (the would-be centre, clamped to
+    /// the container, through `onMoveAnchor`); the close key sits beside it, outside the drag.
+    private var gripStrip: some View {
+        HStack(spacing: 10) {
+            HStack(spacing: 8) {
+                Image(systemName: "line.3.horizontal")
+                    .font(.system(size: 12, weight: .bold))
+                Text("Trackpad")
+                    .font(.system(size: 12, weight: .semibold))
+            }
+            .foregroundStyle(TactileTokens.textSecondary)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(height: 30)
+            .tactileSurface(.interactiveChrome, shape: .rounded(10))
+            .contentShape(Rectangle())
+            .gesture(moveDrag)
+            .accessibilityLabel("Move the trackpad")
+            .accessibilityHint("Drag to move the pad around the screen")
+
+            Button(action: onClose) {
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .bold))
+                    .frame(width: 30, height: 30)
+            }
+            .tactileButton(.secondary, shape: .circle)
+            .accessibilityLabel("Close the trackpad")
+        }
+    }
+
+    /// The grip's drag: the anchor plus the translation, clamped so the whole pad stays on screen.
+    private var moveDrag: some Gesture {
+        DragGesture(minimumDistance: 1)
+            .onChanged { value in
+                onMoveAnchor(clamped(WorkspacePoint(x: anchor.x + Double(value.translation.width),
+                                                    y: anchor.y + Double(value.translation.height))))
+            }
+    }
+
+    /// The pad's centre, clamped so its frame stays inside the container (a container smaller than
+    /// the pad parks it centred rather than pushing it out).
+    private func clamped(_ point: WorkspacePoint) -> WorkspacePoint {
+        var p = point
+        let halfW = Double(Self.padSize.width) / 2
+        let halfH = Double(Self.padSize.height) / 2
+        p.x = min(max(p.x, halfW), max(halfW, Double(containerSize.width) - halfW))
+        p.y = min(max(p.y, halfH), max(halfH, Double(containerSize.height) - halfH))
+        return p
+    }
+}
