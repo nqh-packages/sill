@@ -207,7 +207,9 @@ struct StreamScreen: View {
     @State private var latched: KeyModifiers = []
     @State private var overlay = InputOverlayProxy()
     @State private var accessoryHost: TactileKeyboardAccessoryHost? = nil
-    @State private var textScale: Double? = nil
+    // Phone portrait is ~402 pt wide, narrower than most Mac apps' minimum window width, so 1x clamps
+    // windows into landscape; 0.5x requests ~804 pt wide while keeping the phone's portrait aspect ratio.
+    @State private var textScale: Double? = DuoLayout.phoneArrangement ? 0.5 : nil
     private var scannerOverride: CodeScanner.Mode? = nil
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -266,7 +268,7 @@ struct StreamScreen: View {
          pairingOverlay: Bool = false, scannerOverride: CodeScanner.Mode? = nil) {
         self.client = client
         _keyboardShown = State(initialValue: keyboardShown)
-        _textScale = State(initialValue: textScale)
+        _textScale = State(initialValue: textScale ?? (DuoLayout.phoneArrangement ? 0.5 : nil))
         self.scannerOverride = scannerOverride
 
         var initial = StreamWorkspaceState(
