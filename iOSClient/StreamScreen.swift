@@ -16,18 +16,18 @@ extension Color {
 }
 
 enum Palette {
-    static let bar = Color(hex: 0x16181C)          // top bar and drawer background
-    static let control = Color(hex: 0x23262C)      // bar buttons, search field, selected row
-    static let controlOpen = Color(hex: 0x2C3550)  // a bar button whose thing is showing
-    static let accent = Color(hex: 0x9BB7FF)
-    static let text = Color(hex: 0xEEF0F3)
-    static let barLabel = Color(hex: 0xC4C9D1)     // the 11pt labels under the bar icons
-    static let muted = Color(hex: 0xA4ABB5)        // section headers, window counts, placeholder
-    static let panel = Color(hex: 0x1F2126)        // the stream panel behind the video
-    static let trackpad = Color(hex: 0x101215)     // the portrait trackpad's well
-    static let thumbBody = Color(hex: 0x26282D)    // thumbnail placeholder
-    static let thumbTitleBar = Color(hex: 0x34373D)
-    static let iconFallback = Color(hex: 0x3A3D44) // two-letter app badge
+    static let bar = Color(hex: 0x141415)
+    static let control = Color(hex: 0x1C1C1E)
+    static let controlOpen = Color(hex: 0x2C2C2E)
+    static let accent = Color(hex: 0x0A84FF)
+    static let text = Color(hex: 0xF2F2F7)
+    static let barLabel = Color(hex: 0xAEAEB2)
+    static let muted = Color(hex: 0x8E8E93)
+    static let panel = Color(hex: 0x141415)
+    static let trackpad = Color(hex: 0x0D0D0E)
+    static let thumbBody = Color(hex: 0x242426)
+    static let thumbTitleBar = Color(hex: 0x323235)
+    static let iconFallback = Color(hex: 0x3A3A3C)
 }
 
 // MARK: - Layout selection
@@ -632,14 +632,9 @@ struct StreamScreen: View {
     // MARK: Canvas and workspace chrome
 
     /// Shared bottom footprint for both the iOS keyboard + 56 pt floating bar and the pull-up
-    /// Control Deck, so swapping Keyboard <-> Trackpad keeps the Mac window's frame completely still.
+    /// Control Deck, so swapping Keyboard <-> Trackpad keeps the Mac window and top bar locked in place.
     private func phoneInputFootprint(for size: CGSize) -> CGFloat {
         min(max(size.height * 0.43, 296), 372)
-    }
-
-    private func phoneDeckHeight(for size: CGSize, insets: FullScreenPolicy.Insets) -> CGFloat {
-        let bottomPad = max(6, insets.bottom)
-        return max(240, phoneInputFootprint(for: size) - bottomPad)
     }
 
     private func streamCanvasInsets(size: CGSize, hidden: Bool, room: CGRect, insets: FullScreenPolicy.Insets) -> EdgeInsets {
@@ -702,7 +697,7 @@ struct StreamScreen: View {
         let bottomClearance = max(10, insets.bottom)
 
         if workspace.form.usesPhoneDock {
-            let deckHeight = phoneDeckHeight(for: size, insets: insets)
+            let deckHeight = phoneInputFootprint(for: size)
             let progress = workspace.deckDragProgress
 
             ZStack(alignment: .bottom) {
@@ -718,6 +713,7 @@ struct StreamScreen: View {
                     PhoneControlDeckView(
                         client: client,
                         latched: $latched,
+                        bottomInset: insets.bottom,
                         onDragChanged: { dispatch(.deckDragChanged(progress: $0)) },
                         onDragEnded: { p, v in
                             withAnimation(deckMotion) {
@@ -734,9 +730,7 @@ struct StreamScreen: View {
                         }
                     )
                     .frame(height: deckHeight)
-                    .padding(.horizontal, 8)
-                    .padding(.bottom, max(6, insets.bottom))
-                    .offset(y: (1 - progress) * (deckHeight + bottomClearance + 16))
+                    .offset(y: (1 - progress) * (deckHeight + 16))
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)

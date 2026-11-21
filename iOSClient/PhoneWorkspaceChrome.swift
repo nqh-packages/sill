@@ -91,11 +91,11 @@ struct PhoneFloatingDock: View {
                 .layoutPriority(-1)
             if windows.count > 1 {
                 Text("\(windows.count)")
-                    .font(.caption2.weight(.bold))
-                    .foregroundStyle(TactileTokens.canvasBlack)
+                    .font(.caption2.weight(.semibold))
+                    .foregroundStyle(TactileTokens.textPrimary)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(Capsule().fill(TactileTokens.ledCyan))
+                    .background(Capsule().fill(Color.white.opacity(0.14)))
                     .accessibilityHidden(true)
             }
         }

@@ -2,46 +2,23 @@ import SwiftUI
 import UIKit
 import StreamProtocol
 
-// The tactile deck's keycaps and the keyboard's accessory bar (Slice 1, the tactile rebuild).
-// The look is sculpted dark hardware — keycap gradient, top specular rim, a 2.5 pt shadow lip and
-// 1.5 pt of press travel — never Liquid Glass. The engine underneath is unchanged: esc, tab and the
-// arrows are held keys (HeldCap, as the old key row's), the four modifiers latch the same way, and
-// every key goes out through the caller's `send` (`StreamClient.sendFromKeyRow` keeps the sprite as
-// a key row's key does). Slice 0's contract (TactileTokens, TactileLED, TactileHaptics,
-// TactileSurfaceShape, .tactileSurface/.tactileButton) arrives with Wave 2's merge.
+// Unified neutral-graphite keycaps, the four-way arrow joystick, and the single shared
+// `TactileCommandBar` used above both the iOS keyboard and the phone Control Deck trackpad.
 
 // MARK: - Keycap
 
-/// One sculpted cap of the tactile deck: a physical dark keycap with a top specular rim, a 2.5 pt
-/// shadow lip under its bottom edge, 1.5 pt of press travel (the cap slides down over the lip, a
-/// small scale with it), and a recessed LED in the top-right corner while `ledColor` is set — lit
-/// for a latched modifier, dark otherwise.
-///
-/// `onHoldChange` is told as a finger's press on the cap begins and ends (esc, tab and the arrows:
-/// their key is down on the Mac from the touch to the release, HeldCap); caps that act on their tap
-/// alone (the modifiers, the dismiss key) leave it nil. A `.keyPress` haptic ticks on every press's
-/// begin — the cap's own click — so a modifier's tap plays its `.modifierLatch`/`.modifierRelease`
-/// cue on top of the mechanical click, as a real latching switch does.
 struct TactileKeycap: View {
     enum Label {
-        /// The cap's legend as text ("esc", "⇥").
         case text(String)
-        /// An unenclosed SF Symbol name ("arrow.left", "keyboard.chevron.compact.down"): the cap's
-        /// sculpted body is the enclosure, so never a .circle/.square variant.
+        /// Unenclosed SF Symbol name only (the keycap body is the enclosure).
         case symbol(String)
-    }
-
-    enum Appearance {
-        case hardware
-        case keyboard
     }
 
     let label: Label
     let accessibilityLabel: String
     var ledColor: Color? = nil
     var isLit: Bool = false
-    var minHeight: CGFloat = 42
-    var appearance: Appearance = .hardware
+    var minHeight: CGFloat = 36
     var onHoldChange: ((Bool) -> Void)? = nil
     let onTap: () -> Void
 
@@ -50,7 +27,7 @@ struct TactileKeycap: View {
             legend
         }
         .buttonStyle(KeycapStyle(ledColor: ledColor, isLit: isLit, minHeight: minHeight,
-                                 appearance: appearance, onHoldChange: onHoldChange))
+                                 onHoldChange: onHoldChange))
         .accessibilityLabel(accessibilityLabel)
         .accessibilityAddTraits(isLit ? .isSelected : [])
     }
@@ -59,47 +36,25 @@ struct TactileKeycap: View {
         switch label {
         case .text(let title):
             Text(title)
-                .font(.system(size: appearance == .keyboard ? 13 : 13,
-                              weight: appearance == .keyboard ? .medium : .semibold,
-                              design: appearance == .keyboard ? .default : .rounded))
+                .font(.system(size: 13, weight: .medium))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
         case .symbol(let name):
             Image(systemName: name)
-                .font(.system(size: 15, weight: appearance == .keyboard ? .medium : .semibold))
+                .font(.system(size: 15, weight: .medium))
         }
     }
 }
 
-/// The cap's sculpted face and press physics: gradient face over a stationary shadow lip, the whole
-/// cap (legend, rims, LED) travelling 1.5 pt down and 0.97 in on press, `.keyPress` on the touch.
 private struct KeycapStyle: ButtonStyle {
     let ledColor: Color?
     let isLit: Bool
     let minHeight: CGFloat
-    let appearance: TactileKeycap.Appearance
     let onHoldChange: ((Bool) -> Void)?
 
-    private var shape: RoundedRectangle {
-        RoundedRectangle(cornerRadius: appearance == .keyboard ? 8.5 : 10, style: .continuous)
-    }
-    /// Downward travel while pressed: the cap slides over its own shadow lip.
-    private var travel: CGFloat { appearance == .keyboard ? 1.0 : 1.5 }
-    /// The shadow lip showing under the cap's bottom edge at rest.
-    private var lip: CGFloat { appearance == .keyboard ? 1.5 : 2.5 }
-
-    private var faceTop: Color {
-        appearance == .keyboard ? Color(white: 0.285) : TactileTokens.keycapTop
-    }
-    private var faceBottom: Color {
-        appearance == .keyboard ? Color(white: 0.225) : TactileTokens.keycapPressed
-    }
-    private var rimTop: Color {
-        appearance == .keyboard ? Color.white.opacity(0.16) : TactileTokens.specularRimTop
-    }
-    private var rimBottom: Color {
-        appearance == .keyboard ? Color.white.opacity(0.03) : TactileTokens.specularRimBottom.opacity(0.4)
-    }
+    private let shape = RoundedRectangle(cornerRadius: 8.5, style: .continuous)
+    private let travel: CGFloat = 1.0
+    private let lip: CGFloat = 1.5
 
     func makeBody(configuration: Configuration) -> some View {
         let pressed = configuration.isPressed
@@ -109,18 +64,17 @@ private struct KeycapStyle: ButtonStyle {
             .foregroundStyle(isLit ? (ledColor ?? TactileTokens.ledAmber) : TactileTokens.textPrimary)
             .background(
                 ZStack {
-                    // The shadow lip stays put; the face slides down over it on press.
                     shape
-                        .fill(appearance == .keyboard ? Color.black.opacity(0.45) : TactileTokens.specularRimBottom.opacity(0.7))
+                        .fill(Color.black.opacity(0.45))
                         .offset(y: lip)
                     shape
-                        .fill(LinearGradient(colors: [faceTop, faceBottom],
+                        .fill(LinearGradient(colors: [TactileTokens.keycapTop, TactileTokens.keycapPressed],
                                              startPoint: .top, endPoint: .bottom))
                         .overlay(
                             shape.strokeBorder(
-                                LinearGradient(colors: [rimTop, rimBottom],
+                                LinearGradient(colors: [TactileTokens.specularRimTop, TactileTokens.specularRimBottom],
                                                startPoint: .top, endPoint: .bottom),
-                                lineWidth: appearance == .keyboard ? 0.6 : 1))
+                                lineWidth: 0.6))
                         .offset(y: pressed ? travel : 0)
                 }
             )
@@ -128,57 +82,32 @@ private struct KeycapStyle: ButtonStyle {
                 if let ledColor {
                     TactileLED(isOn: isLit, color: ledColor)
                         .padding(4)
+                        .offset(y: pressed ? travel : 0)
                 }
             }
-            .contentShape(shape)
-            .offset(y: pressed ? travel : 0)
-            .scaleEffect(pressed ? 0.97 : 1, anchor: .center)
-            .animation(.snappy(duration: 0.12), value: pressed)
-            .onChange(of: pressed) { _, now in
-                if now { TactileHaptics.play(.keyPress) }
-                onHoldChange?(now)
+            .scaleEffect(pressed ? 0.97 : 1.0)
+            .animation(.easeOut(duration: 0.08), value: pressed)
+            .onChange(of: pressed) { _, down in
+                if down { TactileHaptics.play(.keyPress) }
+                onHoldChange?(down)
             }
     }
 }
 
-// MARK: - Key rows
+// MARK: - Compact 6-key row (iPad floating trackpad)
 
-/// A sculpted row of the deck's caps. `.deckSix` is the six keys a Mac needs that a software
-/// keyboard does not offer — [esc] [⇥] [⌃] [⌥] [⌘] [⇧] — flexible width, sharing the row evenly.
-/// `.compactWithArrows` is the four latching modifiers plus the four arrows at a fixed compact
-/// size, for the keyboard's accessory bar; a horizontal or vertical swipe across the arrow cluster
-/// is the matching arrow's tap. Esc, tab and the arrows are held keys (HeldCap): down on the touch,
-/// up on the lift, so the Mac repeats them; the modifiers latch for the next key or click and show
-/// it on their LED. `isHidden` flipping true (under another row, the deck stowed) or the row leaving
-/// the screen releases a held key at once, as the old key row's did.
 struct TactileKeycapRow: View {
-    enum LayoutStyle { case deckSix, compactWithArrows }
+    enum LayoutStyle { case deckSix }
 
     let style: LayoutStyle
     @Binding var latched: KeyModifiers
     let send: (InputEvent) -> Void
     var isHidden: Bool = false
 
-    /// Escape, tab or an arrow held down (HeldCap): its key is down on the Mac until the finger leaves.
     @State private var heldCap = HeldCap()
 
     var body: some View {
-        Group {
-            switch style {
-            case .deckSix: deckSix
-            case .compactWithArrows: compactWithArrows
-            }
-        }
-        .onChange(of: isHidden) { _, now in if now { releaseAll() } }
-        .onDisappear(perform: releaseAll)
-    }
-
-    /// The cap height and (compact only) fixed cap width for this layout.
-    private var capHeight: CGFloat { style == .deckSix ? 42 : 38 }
-    private var capWidth: CGFloat? { style == .deckSix ? nil : 44 }
-
-    private var deckSix: some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 5) {
             heldKey(label: .text("esc"), usage: HIDKey.escape, name: "Escape")
             heldKey(label: .text("⇥"), usage: HIDKey.tab, name: "Tab")
             modifier(.control, symbol: "control", name: "Control")
@@ -186,66 +115,25 @@ struct TactileKeycapRow: View {
             modifier(.command, symbol: "command", name: "Command")
             modifier(.shift, symbol: "shift", name: "Shift")
         }
-    }
-
-    private var compactWithArrows: some View {
-        HStack(spacing: 6) {
-            modifier(.control, symbol: "control", name: "Control")
-            modifier(.option, symbol: "option", name: "Option")
-            modifier(.command, symbol: "command", name: "Command")
-            modifier(.shift, symbol: "shift", name: "Shift")
-            arrows
-        }
-    }
-
-    /// The four arrows, each its own held cap and together a swipe pad: a flick across the cluster
-    /// is the flicked direction's whole press, so an arrow can be stroked without aiming.
-    private var arrows: some View {
-        HStack(spacing: 4) {
-            heldKey(label: .symbol("arrow.left"), usage: HIDKey.leftArrow, name: "Left arrow")
-            heldKey(label: .symbol("arrow.down"), usage: HIDKey.downArrow, name: "Down arrow")
-            heldKey(label: .symbol("arrow.up"), usage: HIDKey.upArrow, name: "Up arrow")
-            heldKey(label: .symbol("arrow.right"), usage: HIDKey.rightArrow, name: "Right arrow")
-        }
-        .highPriorityGesture(arrowSwipe)
-    }
-
-    /// A flick across the arrow cluster: the dominant direction's arrow pressed once, carrying the
-    /// latch and spending it. Past its distance the swipe owns the touches, so no cap also taps.
-    private var arrowSwipe: some Gesture {
-        DragGesture(minimumDistance: 24)
-            .onEnded { value in
-                let t = value.translation
-                let usage: UInt16 = abs(t.width) >= abs(t.height)
-                    ? (t.width < 0 ? HIDKey.leftArrow : HIDKey.rightArrow)
-                    : (t.height < 0 ? HIDKey.upArrow : HIDKey.downArrow)
-                press(usage)
-                TactileHaptics.play(.tick)
-            }
+        .onChange(of: isHidden) { _, now in if now { releaseAll() } }
+        .onDisappear(perform: releaseAll)
     }
 
     private func heldKey(label: TactileKeycap.Label, usage: UInt16, name: String) -> some View {
-        TactileKeycap(label: label, accessibilityLabel: name, minHeight: capHeight,
+        TactileKeycap(label: label, accessibilityLabel: name, minHeight: 38,
                       onHoldChange: { touch(usage, down: $0) },
                       onTap: { activate(usage) })
-            .frame(width: capWidth)
     }
 
-    /// A latching modifier: lit on its LED until something uses it or it is tapped again.
     private func modifier(_ flag: KeyModifiers, symbol: String, name: String) -> some View {
         let on = latched.contains(flag)
         return TactileKeycap(label: .symbol(symbol),
                              accessibilityLabel: on ? "\(name), held. Tap to release."
                                                     : "\(name), hold for the next key",
-                             ledColor: TactileTokens.ledAmber, isLit: on, minHeight: capHeight,
+                             ledColor: TactileTokens.ledAmber, isLit: on, minHeight: 38,
                              onTap: { toggle(flag) })
-            .frame(width: capWidth)
     }
 
-    // MARK: Keys, as the old key row sent them
-
-    /// A finger landed on escape, tab or an arrow, or left it (HeldCap): its key down with what is
-    /// latched, which is spent, or its key up.
     private func touch(_ usage: UInt16, down: Bool) {
         let now = ProcessInfo.processInfo.systemUptime
         guard down else { heldCap.touchUp(usage, at: now).forEach(send); return }
@@ -254,66 +142,28 @@ struct TactileKeycapRow: View {
         if HeldCap.spendsLatch(events) { latched = [] }
     }
 
-    /// A held cap's action: nothing after a finger's touch (its key went down and up with it), the up
-    /// of a press whose end was not told yet, or — activated with no touch (VoiceOver, Switch Control,
-    /// Voice Control, a keyboard) — the whole press at once.
     private func activate(_ usage: UInt16) {
         let events = heldCap.activated(usage, latched: latched, at: ProcessInfo.processInfo.systemUptime)
         events.forEach(send)
         if HeldCap.spendsLatch(events) { latched = [] }
     }
 
-    /// A tap on esc, tab, an arrow or a swipe's arrow: down and up, carrying whatever is latched, and
-    /// the latch is spent — ⌥→ is one tap on opt then a flick right.
-    private func press(_ usage: UInt16) {
-        KeyChord.press(usage, with: latched).forEach(send)
-        latched = []
-    }
-
-    /// A modifier tapped: it latches for the next key or click, or unlatches if it was held.
     private func toggle(_ flag: KeyModifiers) {
         let wasOn = latched.contains(flag)
         latched.formSymmetricDifference(flag)
         TactileHaptics.play(wasOn ? .modifierRelease : .modifierLatch)
     }
 
-    /// The cap down comes up: the row hidden or gone from the screen, after which no release comes.
     private func releaseAll() {
         heldCap.releaseAll().forEach(send)
     }
 }
 
-// MARK: - Keyboard accessory host
+// MARK: - Arrow Joystick
 
-/// The keyboard accessory bar's state, observed in place: `update(latched:)` writes here and the
-/// hosted bar re-renders, so the input view is built once and never rebuilt — no reloadInputViews
-/// churn, and no detached-from-the-window hosting controller.
-private final class TactileAccessoryModel: ObservableObject {
-    @Published var latched: KeyModifiers
-    /// A modifier the bar toggled, written back to the caller's own binding.
-    let apply: (KeyModifiers) -> Void
-    let send: (InputEvent) -> Void
-    let onSwitchToTrackpad: (() -> Void)?
-    let onDismiss: () -> Void
-
-    init(latched: KeyModifiers, apply: @escaping (KeyModifiers) -> Void,
-         send: @escaping (InputEvent) -> Void,
-         onSwitchToTrackpad: (() -> Void)? = nil,
-         onDismiss: @escaping () -> Void) {
-        self.latched = latched
-        self.apply = apply
-        self.send = send
-        self.onSwitchToTrackpad = onSwitchToTrackpad
-        self.onDismiss = onDismiss
-    }
-}
-
-// MARK: - Tactile Arrow Joystick
-
-/// A physical thumbstick keycap sitting in the accessory bar's arrow slot:
-/// - Drag left/right/up/down directly on the cap to fire USB HID arrows (respecting latched
-///   modifiers) with visual puck deflection, directional LED glow, and hold-to-repeat.
-/// - Tap the cap to expand into the full four-arrow sculpted keycap cluster inline.
+/// Recessed neutral-graphite four-way thumbstick sitting in the command bar's arrow slot.
+/// Dragging fires and auto-repeats USB HID arrows (respecting latched modifiers); tapping expands
+/// the four individual sculpted arrow keys inline.
 private struct TactileArrowJoystick: View {
     @Binding var latched: KeyModifiers
     let send: (InputEvent) -> Void
@@ -343,11 +193,10 @@ private struct TactileArrowJoystick: View {
 
     var body: some View {
         ZStack {
-            // Recessed neutral-graphite joystick well matching iOS 27 keyboard tone
             Self.shape
                 .fill(
                     LinearGradient(
-                        colors: [Color(white: 0.13), Color(white: 0.17)],
+                        colors: [TactileTokens.trackpadWell, TactileTokens.chassisDark],
                         startPoint: .top,
                         endPoint: .bottom
                     )
@@ -356,16 +205,15 @@ private struct TactileArrowJoystick: View {
                 .strokeBorder(
                     LinearGradient(
                         colors: [
-                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.7) : Color.white.opacity(0.14),
-                            Color.white.opacity(0.03)
+                            activeDirection != nil ? Color.white.opacity(0.45) : TactileTokens.specularRimTop,
+                            TactileTokens.specularRimBottom
                         ],
                         startPoint: .top,
                         endPoint: .bottom
                     ),
-                    lineWidth: activeDirection != nil ? 1.0 : 0.6
+                    lineWidth: activeDirection != nil ? 0.9 : 0.6
                 )
 
-            // Four cardinal micro-indicators
             chevron("chevron.up", active: activeDirection == .up)
                 .frame(maxHeight: .infinity, alignment: .top)
                 .padding(.top, 2)
@@ -379,13 +227,12 @@ private struct TactileArrowJoystick: View {
                 .frame(maxWidth: .infinity, alignment: .trailing)
                 .padding(.trailing, 3)
 
-            // Machined thumbstick puck
             Circle()
                 .fill(
                     LinearGradient(
                         colors: [
-                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.5) : Color(white: 0.34),
-                            Color(white: 0.24)
+                            activeDirection != nil ? Color(white: 0.48) : TactileTokens.keycapTop,
+                            TactileTokens.keycapPressed
                         ],
                         startPoint: .top,
                         endPoint: .bottom
@@ -394,13 +241,12 @@ private struct TactileArrowJoystick: View {
                 .overlay {
                     Circle()
                         .strokeBorder(
-                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.85) : Color.white.opacity(0.22),
+                            activeDirection != nil ? Color.white.opacity(0.55) : Color.white.opacity(0.22),
                             lineWidth: 0.65
                         )
                 }
                 .frame(width: 15, height: 15)
-                .shadow(color: activeDirection != nil ? TactileTokens.ledBlue.opacity(0.45) : .black.opacity(0.5),
-                        radius: activeDirection != nil ? 4 : 2, y: 1)
+                .shadow(color: Color.black.opacity(0.5), radius: 2, y: 1)
                 .offset(puckOffset)
                 .animation(.interactiveSpring(response: 0.16, dampingFraction: 0.72), value: puckOffset)
         }
@@ -418,7 +264,7 @@ private struct TactileArrowJoystick: View {
     private func chevron(_ name: String, active: Bool) -> some View {
         Image(systemName: name)
             .font(.system(size: 6.5, weight: .bold))
-            .foregroundStyle(active ? TactileTokens.ledBlue : TactileTokens.textSecondary.opacity(0.55))
+            .foregroundStyle(active ? TactileTokens.textPrimary : TactileTokens.textSecondary.opacity(0.6))
     }
 
     private var joystickGesture: some Gesture {
@@ -482,21 +328,26 @@ private struct TactileArrowJoystick: View {
     }
 }
 
-/// The bar itself: fits cleanly across the full width with zero horizontal scroll so joystick
-/// swipes never conflict with scrolling. Default: [esc] [⇥] [⌃] [⌥] [⌘] [⇧] [joystick] [dismiss].
-/// Tapping the joystick expands inline into [⌃] [⌥] [⌘] [⇧] [←] [↓] [↑] [→] [collapse].
-private struct TactileAccessoryBar: View {
-    @ObservedObject var model: TactileAccessoryModel
-    /// Escape, tab, and expanded arrow keys held down (HeldCap).
+// MARK: - Shared Command Bar (Keyboard + Trackpad)
+
+/// Single floating Liquid Glass command bar shared identically by the iOS keyboard accessory
+/// and the phone Control Deck trackpad, so switching Keyboard <-> Trackpad keeps every keycap
+/// at the exact same position with zero duplicated UI.
+struct TactileCommandBar: View {
+    enum Mode {
+        case keyboard(onSwitchToTrackpad: (() -> Void)?)
+        case trackpad(onSwitchToKeyboard: (() -> Void)?)
+    }
+
+    let mode: Mode
+    @Binding var latched: KeyModifiers
+    let send: (InputEvent) -> Void
+    let onDismiss: () -> Void
+
     @State private var heldCap = HeldCap()
     @State private var arrowsExpanded = false
 
-    /// The row's latch binding: bar writes go to the model (so `update` and the bar agree) and
-    /// through `apply` to the caller's binding.
-    private var latched: Binding<KeyModifiers> {
-        Binding(get: { model.latched },
-                set: { model.latched = $0; model.apply($0) })
-    }
+    static let barHeight: CGFloat = 56
 
     var body: some View {
         HStack(spacing: 4) {
@@ -514,31 +365,21 @@ private struct TactileAccessoryBar: View {
                 heldKey(label: .symbol("arrow.up"), usage: HIDKey.upArrow, name: "Up arrow")
                 heldKey(label: .symbol("arrow.right"), usage: HIDKey.rightArrow, name: "Right arrow")
                 TactileKeycap(label: .symbol("xmark"),
-                              accessibilityLabel: "Collapse arrow keys", minHeight: 36,
-                              appearance: .keyboard) {
-                    heldCap.releaseAll().forEach(model.send)
+                              accessibilityLabel: "Collapse arrow keys", minHeight: 36) {
+                    heldCap.releaseAll().forEach(send)
                     TactileHaptics.play(.detent)
                     withAnimation(.spring(response: 0.24, dampingFraction: 0.85)) {
                         arrowsExpanded = false
                     }
                 }
             } else {
-                TactileArrowJoystick(latched: latched, send: model.send) {
+                TactileArrowJoystick(latched: $latched, send: send) {
                     withAnimation(.spring(response: 0.24, dampingFraction: 0.85)) {
                         arrowsExpanded = true
                     }
                 }
-                if let switchToTrackpad = model.onSwitchToTrackpad {
-                    TactileKeycap(label: .symbol("rectangle.and.hand.point.up.left"),
-                                  accessibilityLabel: "Switch to trackpad", minHeight: 36,
-                                  appearance: .keyboard) {
-                        heldCap.releaseAll().forEach(model.send)
-                        switchToTrackpad()
-                    }
-                }
-                TactileKeycap(label: .symbol("keyboard.chevron.compact.down"),
-                              accessibilityLabel: "Hide keyboard", minHeight: 36,
-                              appearance: .keyboard, onTap: model.onDismiss)
+                modeSwapKey
+                dismissKey
             }
         }
         .padding(.horizontal, 7)
@@ -548,61 +389,128 @@ private struct TactileAccessoryBar: View {
         .padding(.horizontal, 6)
         .padding(.top, 2)
         .padding(.bottom, 6)
-        .frame(height: 56)
+        .frame(height: Self.barHeight)
         .background(Color.clear)
-        .onDisappear { heldCap.releaseAll().forEach(model.send) }
+        .onDisappear { heldCap.releaseAll().forEach(send) }
+    }
+
+    @ViewBuilder private var modeSwapKey: some View {
+        switch mode {
+        case .keyboard(let switchToTrackpad):
+            if let switchToTrackpad {
+                TactileKeycap(label: .symbol("rectangle.and.hand.point.up.left"),
+                              accessibilityLabel: "Switch to trackpad", minHeight: 36) {
+                    heldCap.releaseAll().forEach(send)
+                    switchToTrackpad()
+                }
+            }
+        case .trackpad(let switchToKeyboard):
+            if let switchToKeyboard {
+                TactileKeycap(label: .symbol("keyboard"),
+                              accessibilityLabel: "Switch to keyboard", minHeight: 36) {
+                    heldCap.releaseAll().forEach(send)
+                    switchToKeyboard()
+                }
+            }
+        }
+    }
+
+    private var dismissKey: some View {
+        let isKeyboard: Bool = {
+            if case .keyboard = mode { return true }
+            return false
+        }()
+        return TactileKeycap(
+            label: .symbol(isKeyboard ? "keyboard.chevron.compact.down" : "chevron.down"),
+            accessibilityLabel: isKeyboard ? "Hide keyboard" : "Stow trackpad",
+            minHeight: 36
+        ) {
+            heldCap.releaseAll().forEach(send)
+            onDismiss()
+        }
     }
 
     private func heldKey(label: TactileKeycap.Label, usage: UInt16, name: String) -> some View {
         TactileKeycap(label: label, accessibilityLabel: name, minHeight: 36,
-                      appearance: .keyboard,
                       onHoldChange: { touch(usage, down: $0) },
                       onTap: { activate(usage) })
     }
 
     private func modifier(_ flag: KeyModifiers, symbol: String, name: String) -> some View {
-        let on = model.latched.contains(flag)
+        let on = latched.contains(flag)
         return TactileKeycap(label: .symbol(symbol),
                              accessibilityLabel: on ? "\(name), held. Tap to release."
                                                     : "\(name), hold for the next key",
-                             ledColor: TactileTokens.ledAmber, isLit: on, minHeight: 36,
-                             appearance: .keyboard) {
-            let wasOn = model.latched.contains(flag)
-            var next = model.latched
-            next.formSymmetricDifference(flag)
-            latched.wrappedValue = next
+                             ledColor: TactileTokens.ledAmber, isLit: on, minHeight: 36) {
+            let wasOn = latched.contains(flag)
+            latched.formSymmetricDifference(flag)
             TactileHaptics.play(wasOn ? .modifierRelease : .modifierLatch)
         }
     }
 
     private func touch(_ usage: UInt16, down: Bool) {
         let now = ProcessInfo.processInfo.systemUptime
-        guard down else { heldCap.touchUp(usage, at: now).forEach(model.send); return }
-        let events = heldCap.touchDown(usage, latched: model.latched, at: now)
-        events.forEach(model.send)
-        if HeldCap.spendsLatch(events) { latched.wrappedValue = [] }
+        guard down else { heldCap.touchUp(usage, at: now).forEach(send); return }
+        let events = heldCap.touchDown(usage, latched: latched, at: now)
+        events.forEach(send)
+        if HeldCap.spendsLatch(events) { latched = [] }
     }
 
     private func activate(_ usage: UInt16) {
-        let events = heldCap.activated(usage, latched: model.latched,
+        let events = heldCap.activated(usage, latched: latched,
                                      at: ProcessInfo.processInfo.systemUptime)
-        events.forEach(model.send)
-        if HeldCap.spendsLatch(events) { latched.wrappedValue = [] }
+        events.forEach(send)
+        if HeldCap.spendsLatch(events) { latched = [] }
     }
 }
 
-/// The software keyboard's tactile accessory bar, as a UIInputView to hand a text view's
-/// `inputAccessoryView`: a keyboard-style input view that self-sizes to its 52 pt bar and hosts it
-/// through a UIHostingController kept for the view's life. `update(latched:)` pushes the latest
-/// modifier latch into the bar in place, so the accessory never goes through a reloadInputViews
-/// rebuild — the view handed out is always the same one.
+// MARK: - Keyboard accessory host
+
+private final class TactileAccessoryModel: ObservableObject {
+    @Published var latched: KeyModifiers
+    let apply: (KeyModifiers) -> Void
+    let send: (InputEvent) -> Void
+    let onSwitchToTrackpad: (() -> Void)?
+    let onDismiss: () -> Void
+
+    init(latched: KeyModifiers, apply: @escaping (KeyModifiers) -> Void,
+         send: @escaping (InputEvent) -> Void,
+         onSwitchToTrackpad: (() -> Void)? = nil,
+         onDismiss: @escaping () -> Void) {
+        self.latched = latched
+        self.apply = apply
+        self.send = send
+        self.onSwitchToTrackpad = onSwitchToTrackpad
+        self.onDismiss = onDismiss
+    }
+}
+
+private struct TactileAccessoryHostView: View {
+    @ObservedObject var model: TactileAccessoryModel
+
+    private var latched: Binding<KeyModifiers> {
+        Binding(get: { model.latched },
+                set: { model.latched = $0; model.apply($0) })
+    }
+
+    var body: some View {
+        TactileCommandBar(
+            mode: .keyboard(onSwitchToTrackpad: model.onSwitchToTrackpad),
+            latched: latched,
+            send: model.send,
+            onDismiss: model.onDismiss
+        )
+    }
+}
+
+/// Hosts `TactileCommandBar` inside a transparent self-sizing `UIInputView` for `inputAccessoryView`.
+/// `update(latched:)` mutates observed state in place so `reloadInputViews` is never needed.
 @MainActor
 final class TactileKeyboardAccessoryHost {
-    /// The input view to attach as `inputAccessoryView`.
     let view: UIView
 
     private let model: TactileAccessoryModel
-    private let hostingController: UIHostingController<TactileAccessoryBar>
+    private let hostingController: UIHostingController<TactileAccessoryHostView>
 
     init(latched: Binding<KeyModifiers>, send: @escaping (InputEvent) -> Void,
          onSwitchToTrackpad: (() -> Void)? = nil,
@@ -614,12 +522,12 @@ final class TactileKeyboardAccessoryHost {
                                           onDismiss: onDismiss)
         self.model = model
 
-        let hosting = UIHostingController(rootView: TactileAccessoryBar(model: model))
+        let hosting = UIHostingController(rootView: TactileAccessoryHostView(model: model))
         hosting.view.backgroundColor = .clear
         hosting.sizingOptions = .intrinsicContentSize
         hostingController = hosting
 
-        let input = UIInputView(frame: CGRect(x: 0, y: 0, width: 0, height: 56),
+        let input = UIInputView(frame: CGRect(x: 0, y: 0, width: 0, height: TactileCommandBar.barHeight),
                                 inputViewStyle: .default)
         input.allowsSelfSizing = true
         input.backgroundColor = .clear
@@ -634,7 +542,6 @@ final class TactileKeyboardAccessoryHost {
         view = input
     }
 
-    /// The latest modifier latch, pushed into the hosted bar in place (no rebuild).
     func update(latched: KeyModifiers) {
         model.latched = latched
     }

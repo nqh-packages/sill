@@ -224,8 +224,7 @@ struct UnifiedSwitcherSheet: View {
         .overlay {
             if client.active == .window(w.id) {
                 RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(TactileTokens.ledBlue, lineWidth: 2)
-                    .shadow(color: TactileTokens.ledBlue.opacity(0.55), radius: 6)
+                    .stroke(Color.white.opacity(0.72), lineWidth: 1.5)
             }
         }
         .contextMenu {

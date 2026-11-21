@@ -15,20 +15,20 @@ private extension Color {
 
 public enum TactileTokens {
     public static let canvasBlack = Color.sillSRGB(0x000000)
-    public static let chassisDark = Color.sillSRGB(0x111317)
-    public static let chassisRaised = Color.sillSRGB(0x1A1D24)
-    public static let keycapTop = Color.sillSRGB(0x262A33)
-    public static let keycapPressed = Color.sillSRGB(0x181B21)
-    public static let trackpadWell = Color.sillSRGB(0x0C0E12)
+    public static let chassisDark = Color.sillSRGB(0x141415)
+    public static let chassisRaised = Color.sillSRGB(0x1C1C1E)
+    public static let keycapTop = Color.sillSRGB(0x3A3A3D)
+    public static let keycapPressed = Color.sillSRGB(0x2B2B2E)
+    public static let trackpadWell = Color.sillSRGB(0x0D0D0E)
     public static let specularRimTop = Color.sillSRGB(0xFFFFFF, opacity: 0.16)
     public static let specularRimBottom = Color.sillSRGB(0xFFFFFF, opacity: 0.03)
     public static let ledAmber = Color.sillSRGB(0xFF9F0A)
     public static let ledEmerald = Color.sillSRGB(0x30D158)
     public static let ledCyan = Color.sillSRGB(0x64D2FF)
     public static let ledCrimson = Color.sillSRGB(0xFF453A)
-    public static let ledBlue = Color.sillSRGB(0x9BB7FF)
-    public static let textPrimary = Color.sillSRGB(0xEEF0F3)
-    public static let textSecondary = Color.sillSRGB(0xA4ABB5)
+    public static let ledBlue = Color.sillSRGB(0x0A84FF)
+    public static let textPrimary = Color.sillSRGB(0xF2F2F7)
+    public static let textSecondary = Color.sillSRGB(0x8E8E93)
 }
 
 public enum TactileSurfaceShape: Equatable, Hashable, Sendable {

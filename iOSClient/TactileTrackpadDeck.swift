@@ -115,98 +115,44 @@ private struct EtchedDotGrid: View {
 struct PhoneControlDeckView: View {
     @ObservedObject var client: StreamClient
     @Binding var latched: KeyModifiers
+    var bottomInset: CGFloat = 0
     let onDragChanged: (_ progress: Double) -> Void
     let onDragEnded: (_ progress: Double, _ velocityY: Double) -> Void
     var onSwitchToKeyboard: (() -> Void)? = nil
     let onClose: () -> Void
 
-    /// The deck's own height, so a drag reports as a fraction of it; 1 until measured.
     @State private var deckHeight: CGFloat = 1
 
     var body: some View {
         VStack(spacing: 0) {
-            grabber
-            header
-            TactileKeycapRow(style: .deckSix, latched: $latched,
-                             send: { client.sendFromKeyRow($0) })
-                .padding(.horizontal, 12)
-                .padding(.top, 4)
-            TactileTrackpadWell(client: client, latched: $latched)
-                .padding(.horizontal, 12)
-                .padding(.top, 8)
-                .padding(.bottom, 12)
+            TactileCommandBar(
+                mode: .trackpad(onSwitchToKeyboard: onSwitchToKeyboard),
+                latched: $latched,
+                send: { client.sendFromKeyRow($0) },
+                onDismiss: onClose
+            )
+            .simultaneousGesture(deckDrag)
+
+            TactileTrackpadWell(client: client, latched: $latched, cornerRadius: 26)
+                .padding(.horizontal, 6)
+                .padding(.bottom, max(6, bottomInset))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-        .tactileSurface(.recessedHardware, shape: .rounded(24))
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: {
             deckHeight = max(1, $0)
         }
     }
 
-    /// The pull handle: a machined grab bar, the deck's drag reported up.
-    private var grabber: some View {
-        Capsule()
-            .fill(TactileTokens.textSecondary.opacity(0.45))
-            .frame(width: 40, height: 5)
-            .frame(maxWidth: .infinity)
-            .padding(.top, 8)
-            .padding(.bottom, 6)
-            .contentShape(Rectangle())
-            .gesture(deckDrag)
-            .accessibilityLabel("Deck handle")
-            .accessibilityHint("Drag to pull the deck up or down, flick down to stow it")
-    }
-
-    /// What streams, and the stow key: the active window's title (its app's name when the window
-    /// names nothing), "Desktop" for the whole display.
-    private var header: some View {
-        HStack(spacing: 10) {
-            Text(activeTitle)
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundStyle(TactileTokens.textSecondary)
-                .lineLimit(1)
-                .truncationMode(.middle)
-            Spacer(minLength: 8)
-            if let onSwitchToKeyboard {
-                Button(action: onSwitchToKeyboard) {
-                    Image(systemName: "keyboard")
-                        .font(.system(size: 13, weight: .semibold))
-                        .frame(width: 18, height: 18)
-                }
-                .tactileButton(.secondary, shape: .circle)
-                .accessibilityLabel("Switch to keyboard")
-            }
-            Button(action: onClose) {
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 13, weight: .bold))
-                    .frame(width: 18, height: 18)
-            }
-            .tactileButton(.secondary, shape: .circle)
-            .accessibilityLabel("Stow the control deck")
-        }
-        .padding(.horizontal, 14)
-    }
-
-    private var activeTitle: String {
-        switch client.active {
-        case .window(let id):
-            guard let window = client.windows.first(where: { $0.id == id }) else { return "Window" }
-            return window.title.isEmpty ? window.appName : window.title
-        case .desktop:
-            return "Desktop"
-        case .none:
-            return "Sill"
-        }
-    }
-
-    /// A drag on the handle: the translation as a fraction of the deck's height, positive while
-    /// pulled up; on release the same plus the projected velocity, positive upward.
     private var deckDrag: some Gesture {
-        DragGesture(minimumDistance: 2)
+        DragGesture(minimumDistance: 12)
             .onChanged { value in
+                guard value.translation.height > 0,
+                      abs(value.translation.height) > abs(value.translation.width) else { return }
                 onDragChanged(progress(for: value.translation.height))
             }
             .onEnded { value in
+                guard value.translation.height > 0,
+                      abs(value.translation.height) > abs(value.translation.width) else { return }
                 onDragEnded(progress(for: value.translation.height),
                             Double(value.velocity.height))
             }

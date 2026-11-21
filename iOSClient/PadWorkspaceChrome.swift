@@ -100,7 +100,7 @@ struct PadFloatingCapsule: View {
                     .overlay {
                         if client.active == .window(w.id) {
                             RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(TactileTokens.ledBlue, lineWidth: 2)
+                                .stroke(Color.white.opacity(0.75), lineWidth: 1.5)
                                 .padding(-3)
                         }
                     }
