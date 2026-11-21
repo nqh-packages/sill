@@ -293,13 +293,17 @@ private final class TactileAccessoryModel: ObservableObject {
     /// A modifier the bar toggled, written back to the caller's own binding.
     let apply: (KeyModifiers) -> Void
     let send: (InputEvent) -> Void
+    let onSwitchToTrackpad: (() -> Void)?
     let onDismiss: () -> Void
 
     init(latched: KeyModifiers, apply: @escaping (KeyModifiers) -> Void,
-         send: @escaping (InputEvent) -> Void, onDismiss: @escaping () -> Void) {
+         send: @escaping (InputEvent) -> Void,
+         onSwitchToTrackpad: (() -> Void)? = nil,
+         onDismiss: @escaping () -> Void) {
         self.latched = latched
         self.apply = apply
         self.send = send
+        self.onSwitchToTrackpad = onSwitchToTrackpad
         self.onDismiss = onDismiss
     }
 }
@@ -495,7 +499,7 @@ private struct TactileAccessoryBar: View {
     }
 
     var body: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: 4) {
             if !arrowsExpanded {
                 heldKey(label: .text("esc"), usage: HIDKey.escape, name: "Escape")
                 heldKey(label: .text("⇥"), usage: HIDKey.tab, name: "Tab")
@@ -522,6 +526,14 @@ private struct TactileAccessoryBar: View {
                 TactileArrowJoystick(latched: latched, send: model.send) {
                     withAnimation(.spring(response: 0.24, dampingFraction: 0.85)) {
                         arrowsExpanded = true
+                    }
+                }
+                if let switchToTrackpad = model.onSwitchToTrackpad {
+                    TactileKeycap(label: .symbol("rectangle.and.hand.point.up.left"),
+                                  accessibilityLabel: "Switch to trackpad", minHeight: 36,
+                                  appearance: .keyboard) {
+                        heldCap.releaseAll().forEach(model.send)
+                        switchToTrackpad()
                     }
                 }
                 TactileKeycap(label: .symbol("keyboard.chevron.compact.down"),
@@ -593,10 +605,13 @@ final class TactileKeyboardAccessoryHost {
     private let hostingController: UIHostingController<TactileAccessoryBar>
 
     init(latched: Binding<KeyModifiers>, send: @escaping (InputEvent) -> Void,
+         onSwitchToTrackpad: (() -> Void)? = nil,
          onDismiss: @escaping () -> Void) {
         let model = TactileAccessoryModel(latched: latched.wrappedValue,
                                           apply: { latched.wrappedValue = $0 },
-                                          send: send, onDismiss: onDismiss)
+                                          send: send,
+                                          onSwitchToTrackpad: onSwitchToTrackpad,
+                                          onDismiss: onDismiss)
         self.model = model
 
         let hosting = UIHostingController(rootView: TactileAccessoryBar(model: model))

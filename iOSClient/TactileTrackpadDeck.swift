@@ -117,6 +117,7 @@ struct PhoneControlDeckView: View {
     @Binding var latched: KeyModifiers
     let onDragChanged: (_ progress: Double) -> Void
     let onDragEnded: (_ progress: Double, _ velocityY: Double) -> Void
+    var onSwitchToKeyboard: (() -> Void)? = nil
     let onClose: () -> Void
 
     /// The deck's own height, so a drag reports as a fraction of it; 1 until measured.
@@ -166,6 +167,15 @@ struct PhoneControlDeckView: View {
                 .lineLimit(1)
                 .truncationMode(.middle)
             Spacer(minLength: 8)
+            if let onSwitchToKeyboard {
+                Button(action: onSwitchToKeyboard) {
+                    Image(systemName: "keyboard")
+                        .font(.system(size: 13, weight: .semibold))
+                        .frame(width: 18, height: 18)
+                }
+                .tactileButton(.secondary, shape: .circle)
+                .accessibilityLabel("Switch to keyboard")
+            }
             Button(action: onClose) {
                 Image(systemName: "chevron.down")
                     .font(.system(size: 13, weight: .bold))

@@ -440,7 +440,16 @@ struct StreamScreen: View {
                 accessoryHost = TactileKeyboardAccessoryHost(
                     latched: $latched,
                     send: { client.sendFromKeyRow($0) },
-                    onDismiss: { dispatch(.dismissKeyboardRequested) }
+                    onSwitchToTrackpad: DuoLayout.phoneArrangement ? {
+                        animatedDispatch(.setPhoneDeck(open: true))
+                    } : nil,
+                    onDismiss: {
+                        // Explicit hide returns to Focus canvas when a dedicated Trackpad switch sits beside it.
+                        if workspace.form.usesPhoneDock {
+                            animatedDispatch(.setPhoneDeck(open: false))
+                        }
+                        dispatch(.dismissKeyboardRequested)
+                    }
                 )
             }
             let proxy = overlay
@@ -622,8 +631,15 @@ struct StreamScreen: View {
 
     // MARK: Canvas and workspace chrome
 
-    private func phoneDeckHeight(for size: CGSize) -> CGFloat {
-        min(max(size.height * 0.44, 290), 376)
+    /// Shared bottom footprint for both the iOS keyboard + 56 pt floating bar and the pull-up
+    /// Control Deck, so swapping Keyboard <-> Trackpad keeps the Mac window's frame completely still.
+    private func phoneInputFootprint(for size: CGSize) -> CGFloat {
+        min(max(size.height * 0.43, 296), 372)
+    }
+
+    private func phoneDeckHeight(for size: CGSize, insets: FullScreenPolicy.Insets) -> CGFloat {
+        let bottomPad = max(6, insets.bottom)
+        return max(240, phoneInputFootprint(for: size) - bottomPad)
     }
 
     private func streamCanvasInsets(size: CGSize, hidden: Bool, room: CGRect, insets: FullScreenPolicy.Insets) -> EdgeInsets {
@@ -635,12 +651,10 @@ struct StreamScreen: View {
         guard workspace.form.usesPhoneDock else { return EdgeInsets() }
         let bottomClearance = max(10, insets.bottom)
         let dockReserve = bottomClearance + 76
-        let deckHeight = phoneDeckHeight(for: size)
-        let deckReserve = deckHeight + max(6, insets.bottom) + 10
+        let sharedReserve = phoneInputFootprint(for: size) + 6
         let progress = CGFloat(max(0, min(1, workspace.deckDragProgress)))
-        let deckBottom = dockReserve + progress * (deckReserve - dockReserve)
-        // iOS software keyboard (~301-320 pt) + 52 pt sculpted keycap accessory bar + 8 pt breathing room.
-        let keyboardBottom: CGFloat = keyboardShown ? min(size.height * 0.46, 366) : 0
+        let deckBottom = dockReserve + progress * (sharedReserve - dockReserve)
+        let keyboardBottom: CGFloat = keyboardShown ? sharedReserve : 0
         return EdgeInsets(top: 6, leading: 0, bottom: max(deckBottom, keyboardBottom), trailing: 0)
     }
 
@@ -688,7 +702,7 @@ struct StreamScreen: View {
         let bottomClearance = max(10, insets.bottom)
 
         if workspace.form.usesPhoneDock {
-            let deckHeight = phoneDeckHeight(for: size)
+            let deckHeight = phoneDeckHeight(for: size, insets: insets)
             let progress = workspace.deckDragProgress
 
             ZStack(alignment: .bottom) {
@@ -709,6 +723,9 @@ struct StreamScreen: View {
                             withAnimation(deckMotion) {
                                 dispatch(.deckDragEnded(progress: p, velocityY: v))
                             }
+                        },
+                        onSwitchToKeyboard: {
+                            animatedDispatch(.tapKeyboardButton)
                         },
                         onClose: {
                             withAnimation(deckMotion) {
