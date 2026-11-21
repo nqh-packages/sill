@@ -62,7 +62,7 @@ struct PhoneFloatingDock: View {
                     .onChanged { g in dispatch(.deckDragChanged(progress: dragProgress(g.translation.height))) }
                     .onEnded { g in
                         dispatch(.deckDragEnded(progress: dragProgress(g.translation.height),
-                                                velocityY: -g.velocity.height))
+                                                velocityY: Double(g.velocity.height)))
                     }
             )
             .accessibilityLabel("Control deck")
@@ -164,9 +164,9 @@ struct PhoneFloatingDock: View {
                             action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
-                .font(.system(size: 19, weight: .medium))
+                .font(.system(size: 18, weight: .medium))
                 .foregroundStyle(lit ? TactileTokens.ledCyan : TactileTokens.textPrimary)
-                .frame(width: 46, height: 46)
+                .frame(width: 24, height: 24)
         }
         .tactileButton(.secondary, shape: .circle)
         .accessibilityLabel(label)

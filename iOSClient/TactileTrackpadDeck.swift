@@ -169,7 +169,7 @@ struct PhoneControlDeckView: View {
             Button(action: onClose) {
                 Image(systemName: "chevron.down")
                     .font(.system(size: 13, weight: .bold))
-                    .frame(width: 30, height: 30)
+                    .frame(width: 18, height: 18)
             }
             .tactileButton(.secondary, shape: .circle)
             .accessibilityLabel("Stow the control deck")
@@ -198,18 +198,12 @@ struct PhoneControlDeckView: View {
             }
             .onEnded { value in
                 onDragEnded(progress(for: value.translation.height),
-                            velocityY(for: value))
+                            Double(value.velocity.height))
             }
     }
 
     private func progress(for translationY: CGFloat) -> Double {
-        max(-1, min(1, Double(-translationY) / Double(deckHeight)))
-    }
-
-    /// The flick's projected velocity in pt/s, positive upward: how far the gesture predicts the
-    /// drag continues past the lift, over the ~0.3 s the prediction spans.
-    private func velocityY(for value: DragGesture.Value) -> Double {
-        Double(-(value.predictedEndTranslation.height - value.translation.height)) / 0.3
+        max(0, min(1, 1.0 - Double(translationY) / Double(deckHeight)))
     }
 }
 
@@ -229,6 +223,8 @@ struct PadFloatingTrackpadView: View {
     let anchor: WorkspacePoint
     let onMoveAnchor: (WorkspacePoint) -> Void
     let onClose: () -> Void
+
+    @State private var dragStart: WorkspacePoint? = nil
 
     /// The pad's footprint: compact, so the stream stays the screen on a handheld iPad.
     static let padSize = CGSize(width: 320, height: 260)
@@ -269,7 +265,7 @@ struct PadFloatingTrackpadView: View {
             Button(action: onClose) {
                 Image(systemName: "xmark")
                     .font(.system(size: 12, weight: .bold))
-                    .frame(width: 30, height: 30)
+                    .frame(width: 18, height: 18)
             }
             .tactileButton(.secondary, shape: .circle)
             .accessibilityLabel("Close the trackpad")
@@ -278,10 +274,15 @@ struct PadFloatingTrackpadView: View {
 
     /// The grip's drag: the anchor plus the translation, clamped so the whole pad stays on screen.
     private var moveDrag: some Gesture {
-        DragGesture(minimumDistance: 1)
+        DragGesture(minimumDistance: 1, coordinateSpace: .global)
             .onChanged { value in
-                onMoveAnchor(clamped(WorkspacePoint(x: anchor.x + Double(value.translation.width),
-                                                    y: anchor.y + Double(value.translation.height))))
+                let start = dragStart ?? anchor
+                if dragStart == nil { dragStart = start }
+                onMoveAnchor(clamped(WorkspacePoint(x: start.x + Double(value.translation.width),
+                                                    y: start.y + Double(value.translation.height))))
+            }
+            .onEnded { _ in
+                dragStart = nil
             }
     }
 

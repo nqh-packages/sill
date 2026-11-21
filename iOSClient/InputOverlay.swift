@@ -985,6 +985,9 @@ final class InputOverlayView: UIView, UITextInput, UIGestureRecognizerDelegate {
     /// does) and no assistant groups; the system keyboard and its groups for the person's own.
     override var inputView: UIView? { holdsForHardwareKeyboard ? emptyInputView : nil }
 
+    var customInputAccessoryView: UIView?
+    override var inputAccessoryView: UIView? { holdsForHardwareKeyboard ? nil : customInputAccessoryView }
+
     /// An input method is composing here (marked text): KeyboardFrameMonitor reloads no input views then.
     var isComposingText: Bool { composition.isComposing }
 
@@ -2066,10 +2069,12 @@ struct InputOverlay: UIViewRepresentable {
     /// view.
     var readZoom: (() -> StreamZoom)? = nil
     var writeZoom: ((StreamZoom) -> Void)? = nil
+    var customInputAccessoryView: UIView? = nil
 
     func makeUIView(context: Context) -> InputOverlayView {
         let view = InputOverlayView(frame: .zero)
         view.keyboardProxy = proxy
+        view.customInputAccessoryView = customInputAccessoryView
         proxy.view = view
         return view
     }
@@ -2083,6 +2088,13 @@ struct InputOverlay: UIViewRepresentable {
         uiView.macRepeatsKeys = macRepeatsKeys
         uiView.readZoom = readZoom
         uiView.writeZoom = writeZoom
+        // Never reloadInputViews while an IME composition is active (marked text would commit/drop).
+        if uiView.customInputAccessoryView !== customInputAccessoryView {
+            uiView.customInputAccessoryView = customInputAccessoryView
+            if uiView.isFirstResponder && !uiView.isComposingText {
+                uiView.reloadInputViews()
+            }
+        }
         // Called straight from a UIKit text-input callback, never from inside a SwiftUI update,
         // so writing the binding here needs no hop.
         uiView.onModifiersConsumed = onModifiersConsumed

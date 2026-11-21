@@ -516,7 +516,7 @@ private struct DeckTile: View {
             .foregroundStyle(TactileTokens.textPrimary)
             .frame(maxWidth: .infinity, minHeight: 66)
         }
-        .tactileButton(.secondary, shape: .rounded(14))
+        .tactileRecessedButton(.secondary, shape: .rounded(14))
         .disabled(!enabled)
         .opacity(enabled ? 1 : 0.45)
     }

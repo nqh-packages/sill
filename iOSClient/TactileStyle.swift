@@ -251,7 +251,7 @@ private struct TactileSurfaceModifier: ViewModifier {
     }
 }
 
-private struct MachinedTactileButtonStyle: ButtonStyle {
+struct MachinedTactileButtonStyle: ButtonStyle {
     let role: TactileButtonRole
     let shape: TactileSurfaceShape
 
@@ -372,6 +372,10 @@ extension View {
 
     func tactileButton(_ role: TactileButtonRole, shape: TactileSurfaceShape) -> some View {
         modifier(TactileButtonModifier(role: role, shape: shape))
+    }
+
+    func tactileRecessedButton(_ role: TactileButtonRole, shape: TactileSurfaceShape) -> some View {
+        buttonStyle(MachinedTactileButtonStyle(role: role, shape: shape))
     }
 
     @ViewBuilder

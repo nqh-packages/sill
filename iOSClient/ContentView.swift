@@ -7,6 +7,7 @@ struct ContentView: View {
     /// Tells the host what this device sees, once a second while connected. Also covers the DEBUG
     /// harness's `-SillLive 1` session, which runs on this same client.
     @StateObject private var statsReporter = ClientStatsReporter()
+    @State private var suppressAutoReconnect = false
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
@@ -32,17 +33,22 @@ struct ContentView: View {
 
     private var app: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            TactileTokens.canvasBlack.ignoresSafeArea()
             if client.connected {
                 StreamScreen(client: client)
             } else {
-                ConnectScreen(client: client)
+                TactileConnectView(client: client, suppressAutoReconnectOnAppear: suppressAutoReconnect)
             }
         }
         .preferredColorScheme(.dark)
         // Tells MacMenuHub which window shows this session: the iPad's menu bar shows its menus while
         // it is the app's one window.
         .background(WindowSessionObserver(client: client))
+        .onChange(of: client.connected) { wasConnected, nowConnected in
+            if wasConnected && !nowConnected {
+                suppressAutoReconnect = true
+            }
+        }
         .onAppear {
             #if DEBUG
             SecondWindow.openFromLaunchArgument()   // -SillSecondWindow 1
@@ -732,6 +738,7 @@ struct LayoutHarness: View {
     /// The app's real client, used only when `-SillLive 1` was passed.
     @ObservedObject var live: StreamClient
     @StateObject private var mock: StreamClient
+    @State private var suppressAutoReconnect = false
 
     init(spec: Spec, live: StreamClient) {
         self.spec = spec
@@ -843,7 +850,7 @@ struct LayoutHarness: View {
     @ViewBuilder private var screen: some View {
         if spec.live {
             ZStack {
-                Color.black
+                TactileTokens.canvasBlack
                 if live.connected {
                     StreamScreen(client: live,
                                  drawerOpen: spec.drawerOpen,
@@ -852,14 +859,19 @@ struct LayoutHarness: View {
                                  settingsOpen: spec.settingsOpen,
                                  pairingOverlay: spec.scanOverlay, scannerOverride: spec.scanOverlay ? .placeholder : nil)
                 } else {
-                    ConnectScreen(client: live)
+                    TactileConnectView(client: live, suppressAutoReconnectOnAppear: suppressAutoReconnect)
+                }
+            }
+            .onChange(of: live.connected) { wasConnected, nowConnected in
+                if wasConnected && !nowConnected {
+                    suppressAutoReconnect = true
                 }
             }
         } else if let c = spec.connectCase {
             let options = MockCatalog.connectScreenOptions(c)
             ZStack {
-                Color.black
-                ConnectScreen(client: mock, adding: options.adding, typed: options.typed, scannerOverride: options.scanner)
+                TactileTokens.canvasBlack
+                TactileConnectView(client: mock, suppressAutoReconnectOnAppear: true, scannerOverride: options.scanner)
             }
         } else {
             StreamScreen(client: mock,

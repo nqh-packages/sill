@@ -18,6 +18,7 @@ struct PadFloatingCapsule: View {
     @ObservedObject var client: StreamClient
     let state: StreamWorkspaceState
     @Binding var textScale: Double?
+    var onTextScaleCommit: () -> Void = {}
     let dispatch: (StreamWorkspaceState.Action) -> Void
 
     /// The Mac menu trigger's open state (`MacMenuTrigger` is UIKit: SwiftUI's `Menu` cannot fetch
@@ -69,6 +70,9 @@ struct PadFloatingCapsule: View {
         }
         .onChange(of: client.textScaleSelectable) { _, now in
             if !now { scaleOpen = false }
+        }
+        .onChange(of: state.modal) { _, now in
+            if now != .menusPullDown { menusOpen = false }
         }
     }
 
@@ -150,12 +154,13 @@ struct PadFloatingCapsule: View {
     /// under the capsule; dimmed to its hint while the Desktop streams (Aa sizes a window).
     private var aaButton: some View {
         Button {
+            guard client.textScaleSelectable else { return }
             withAnimation(.easeOut(duration: 0.18)) { scaleOpen.toggle() }
         } label: {
             Text("Aa")
-                .font(.system(size: 17, weight: .semibold))
+                .font(.system(size: 16, weight: .semibold))
                 .foregroundStyle(scaleOpen ? TactileTokens.ledCyan : TactileTokens.textPrimary)
-                .frame(width: 44, height: 44)
+                .frame(width: 22, height: 22)
         }
         .tactileButton(.secondary, shape: .circle)
         .opacity(client.textScaleSelectable ? 1 : 0.45)
@@ -173,8 +178,8 @@ struct PadFloatingCapsule: View {
         return HStack(spacing: 0) {
             ForEach(TextScale.detents(offered: offered), id: \.self) { detent in
                 Button {
-                    TactileHaptics.play(.detent)
                     textScale = TextScale.scale(at: detent)
+                    onTextScaleCommit()
                 } label: {
                     Text(TextScale.title(at: detent))
                         .font(.caption.weight(.semibold))
@@ -195,9 +200,9 @@ struct PadFloatingCapsule: View {
                                action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Image(systemName: symbol)
-                .font(.system(size: 19, weight: .medium))
+                .font(.system(size: 18, weight: .medium))
                 .foregroundStyle(lit ? TactileTokens.ledCyan : TactileTokens.textPrimary)
-                .frame(width: 44, height: 44)
+                .frame(width: 22, height: 22)
         }
         .tactileButton(.secondary, shape: .circle)
         .accessibilityLabel(label)

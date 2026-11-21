@@ -219,7 +219,7 @@ struct TactileConnectView: View {
                             .font(.system(size: 15, weight: .semibold))
                             .frame(minHeight: 44)
                     }
-                    .tactileButton(.secondary, shape: .capsule)
+                    .tactileRecessedButton(.secondary, shape: .capsule)
                     .accessibilityHint("Also looks for a Mac with Direct Wireless Connection turned on, without a Wi\u{2011}Fi network.")
                 }
             }
