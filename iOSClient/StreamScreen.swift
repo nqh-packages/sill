@@ -316,7 +316,7 @@ struct StreamScreen: View {
 
             ZStack {
                 // Single unconditional canvas node so HEVCDisplayView and InputOverlay never re-parent.
-                streamCanvas(size: geo.size, hidden: hidden, room: room)
+                streamCanvas(size: geo.size, hidden: hidden, room: room, insets: insets)
                     .allowsHitTesting(!overlayShown && tour == nil)
                     .ignoresSafeArea(.keyboard)
 
@@ -620,8 +620,30 @@ struct StreamScreen: View {
 
     // MARK: Canvas and workspace chrome
 
-    private func streamCanvas(size: CGSize, hidden: Bool, room: CGRect) -> some View {
-        ZStack {
+    private func phoneDeckHeight(for size: CGSize) -> CGFloat {
+        min(max(size.height * 0.44, 290), 376)
+    }
+
+    private func streamCanvasInsets(size: CGSize, hidden: Bool, room: CGRect, insets: FullScreenPolicy.Insets) -> EdgeInsets {
+        if hidden {
+            return EdgeInsets(top: room.minY, leading: room.minX,
+                              bottom: max(0, size.height - room.maxY),
+                              trailing: max(0, size.width - room.maxX))
+        }
+        guard workspace.form.usesPhoneDock else { return EdgeInsets() }
+        let bottomClearance = max(10, insets.bottom)
+        let dockReserve = bottomClearance + 76
+        let deckHeight = phoneDeckHeight(for: size)
+        let deckReserve = deckHeight + max(6, insets.bottom) + 10
+        let progress = CGFloat(max(0, min(1, workspace.deckDragProgress)))
+        let deckBottom = dockReserve + progress * (deckReserve - dockReserve)
+        let keyboardBottom: CGFloat = keyboardShown ? max(deckReserve, min(size.height * 0.48, 360)) : 0
+        return EdgeInsets(top: 6, leading: 0, bottom: max(deckBottom, keyboardBottom), trailing: 0)
+    }
+
+    private func streamCanvas(size: CGSize, hidden: Bool, room: CGRect, insets: FullScreenPolicy.Insets) -> some View {
+        let canvasInsets = streamCanvasInsets(size: size, hidden: hidden, room: room, insets: insets)
+        return ZStack {
             ZoomedStreamView(client: client, zoom: zoom)
             InputOverlay(videoSize: client.videoSize,
                          send: { client.sendInput($0) },
@@ -644,15 +666,15 @@ struct StreamScreen: View {
                                  show: { showChrome(by: "an assistive technology") })
         }
         .onGeometryChange(for: CGSize.self, of: { $0.size }) { measured in
-            dispatch(.focusCanvasMeasured(WorkspaceSize(width: Double(measured.width),
-                                                        height: Double(measured.height))))
+            // Only commit baseline Focus canvas dimensions; deck drags and keyboard lifts never thrash Mac viewport.
+            if !workspace.form.usesPhoneDock || (workspace.deckDragProgress == 0 && !keyboardShown) {
+                dispatch(.focusCanvasMeasured(WorkspaceSize(width: Double(measured.width),
+                                                            height: Double(measured.height))))
+            }
         }
         .tourTarget(.stream)
-        .padding(hidden
-                 ? EdgeInsets(top: room.minY, leading: room.minX,
-                              bottom: max(0, size.height - room.maxY),
-                              trailing: max(0, size.width - room.maxX))
-                 : EdgeInsets())
+        .padding(canvasInsets)
+        .animation(.easeOut(duration: 0.22), value: keyboardShown)
     }
 
     @ViewBuilder
@@ -660,7 +682,7 @@ struct StreamScreen: View {
         let bottomClearance = max(10, insets.bottom)
 
         if workspace.form.usesPhoneDock {
-            let deckHeight = min(max(size.height * 0.48, 300), 400)
+            let deckHeight = phoneDeckHeight(for: size)
             let progress = workspace.deckDragProgress
 
             ZStack(alignment: .bottom) {
