@@ -277,7 +277,7 @@ public struct StreamWorkspaceState: Equatable, Sendable {
                 committedCanvasSize = size
                 pendingFormViewportCommit = false
                 effects.append(.commitViewport(size, reason: .initialCanvas))
-            } else if form.usesPhoneDock && (phoneDock != .focus || deckDragProgress > 0) {
+            } else if form.usesPhoneDock && deckDragProgress > 0 && deckDragProgress < 1 {
                 break
             } else if pendingFormViewportCommit
                 || abs(size.width - committedCanvasSize.width) >= 0.5

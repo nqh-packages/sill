@@ -639,7 +639,8 @@ struct StreamScreen: View {
         let deckReserve = deckHeight + max(6, insets.bottom) + 10
         let progress = CGFloat(max(0, min(1, workspace.deckDragProgress)))
         let deckBottom = dockReserve + progress * (deckReserve - dockReserve)
-        let keyboardBottom: CGFloat = keyboardShown ? max(deckReserve, min(size.height * 0.48, 360)) : 0
+        // iOS software keyboard (~301-320 pt) + 52 pt sculpted keycap accessory bar + 8 pt breathing room.
+        let keyboardBottom: CGFloat = keyboardShown ? min(size.height * 0.46, 366) : 0
         return EdgeInsets(top: 6, leading: 0, bottom: max(deckBottom, keyboardBottom), trailing: 0)
     }
 
@@ -668,8 +669,11 @@ struct StreamScreen: View {
                                  show: { showChrome(by: "an assistive technology") })
         }
         .onGeometryChange(for: CGSize.self, of: { $0.size }) { measured in
-            // Only commit baseline Focus canvas dimensions; deck drags and keyboard lifts never thrash Mac viewport.
-            if !workspace.form.usesPhoneDock || (workspace.deckDragProgress == 0 && !keyboardShown) {
+            // Commit settled visible canvas dimensions (Focus, Deck open, or Keyboard up) so the Mac window
+            // always fits edge-to-edge without pillarboxing, while suppressing mid-drag deck frames.
+            let isDraggingDeck = workspace.form.usesPhoneDock
+                && workspace.deckDragProgress > 0 && workspace.deckDragProgress < 1
+            if !isDraggingDeck {
                 dispatch(.focusCanvasMeasured(WorkspaceSize(width: Double(measured.width),
                                                             height: Double(measured.height))))
             }

@@ -287,23 +287,34 @@ do {
     let sameFX = s.send(.focusCanvasMeasured(focusSize))
     check("identical focusCanvasMeasured is no-op", sameFX.isEmpty)
 
-    // Dragging deck & opening deck never commit viewport, and ignore shrunk canvas measurements
+    // Mid-drag deck never commits viewport, while settled deck open/close refits the visible canvas
     let dragFX = s.send(.deckDragChanged(progress: 0.5))
     let shrunkDuringDrag = s.send(.focusCanvasMeasured(WorkspaceSize(width: 402, height: 420)))
-    let openDeckFX = s.send(.setPhoneDeck(open: true))
-    let shrunkWhileOpen = s.send(.focusCanvasMeasured(WorkspaceSize(width: 402, height: 300)))
-    let closeDeckFX = s.send(.setPhoneDeck(open: false))
-    let noViewportEffects = (dragFX + shrunkDuringDrag + openDeckFX + shrunkWhileOpen + closeDeckFX)
-        .filter { if case .commitViewport = $0 { return true }; return false }
-    check("viewport stays locked to focusSize while deck drags, opens, and closes",
-          s.committedCanvasSize == focusSize && noViewportEffects.isEmpty)
+    check("viewport stays locked mid-drag so deck gesture never thrashes Mac",
+          s.committedCanvasSize == focusSize && dragFX.isEmpty && shrunkDuringDrag.isEmpty)
 
-    // Keyboard up also preserves committed focusSize
+    _ = s.send(.setPhoneDeck(open: true))
+    let deckVisible = WorkspaceSize(width: 402, height: 410)
+    let deckFitFX = s.send(.focusCanvasMeasured(deckVisible))
+    check("settled open deck commits visible canvas size to eliminate pillarboxing",
+          s.committedCanvasSize == deckVisible
+            && deckFitFX == [.commitViewport(deckVisible, reason: .formOrSizeChanged)])
+
+    _ = s.send(.setPhoneDeck(open: false))
+    let focusRestoreFX = s.send(.focusCanvasMeasured(focusSize))
+    check("stowing deck restores Focus canvas viewport",
+          s.committedCanvasSize == focusSize
+            && focusRestoreFX == [.commitViewport(focusSize, reason: .formOrSizeChanged)])
+
+    // Keyboard up also refits settled visible canvas so window fills width above keycap bar
     _ = s.send(.tapKeyboardButton)
-    let shrunkWhileKB = s.send(.focusCanvasMeasured(WorkspaceSize(width: 402, height: 390)))
-    check("viewport stays locked while phone keyboard is up",
-          s.committedCanvasSize == focusSize && shrunkWhileKB.isEmpty)
+    let kbVisible = WorkspaceSize(width: 402, height: 390)
+    let kbFitFX = s.send(.focusCanvasMeasured(kbVisible))
+    check("settled keyboard commits visible canvas size above keycap bar",
+          s.committedCanvasSize == kbVisible
+            && kbFitFX == [.commitViewport(kbVisible, reason: .formOrSizeChanged)])
     _ = s.send(.tapKeyboardButton)
+    _ = s.send(.focusCanvasMeasured(focusSize))
 
     // Real resize in Focus commits .formOrSizeChanged
     let resized = WorkspaceSize(width: 440, height: 810)
