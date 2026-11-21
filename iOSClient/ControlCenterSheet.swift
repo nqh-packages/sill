@@ -197,6 +197,8 @@ struct ControlCenterSheet: View {
                 .lineLimit(1)
         }
         .frame(maxWidth: .infinity, minHeight: 66)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
         .tactileSurface(.recessedHardware, shape: .rounded(14))
     }
 
