@@ -145,6 +145,7 @@ struct ControlCenterSheet: View {
         VStack(spacing: 10) {
             LazyVGrid(columns: [GridItem(.flexible(), spacing: 10), GridItem(.flexible(), spacing: 10)],
                       spacing: 10) {
+                if let row = fullScreenRow, row.offered { fullScreenTile(row) }
                 if client.macHasSound { muteTile }
                 if ClipboardPolicy.hostTakes(client.hostClipboard) { pasteTile }
                 menusTile
@@ -157,6 +158,18 @@ struct ControlCenterSheet: View {
                                 commit: onTextScaleCommit)
             linkPill
         }
+    }
+
+    /// Full Screen: hides status bar, Home indicator, and dock/capsule so only the Mac stream stays
+    /// on screen; swipe in from the left edge or shake to return.
+    private func fullScreenTile(_ row: HostSettingsPanel.FullScreenRow) -> some View {
+        DeckTile(symbol: "arrow.up.left.and.arrow.down.right",
+                 title: FullScreenPolicy.Copy.rowTitle,
+                 enabled: row.coversScreen) {
+            TactileHaptics.play(.detent)
+            row.hide()
+        }
+        .accessibilityHint(FullScreenPolicy.Copy.rowHint)
     }
 
     /// Mute: this device's own (the panel's Mute row, `soundMuted`), an amber LED while silenced,

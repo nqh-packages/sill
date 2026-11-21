@@ -1218,6 +1218,12 @@ struct StreamScreen: View {
     private func hideFromSettings() {
         let keyboard = workspace.restoreKeyboardAfterModal
         dispatch(.closeModal(restoreKeyboard: false))
+        if workspace.showsPhoneDeck {
+            dispatch(.setPhoneDeck(open: false))
+        }
+        if workspace.floatingPad.isVisible {
+            dispatch(.toggleFloatingPad)
+        }
         let mark = client.connectedAt
         Task { @MainActor in
             try? await Task.sleep(for: .seconds(0.2))
