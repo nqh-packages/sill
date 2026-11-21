@@ -52,7 +52,7 @@ private struct KeycapStyle: ButtonStyle {
     let minHeight: CGFloat
     let onHoldChange: ((Bool) -> Void)?
 
-    private let shape = RoundedRectangle(cornerRadius: 8.5, style: .continuous)
+    private let shape = RoundedRectangle(cornerRadius: TactileRadius.keycap, style: .continuous)
     private let travel: CGFloat = 1.0
     private let lip: CGFloat = 1.5
 
@@ -65,16 +65,12 @@ private struct KeycapStyle: ButtonStyle {
             .background(
                 ZStack {
                     shape
-                        .fill(Color.black.opacity(0.45))
+                        .fill(TactileTokens.keycapLip)
                         .offset(y: lip)
                     shape
                         .fill(LinearGradient(colors: [TactileTokens.keycapTop, TactileTokens.keycapPressed],
                                              startPoint: .top, endPoint: .bottom))
-                        .overlay(
-                            shape.strokeBorder(
-                                LinearGradient(colors: [TactileTokens.specularRimTop, TactileTokens.specularRimBottom],
-                                               startPoint: .top, endPoint: .bottom),
-                                lineWidth: 0.6))
+                        .tactileSpecularBorder(.rounded(TactileRadius.keycap), lineWidth: 0.6)
                         .offset(y: pressed ? travel : 0)
                 }
             )
@@ -86,7 +82,7 @@ private struct KeycapStyle: ButtonStyle {
                 }
             }
             .scaleEffect(pressed ? 0.97 : 1.0)
-            .animation(.easeOut(duration: 0.08), value: pressed)
+            .animation(TactileMotion.keyPress, value: pressed)
             .onChange(of: pressed) { _, down in
                 if down { TactileHaptics.play(.keyPress) }
                 onHoldChange?(down)
@@ -189,7 +185,7 @@ private struct TactileArrowJoystick: View {
 
     private static let activationDistance: CGFloat = 10
     private static let maxTravel: CGFloat = 7.0
-    private static let shape = RoundedRectangle(cornerRadius: 8.5, style: .continuous)
+    private static let shape = RoundedRectangle(cornerRadius: TactileRadius.keycap, style: .continuous)
 
     var body: some View {
         ZStack {
@@ -201,18 +197,9 @@ private struct TactileArrowJoystick: View {
                         endPoint: .bottom
                     )
                 )
-            Self.shape
-                .strokeBorder(
-                    LinearGradient(
-                        colors: [
-                            activeDirection != nil ? Color.white.opacity(0.45) : TactileTokens.specularRimTop,
-                            TactileTokens.specularRimBottom
-                        ],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    ),
-                    lineWidth: activeDirection != nil ? 0.9 : 0.6
-                )
+                .tactileSpecularBorder(.rounded(TactileRadius.keycap),
+                                       lineWidth: activeDirection != nil ? 0.9 : 0.6,
+                                       active: activeDirection != nil)
 
             chevron("chevron.up", active: activeDirection == .up)
                 .frame(maxHeight: .infinity, alignment: .top)
@@ -231,24 +218,18 @@ private struct TactileArrowJoystick: View {
                 .fill(
                     LinearGradient(
                         colors: [
-                            activeDirection != nil ? Color(white: 0.48) : TactileTokens.keycapTop,
+                            activeDirection != nil ? TactileTokens.keycapActive : TactileTokens.keycapTop,
                             TactileTokens.keycapPressed
                         ],
                         startPoint: .top,
                         endPoint: .bottom
                     )
                 )
-                .overlay {
-                    Circle()
-                        .strokeBorder(
-                            activeDirection != nil ? Color.white.opacity(0.55) : Color.white.opacity(0.22),
-                            lineWidth: 0.65
-                        )
-                }
+                .tactileSpecularBorder(.circle, lineWidth: 0.65, active: activeDirection != nil)
                 .frame(width: 15, height: 15)
-                .shadow(color: Color.black.opacity(0.5), radius: 2, y: 1)
+                .shadow(color: TactileTokens.ambientShadow, radius: 2, y: 1)
                 .offset(puckOffset)
-                .animation(.interactiveSpring(response: 0.16, dampingFraction: 0.72), value: puckOffset)
+                .animation(TactileMotion.joystickSnap, value: puckOffset)
         }
         .frame(maxWidth: .infinity, minHeight: 36, maxHeight: 36)
         .contentShape(Self.shape)

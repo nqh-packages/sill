@@ -60,7 +60,7 @@ struct TactileTrackpadWell: View {
         // The recessed rim: a dark inner shadow at the top falling off to the bottom edge's
         // specular line, so the well reads as sunk into the chassis rather than laid on it.
         .overlay(shape.strokeBorder(
-            LinearGradient(colors: [Color.black.opacity(0.65), Color.black.opacity(0.2),
+            LinearGradient(colors: [TactileTokens.recessShadowTop, TactileTokens.recessShadowMid,
                                     TactileTokens.specularRimBottom],
                            startPoint: .top, endPoint: .bottom),
             lineWidth: 1.5))

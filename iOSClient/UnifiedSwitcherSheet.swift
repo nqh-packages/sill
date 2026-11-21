@@ -105,25 +105,16 @@ struct UnifiedSwitcherSheet: View {
             dismiss()
         } label: {
             VStack(alignment: .leading, spacing: 10) {
-                ZStack {
-                    RoundedRectangle(cornerRadius: 14, style: .continuous)
-                        .fill(TactileTokens.chassisDark)
-                    RoundedRectangle(cornerRadius: 9, style: .continuous)
-                        .fill(TactileTokens.canvasBlack)
-                        .padding(7)
-                    Image(systemName: "display")
-                        .font(.system(size: 34, weight: .thin))
-                        .foregroundStyle(TactileTokens.textSecondary)
-                    VStack {
-                        Spacer()
-                        HStack {
-                            Spacer()
-                            TactileLED(isOn: client.active == .desktop, color: TactileTokens.ledEmerald)
-                                .padding(6)
-                        }
-                    }
-                }
-                .frame(height: 108)
+                TactileDisplayBezel(
+                    image: nil,
+                    placeholderSymbol: "display",
+                    placeholderSize: 34,
+                    height: 108,
+                    outerRadius: TactileRadius.card,
+                    innerRadius: TactileRadius.screen,
+                    bezelPadding: 7,
+                    led: (isOn: client.active == .desktop, color: TactileTokens.ledEmerald)
+                )
                 HStack(spacing: 8) {
                     Text(client.desktopButton.label)
                         .font(.headline)
@@ -147,7 +138,7 @@ struct UnifiedSwitcherSheet: View {
             .padding(10)
         }
         .buttonStyle(.plain)
-        .tactileSurface(.recessedHardware, shape: .rounded(14))
+        .tactileSurface(.recessedHardware, shape: .rounded(TactileRadius.card))
         .accessibilityLabel(client.desktopButton.accessibilityLabel)
         .accessibilityValue(client.desktopButton.accessibilityValue ?? "")
         .accessibilityHint(client.desktopButton.accessibilityHint ?? "")
@@ -155,12 +146,9 @@ struct UnifiedSwitcherSheet: View {
 
     // MARK: The window cards
 
-    /// The Mac's windows, front to back, each card its live thumbnail over a machined frame, its
-    /// app's icon and the window's title; the one streaming carries the blue rim. A long press is
-    /// the window's traffic lights: Close, Minimize, Full Screen.
     private var windowsGrid: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionHeader("Windows")
+            TactileSectionHeader("Windows")
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 160), spacing: 12)], spacing: 12) {
                 ForEach(windows, id: \.id) { w in
                     windowCard(w)
@@ -176,37 +164,14 @@ struct UnifiedSwitcherSheet: View {
             dismiss()
         } label: {
             VStack(alignment: .leading, spacing: 7) {
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .fill(TactileTokens.canvasBlack)
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 100)
-                    .overlay {
-                        if let thumb = client.thumbnails[w.id] {
-                            Image(uiImage: thumb)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        } else {
-                            Image(systemName: "macwindow")
-                                .font(.system(size: 28, weight: .thin))
-                                .foregroundStyle(TactileTokens.textSecondary.opacity(0.5))
-                        }
-                    }
-                    .overlay(alignment: .bottomLeading) {
-                        if let icon = client.icons[w.bundleID] {
-                            Image(uiImage: icon)
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-                                .shadow(color: .black.opacity(0.6), radius: 3, y: 1)
-                                .padding(6)
-                        }
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 9, style: .continuous)
-                            .strokeBorder(TactileTokens.specularRimTop.opacity(0.45), lineWidth: 0.5)
-                    )
+                TactileDisplayBezel(
+                    image: client.thumbnails[w.id],
+                    placeholderSymbol: "macwindow",
+                    placeholderSize: 28,
+                    height: 100,
+                    innerRadius: TactileRadius.screen,
+                    cornerIcon: client.icons[w.bundleID]
+                )
                 Text(w.title.isEmpty ? w.appName : w.title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(TactileTokens.textPrimary)
@@ -217,16 +182,11 @@ struct UnifiedSwitcherSheet: View {
                     .lineLimit(1)
             }
             .padding(8)
-            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+            .contentShape(RoundedRectangle(cornerRadius: TactileRadius.card, style: .continuous))
         }
         .buttonStyle(.plain)
-        .tactileSurface(.recessedHardware, shape: .rounded(14))
-        .overlay {
-            if client.active == .window(w.id) {
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .stroke(Color.white.opacity(0.72), lineWidth: 1.5)
-            }
-        }
+        .tactileSurface(.recessedHardware, shape: .rounded(TactileRadius.card))
+        .tactileSelectionRim(client.active == .window(w.id), shape: .rounded(TactileRadius.card))
         .contextMenu {
             Button { client.command(.close, window: w.id) } label: {
                 Label("Close", systemImage: "xmark")
@@ -242,11 +202,9 @@ struct UnifiedSwitcherSheet: View {
 
     // MARK: The app rows
 
-    /// Every app the Mac offers, a row each — icon and name — in a recessed tray. A tap asks the
-    /// Mac to launch or front it (`client.launch`): one window at a time, never a launcher.
     private var appsList: some View {
         VStack(alignment: .leading, spacing: 10) {
-            sectionHeader("Apps on \(client.macName.isEmpty ? "Mac" : client.macName)")
+            TactileSectionHeader("Apps on \(client.macName.isEmpty ? "Mac" : client.macName)")
             VStack(spacing: 0) {
                 ForEach(Array(apps.indices), id: \.self) { index in
                     let app = apps[index]
@@ -255,16 +213,7 @@ struct UnifiedSwitcherSheet: View {
                         dismiss()
                     } label: {
                         HStack(spacing: 12) {
-                            if let icon = client.icons[app.bundleID] {
-                                Image(uiImage: icon)
-                                    .resizable()
-                                    .frame(width: 30, height: 30)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                            } else {
-                                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                                    .fill(TactileTokens.chassisRaised)
-                                    .frame(width: 30, height: 30)
-                            }
+                            TactileAppIcon(image: client.icons[app.bundleID], size: 30, cornerRadius: TactileRadius.icon)
                             Text(app.name)
                                 .font(.body)
                                 .foregroundStyle(TactileTokens.textPrimary)
@@ -286,18 +235,8 @@ struct UnifiedSwitcherSheet: View {
                     }
                 }
             }
-            .tactileSurface(.recessedHardware, shape: .rounded(14))
+            .tactileSurface(.recessedHardware, shape: .rounded(TactileRadius.card))
         }
-    }
-
-    // MARK: Odds and ends
-
-    private func sectionHeader(_ title: String) -> some View {
-        Text(title)
-            .font(.subheadline.weight(.semibold))
-            .foregroundStyle(TactileTokens.textSecondary)
-            .textCase(nil)
-            .padding(.leading, 4)
     }
 
     private var nothingFound: some View {

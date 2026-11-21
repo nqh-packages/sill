@@ -15,19 +15,20 @@ extension Color {
     }
 }
 
+/// Legacy palette alias backed strictly by `TactileTokens` (single source of truth).
 enum Palette {
-    static let bar = Color(hex: 0x141415)
-    static let control = Color(hex: 0x1C1C1E)
-    static let controlOpen = Color(hex: 0x2C2C2E)
-    static let accent = Color(hex: 0x0A84FF)
-    static let text = Color(hex: 0xF2F2F7)
-    static let barLabel = Color(hex: 0xAEAEB2)
-    static let muted = Color(hex: 0x8E8E93)
-    static let panel = Color(hex: 0x141415)
-    static let trackpad = Color(hex: 0x0D0D0E)
-    static let thumbBody = Color(hex: 0x242426)
-    static let thumbTitleBar = Color(hex: 0x323235)
-    static let iconFallback = Color(hex: 0x3A3A3C)
+    static let bar = TactileTokens.chassisDark
+    static let control = TactileTokens.chassisRaised
+    static let controlOpen = TactileTokens.controlRaised
+    static let accent = TactileTokens.ledBlue
+    static let text = TactileTokens.textPrimary
+    static let barLabel = TactileTokens.textBarLabel
+    static let muted = TactileTokens.textSecondary
+    static let panel = TactileTokens.chassisDark
+    static let trackpad = TactileTokens.trackpadWell
+    static let thumbBody = TactileTokens.chassisRaised
+    static let thumbTitleBar = TactileTokens.controlRaised
+    static let iconFallback = TactileTokens.keycapTop
 }
 
 // MARK: - Layout selection
@@ -544,7 +545,7 @@ struct StreamScreen: View {
     }
 
     private var deckMotion: Animation {
-        reduceMotion ? .easeOut(duration: 0.18) : .spring(response: 0.32, dampingFraction: 0.84)
+        TactileMotion.deck(reduceMotion: reduceMotion)
     }
 
     private func dispatch(_ action: StreamWorkspaceState.Action) {

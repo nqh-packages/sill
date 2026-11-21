@@ -85,25 +85,12 @@ struct PadFloatingCapsule: View {
                     TactileHaptics.play(.tick)
                     client.select(.window(w.id))
                 } label: {
-                    Group {
-                        if let icon = client.icons[w.bundleID] {
-                            Image(uiImage: icon)
-                                .resizable()
-                                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                        } else {
-                            Image(systemName: "macwindow")
-                                .font(.system(size: 17))
-                                .foregroundStyle(TactileTokens.textSecondary)
-                        }
-                    }
-                    .frame(width: 30, height: 30)
-                    .overlay {
-                        if client.active == .window(w.id) {
-                            RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                .stroke(Color.white.opacity(0.75), lineWidth: 1.5)
-                                .padding(-3)
-                        }
-                    }
+                    TactileAppIcon(image: client.icons[w.bundleID], fallbackSymbol: "macwindow",
+                                   size: 30, cornerRadius: TactileRadius.icon)
+                        .tactileSelectionRim(client.active == .window(w.id),
+                                             shape: .rounded(TactileRadius.pill),
+                                             lineWidth: 1.5,
+                                             inset: -3)
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(w.title.isEmpty ? w.appName : w.title)

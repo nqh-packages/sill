@@ -92,7 +92,7 @@ struct ControlCenterSheet: View {
                 .lineLimit(1)
             Text(linkBadge)
                 .font(.caption2)
-                .foregroundStyle(linkWarning ? Color.orange : Color.secondary)
+                .foregroundStyle(linkWarning ? TactileTokens.ledAmber : TactileTokens.textSecondary)
                 .lineLimit(1)
         }
         .accessibilityElement(children: .ignore)

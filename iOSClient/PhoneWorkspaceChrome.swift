@@ -95,7 +95,7 @@ struct PhoneFloatingDock: View {
                     .foregroundStyle(TactileTokens.textPrimary)
                     .padding(.horizontal, 6)
                     .padding(.vertical, 2)
-                    .background(Capsule().fill(Color.white.opacity(0.14)))
+                    .background(Capsule().fill(TactileTokens.badgeFill))
                     .accessibilityHidden(true)
             }
         }
@@ -125,16 +125,8 @@ struct PhoneFloatingDock: View {
     /// nothing streams.
     @ViewBuilder private func chipIcon(_ windows: [WindowInfo]) -> some View {
         if case .window(let id) = client.active, let w = windows.first(where: { $0.id == id }) {
-            if let icon = client.icons[w.bundleID] {
-                Image(uiImage: icon)
-                    .resizable()
-                    .frame(width: 24, height: 24)
-                    .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
-            } else {
-                Image(systemName: "macwindow")
-                    .font(.system(size: 20))
-                    .foregroundStyle(TactileTokens.textSecondary)
-            }
+            TactileAppIcon(image: client.icons[w.bundleID], fallbackSymbol: "macwindow",
+                           size: 24, cornerRadius: TactileRadius.micro)
         } else if client.active == .desktop {
             Image(systemName: "display")
                 .font(.system(size: 19))

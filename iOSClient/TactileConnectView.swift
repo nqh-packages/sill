@@ -300,38 +300,17 @@ struct TactileConnectView: View {
         .contextMenu { macMenu(mac) }
     }
 
-    /// The 16:10 dark-anodized display bezel: a machined frame around the screen, which is the Mac's
-    /// kept picture or a machined monitor glyph until one lands.
     private func bezel(preview: UIImage?) -> some View {
-        RoundedRectangle(cornerRadius: 12, style: .continuous)
-            .fill(TactileTokens.chassisDark)
-            .aspectRatio(1.6, contentMode: .fit)
-            .overlay {
-                RoundedRectangle(cornerRadius: 8, style: .continuous)
-                    .fill(TactileTokens.trackpadWell)
-                    .overlay {
-                        if let preview {
-                            Image(uiImage: preview)
-                                .resizable()
-                                .scaledToFill()
-                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
-                        } else {
-                            Image(systemName: "display")
-                                .font(.system(size: 26, weight: .light))
-                                .foregroundStyle(TactileTokens.textSecondary.opacity(0.55))
-                        }
-                    }
-                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                    .padding(8)
-            }
-            .overlay(
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .strokeBorder(
-                        LinearGradient(colors: [TactileTokens.specularRimTop, TactileTokens.specularRimBottom],
-                                       startPoint: .top, endPoint: .bottom),
-                        lineWidth: 1)
-            )
-            .accessibilityHidden(true)
+        TactileDisplayBezel(
+            image: preview,
+            placeholderSymbol: "display",
+            placeholderSize: 26,
+            aspectRatio: 1.6,
+            outerRadius: TactileRadius.bezel,
+            innerRadius: TactileRadius.icon,
+            bezelPadding: 8
+        )
+        .accessibilityHidden(true)
     }
 
     /// A saved Mac's menu, as the connect screen's rows offer it: Connect (a Remote card) or Connect
