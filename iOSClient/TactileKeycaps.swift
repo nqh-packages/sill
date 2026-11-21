@@ -31,11 +31,17 @@ struct TactileKeycap: View {
         case symbol(String)
     }
 
+    enum Appearance {
+        case hardware
+        case keyboard
+    }
+
     let label: Label
     let accessibilityLabel: String
     var ledColor: Color? = nil
     var isLit: Bool = false
     var minHeight: CGFloat = 42
+    var appearance: Appearance = .hardware
     var onHoldChange: ((Bool) -> Void)? = nil
     let onTap: () -> Void
 
@@ -44,7 +50,7 @@ struct TactileKeycap: View {
             legend
         }
         .buttonStyle(KeycapStyle(ledColor: ledColor, isLit: isLit, minHeight: minHeight,
-                                 onHoldChange: onHoldChange))
+                                 appearance: appearance, onHoldChange: onHoldChange))
         .accessibilityLabel(accessibilityLabel)
         .accessibilityAddTraits(isLit ? .isSelected : [])
     }
@@ -53,12 +59,14 @@ struct TactileKeycap: View {
         switch label {
         case .text(let title):
             Text(title)
-                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                .font(.system(size: appearance == .keyboard ? 13 : 13,
+                              weight: appearance == .keyboard ? .medium : .semibold,
+                              design: appearance == .keyboard ? .default : .rounded))
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
         case .symbol(let name):
             Image(systemName: name)
-                .font(.system(size: 15, weight: .semibold))
+                .font(.system(size: 15, weight: appearance == .keyboard ? .medium : .semibold))
         }
     }
 }
@@ -69,13 +77,29 @@ private struct KeycapStyle: ButtonStyle {
     let ledColor: Color?
     let isLit: Bool
     let minHeight: CGFloat
+    let appearance: TactileKeycap.Appearance
     let onHoldChange: ((Bool) -> Void)?
 
-    private var shape: RoundedRectangle { RoundedRectangle(cornerRadius: 10, style: .continuous) }
+    private var shape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: appearance == .keyboard ? 8.5 : 10, style: .continuous)
+    }
     /// Downward travel while pressed: the cap slides over its own shadow lip.
-    private let travel: CGFloat = 1.5
+    private var travel: CGFloat { appearance == .keyboard ? 1.0 : 1.5 }
     /// The shadow lip showing under the cap's bottom edge at rest.
-    private let lip: CGFloat = 2.5
+    private var lip: CGFloat { appearance == .keyboard ? 1.5 : 2.5 }
+
+    private var faceTop: Color {
+        appearance == .keyboard ? Color(white: 0.285) : TactileTokens.keycapTop
+    }
+    private var faceBottom: Color {
+        appearance == .keyboard ? Color(white: 0.225) : TactileTokens.keycapPressed
+    }
+    private var rimTop: Color {
+        appearance == .keyboard ? Color.white.opacity(0.16) : TactileTokens.specularRimTop
+    }
+    private var rimBottom: Color {
+        appearance == .keyboard ? Color.white.opacity(0.03) : TactileTokens.specularRimBottom.opacity(0.4)
+    }
 
     func makeBody(configuration: Configuration) -> some View {
         let pressed = configuration.isPressed
@@ -87,17 +111,16 @@ private struct KeycapStyle: ButtonStyle {
                 ZStack {
                     // The shadow lip stays put; the face slides down over it on press.
                     shape
-                        .fill(TactileTokens.specularRimBottom.opacity(0.7))
+                        .fill(appearance == .keyboard ? Color.black.opacity(0.45) : TactileTokens.specularRimBottom.opacity(0.7))
                         .offset(y: lip)
                     shape
-                        .fill(LinearGradient(colors: [TactileTokens.keycapTop, TactileTokens.keycapPressed],
+                        .fill(LinearGradient(colors: [faceTop, faceBottom],
                                              startPoint: .top, endPoint: .bottom))
                         .overlay(
                             shape.strokeBorder(
-                                LinearGradient(colors: [TactileTokens.specularRimTop,
-                                                        TactileTokens.specularRimBottom.opacity(0.4)],
+                                LinearGradient(colors: [rimTop, rimBottom],
                                                startPoint: .top, endPoint: .bottom),
-                                lineWidth: 1))
+                                lineWidth: appearance == .keyboard ? 0.6 : 1))
                         .offset(y: pressed ? travel : 0)
                 }
             )
@@ -311,16 +334,16 @@ private struct TactileArrowJoystick: View {
     @State private var repeatTask: Task<Void, Never>? = nil
 
     private static let activationDistance: CGFloat = 10
-    private static let maxTravel: CGFloat = 7.5
-    private static let shape = RoundedRectangle(cornerRadius: 9, style: .continuous)
+    private static let maxTravel: CGFloat = 7.0
+    private static let shape = RoundedRectangle(cornerRadius: 8.5, style: .continuous)
 
     var body: some View {
         ZStack {
-            // Recessed anodized joystick well
+            // Recessed neutral-graphite joystick well matching iOS 27 keyboard tone
             Self.shape
                 .fill(
                     LinearGradient(
-                        colors: [TactileTokens.trackpadWell, TactileTokens.chassisDark],
+                        colors: [Color(white: 0.13), Color(white: 0.17)],
                         startPoint: .top,
                         endPoint: .bottom
                     )
@@ -329,36 +352,36 @@ private struct TactileArrowJoystick: View {
                 .strokeBorder(
                     LinearGradient(
                         colors: [
-                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.65) : TactileTokens.specularRimTop,
-                            TactileTokens.specularRimBottom
+                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.7) : Color.white.opacity(0.14),
+                            Color.white.opacity(0.03)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
                     ),
-                    lineWidth: activeDirection != nil ? 1.0 : 0.75
+                    lineWidth: activeDirection != nil ? 1.0 : 0.6
                 )
 
             // Four cardinal micro-indicators
             chevron("chevron.up", active: activeDirection == .up)
                 .frame(maxHeight: .infinity, alignment: .top)
-                .padding(.top, 2.5)
+                .padding(.top, 2)
             chevron("chevron.down", active: activeDirection == .down)
                 .frame(maxHeight: .infinity, alignment: .bottom)
-                .padding(.bottom, 2.5)
+                .padding(.bottom, 2)
             chevron("chevron.left", active: activeDirection == .left)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.leading, 3.5)
+                .padding(.leading, 3)
             chevron("chevron.right", active: activeDirection == .right)
                 .frame(maxWidth: .infinity, alignment: .trailing)
-                .padding(.trailing, 3.5)
+                .padding(.trailing, 3)
 
             // Machined thumbstick puck
             Circle()
                 .fill(
                     LinearGradient(
                         colors: [
-                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.45) : TactileTokens.keycapTop,
-                            TactileTokens.keycapPressed
+                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.5) : Color(white: 0.34),
+                            Color(white: 0.24)
                         ],
                         startPoint: .top,
                         endPoint: .bottom
@@ -367,17 +390,17 @@ private struct TactileArrowJoystick: View {
                 .overlay {
                     Circle()
                         .strokeBorder(
-                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.85) : TactileTokens.specularRimTop,
-                            lineWidth: 0.75
+                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.85) : Color.white.opacity(0.22),
+                            lineWidth: 0.65
                         )
                 }
-                .frame(width: 16, height: 16)
-                .shadow(color: activeDirection != nil ? TactileTokens.ledBlue.opacity(0.45) : .black.opacity(0.55),
+                .frame(width: 15, height: 15)
+                .shadow(color: activeDirection != nil ? TactileTokens.ledBlue.opacity(0.45) : .black.opacity(0.5),
                         radius: activeDirection != nil ? 4 : 2, y: 1)
                 .offset(puckOffset)
                 .animation(.interactiveSpring(response: 0.16, dampingFraction: 0.72), value: puckOffset)
         }
-        .frame(maxWidth: .infinity, minHeight: 38, maxHeight: 38)
+        .frame(maxWidth: .infinity, minHeight: 36, maxHeight: 36)
         .contentShape(Self.shape)
         .gesture(joystickGesture)
         .onDisappear { stopRepeating() }
@@ -487,7 +510,8 @@ private struct TactileAccessoryBar: View {
                 heldKey(label: .symbol("arrow.up"), usage: HIDKey.upArrow, name: "Up arrow")
                 heldKey(label: .symbol("arrow.right"), usage: HIDKey.rightArrow, name: "Right arrow")
                 TactileKeycap(label: .symbol("xmark"),
-                              accessibilityLabel: "Collapse arrow keys", minHeight: 38) {
+                              accessibilityLabel: "Collapse arrow keys", minHeight: 36,
+                              appearance: .keyboard) {
                     heldCap.releaseAll().forEach(model.send)
                     TactileHaptics.play(.detent)
                     withAnimation(.spring(response: 0.24, dampingFraction: 0.85)) {
@@ -501,19 +525,25 @@ private struct TactileAccessoryBar: View {
                     }
                 }
                 TactileKeycap(label: .symbol("keyboard.chevron.compact.down"),
-                              accessibilityLabel: "Hide keyboard", minHeight: 38,
-                              onTap: model.onDismiss)
+                              accessibilityLabel: "Hide keyboard", minHeight: 36,
+                              appearance: .keyboard, onTap: model.onDismiss)
             }
         }
-        .padding(.horizontal, 8)
+        .padding(.horizontal, 7)
+        .padding(.vertical, 6)
         .frame(maxWidth: .infinity)
-        .frame(height: 52)
-        .background(TactileTokens.chassisDark)
+        .tactileSurface(.floatingChrome, shape: .rounded(20))
+        .padding(.horizontal, 6)
+        .padding(.top, 2)
+        .padding(.bottom, 6)
+        .frame(height: 56)
+        .background(Color.clear)
         .onDisappear { heldCap.releaseAll().forEach(model.send) }
     }
 
     private func heldKey(label: TactileKeycap.Label, usage: UInt16, name: String) -> some View {
-        TactileKeycap(label: label, accessibilityLabel: name, minHeight: 38,
+        TactileKeycap(label: label, accessibilityLabel: name, minHeight: 36,
+                      appearance: .keyboard,
                       onHoldChange: { touch(usage, down: $0) },
                       onTap: { activate(usage) })
     }
@@ -523,7 +553,8 @@ private struct TactileAccessoryBar: View {
         return TactileKeycap(label: .symbol(symbol),
                              accessibilityLabel: on ? "\(name), held. Tap to release."
                                                     : "\(name), hold for the next key",
-                             ledColor: TactileTokens.ledAmber, isLit: on, minHeight: 38) {
+                             ledColor: TactileTokens.ledAmber, isLit: on, minHeight: 36,
+                             appearance: .keyboard) {
             let wasOn = model.latched.contains(flag)
             var next = model.latched
             next.formSymmetricDifference(flag)
@@ -573,8 +604,8 @@ final class TactileKeyboardAccessoryHost {
         hosting.sizingOptions = .intrinsicContentSize
         hostingController = hosting
 
-        let input = UIInputView(frame: CGRect(x: 0, y: 0, width: 0, height: 52),
-                                inputViewStyle: .keyboard)
+        let input = UIInputView(frame: CGRect(x: 0, y: 0, width: 0, height: 56),
+                                inputViewStyle: .default)
         input.allowsSelfSizing = true
         input.backgroundColor = .clear
         input.addSubview(hosting.view)
