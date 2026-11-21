@@ -75,6 +75,10 @@ public enum TactileMotion {
     public static func deck(reduceMotion: Bool) -> Animation {
         reduceMotion ? .easeOut(duration: 0.18) : .spring(response: 0.32, dampingFraction: 0.84)
     }
+
+    public static func paletteDock(reduceMotion: Bool) -> Animation {
+        reduceMotion ? .easeOut(duration: 0.18) : .spring(response: 0.34, dampingFraction: 0.82)
+    }
 }
 
 public enum TactileSurfaceShape: Equatable, Hashable, Sendable {

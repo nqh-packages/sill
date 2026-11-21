@@ -82,22 +82,76 @@ public enum PhoneDockMode: Equatable, Hashable, Sendable {
 public enum CapsuleEdge: Equatable, Hashable, Sendable {
     case top
     case bottom
+    case leading
+    case trailing
+
+    public var isVertical: Bool {
+        self == .leading || self == .trailing
+    }
+
+    public var defaultMinimizeCorner: CapsuleCorner {
+        switch self {
+        case .top: return .topTrailing
+        case .bottom: return .bottomTrailing
+        case .leading: return .bottomLeading
+        case .trailing: return .bottomTrailing
+        }
+    }
+}
+
+public enum CapsuleCorner: Equatable, Hashable, Sendable {
+    case topLeading
+    case topTrailing
+    case bottomLeading
+    case bottomTrailing
+
+    public var defaultExpandEdge: CapsuleEdge {
+        switch self {
+        case .topLeading, .topTrailing: return .top
+        case .bottomLeading, .bottomTrailing: return .bottom
+        }
+    }
+
+    public func isAdjacent(to edge: CapsuleEdge) -> Bool {
+        switch (self, edge) {
+        case (.topLeading, .top), (.topLeading, .leading),
+             (.topTrailing, .top), (.topTrailing, .trailing),
+             (.bottomLeading, .bottom), (.bottomLeading, .leading),
+             (.bottomTrailing, .bottom), (.bottomTrailing, .trailing):
+            return true
+        default:
+            return false
+        }
+    }
+
+    public func resolvedReturnEdge(from previous: CapsuleEdge) -> CapsuleEdge {
+        isAdjacent(to: previous) ? previous : defaultExpandEdge
+    }
 }
 
 public enum CapsuleVisibility: Equatable, Hashable, Sendable {
     case expanded(edge: CapsuleEdge)
-    case tucked(edge: CapsuleEdge)
+    case minimized(corner: CapsuleCorner, returnEdge: CapsuleEdge)
 
-    public var isTucked: Bool {
-        if case .tucked = self { return true }
+    public var isMinimized: Bool {
+        if case .minimized = self { return true }
         return false
     }
 
+    public var isTucked: Bool { isMinimized }
+
     public var edge: CapsuleEdge {
         switch self {
-        case .expanded(let edge), .tucked(let edge):
+        case .expanded(let edge):
             return edge
+        case .minimized(_, let returnEdge):
+            return returnEdge
         }
+    }
+
+    public var corner: CapsuleCorner? {
+        if case .minimized(let corner, _) = self { return corner }
+        return nil
     }
 }
 
@@ -140,11 +194,13 @@ public struct StreamWorkspaceState: Equatable, Sendable {
     public static let deckFlickVelocityThreshold: Double = 300.0
     public static let floatingPadAnchorXBounds: ClosedRange<Double> = 0.10...0.90
     public static let floatingPadAnchorYBounds: ClosedRange<Double> = 0.10...0.90
+    public static let capsuleCornerZoneX: Double = 0.20
+    public static let capsuleCornerZoneY: Double = 0.22
 
     public private(set) var form: WorkspaceForm
     public private(set) var modal: WorkspaceModal = .none
     public private(set) var phoneDock: PhoneDockMode = .focus
-    public private(set) var capsule: CapsuleVisibility = .expanded(edge: .top)
+    public private(set) var capsule: CapsuleVisibility = .expanded(edge: .bottom)
     public private(set) var floatingPad: FloatingPadState = FloatingPadState()
     public private(set) var restoreKeyboardAfterModal: Bool = false
     public private(set) var personKeyboardUp: Bool = false
@@ -219,6 +275,9 @@ public struct StreamWorkspaceState: Equatable, Sendable {
         case setControlCenterRoute(WorkspaceModal.ControlCenterRoute)
         case toggleCapsuleTuck
         case setCapsuleEdge(CapsuleEdge)
+        case snapCapsule(normalizedProjectedPoint: WorkspacePoint)
+        case expandCapsule(edge: CapsuleEdge? = nil)
+        case minimizeCapsule(corner: CapsuleCorner)
         case toggleFloatingPad
         case moveFloatingPad(anchor: WorkspacePoint)
         case setFullScreenHidden(Bool)
@@ -424,16 +483,48 @@ public struct StreamWorkspaceState: Equatable, Sendable {
             guard form.usesFloatingCapsule else { break }
             switch capsule {
             case .expanded(let edge):
-                capsule = .tucked(edge: edge)
-            case .tucked(let edge):
-                capsule = .expanded(edge: edge)
+                capsule = .minimized(corner: edge.defaultMinimizeCorner, returnEdge: edge)
+            case .minimized(_, let returnEdge):
+                capsule = .expanded(edge: returnEdge)
             }
             effects.append(.haptic(.detent))
 
         case .setCapsuleEdge(let edge):
             guard form.usesFloatingCapsule, capsule.edge != edge else { break }
-            capsule = capsule.isTucked ? .tucked(edge: edge) : .expanded(edge: edge)
+            switch capsule {
+            case .expanded:
+                capsule = .expanded(edge: edge)
+            case .minimized(let corner, _):
+                capsule = .minimized(corner: corner, returnEdge: edge)
+            }
             effects.append(.haptic(.detent))
+
+        case .snapCapsule(let point):
+            guard form.usesFloatingCapsule,
+                  let target = Self.capsuleSnapTarget(for: point, currentEdge: capsule.edge) else { break }
+            if target != capsule {
+                capsule = target
+                effects.append(.haptic(.detent))
+            }
+
+        case .expandCapsule(let edge):
+            guard form.usesFloatingCapsule else { break }
+            let target = CapsuleVisibility.expanded(edge: edge ?? capsule.edge)
+            if target != capsule {
+                capsule = target
+                effects.append(.haptic(.detent))
+            }
+
+        case .minimizeCapsule(let corner):
+            guard form.usesFloatingCapsule else { break }
+            let target = CapsuleVisibility.minimized(
+                corner: corner,
+                returnEdge: corner.resolvedReturnEdge(from: capsule.edge)
+            )
+            if target != capsule {
+                capsule = target
+                effects.append(.haptic(.detent))
+            }
 
         case .toggleFloatingPad:
             guard form.usesFloatingCapsule else { break }
@@ -517,6 +608,48 @@ public struct StreamWorkspaceState: Equatable, Sendable {
         } else if form.usesPhoneDock, case .keyboard(let returnTo) = phoneDock {
             restorePhoneDock(to: returnTo)
         }
+    }
+
+    public static func capsuleSnapTarget(
+        for normalizedProjectedPoint: WorkspacePoint,
+        currentEdge: CapsuleEdge
+    ) -> CapsuleVisibility? {
+        guard normalizedProjectedPoint.x.isFinite, normalizedProjectedPoint.y.isFinite else {
+            return nil
+        }
+        let x = clamp(normalizedProjectedPoint.x, to: 0...1)
+        let y = clamp(normalizedProjectedPoint.y, to: 0...1)
+
+        let nearLeading = x <= capsuleCornerZoneX
+        let nearTrailing = x >= (1.0 - capsuleCornerZoneX)
+        let nearTop = y <= capsuleCornerZoneY
+        let nearBottom = y >= (1.0 - capsuleCornerZoneY)
+
+        if nearTop && nearLeading {
+            return .minimized(corner: .topLeading, returnEdge: CapsuleCorner.topLeading.resolvedReturnEdge(from: currentEdge))
+        }
+        if nearTop && nearTrailing {
+            return .minimized(corner: .topTrailing, returnEdge: CapsuleCorner.topTrailing.resolvedReturnEdge(from: currentEdge))
+        }
+        if nearBottom && nearLeading {
+            return .minimized(corner: .bottomLeading, returnEdge: CapsuleCorner.bottomLeading.resolvedReturnEdge(from: currentEdge))
+        }
+        if nearBottom && nearTrailing {
+            return .minimized(corner: .bottomTrailing, returnEdge: CapsuleCorner.bottomTrailing.resolvedReturnEdge(from: currentEdge))
+        }
+
+        let candidates: [(CapsuleEdge, Double)] = [
+            (.bottom, 1.0 - y),
+            (.top, y),
+            (.trailing, 1.0 - x),
+            (.leading, x),
+        ]
+        let minDist = candidates.map(\.1).min() ?? 0
+        if let current = candidates.first(where: { $0.0 == currentEdge && abs($0.1 - minDist) < 1e-9 }) {
+            return .expanded(edge: current.0)
+        }
+        let best = candidates.first(where: { abs($0.1 - minDist) < 1e-9 })?.0 ?? currentEdge
+        return .expanded(edge: best)
     }
 
     private static func clamp(_ value: Double, to bounds: ClosedRange<Double>) -> Double {

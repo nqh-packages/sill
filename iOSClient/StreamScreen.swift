@@ -559,6 +559,10 @@ struct StreamScreen: View {
         switch action {
         case .deckDragChanged, .moveFloatingPad:
             dispatch(action)
+        case .snapCapsule, .toggleCapsuleTuck, .setCapsuleEdge, .expandCapsule, .minimizeCapsule:
+            withAnimation(TactileMotion.paletteDock(reduceMotion: reduceMotion)) {
+                dispatch(action)
+            }
         default:
             withAnimation(deckMotion) {
                 dispatch(action)
@@ -762,26 +766,16 @@ struct StreamScreen: View {
                     .transition(.scale(scale: 0.94).combined(with: .opacity))
                 }
 
-                if workspace.capsule.isTucked {
-                    HStack {
-                        Spacer(minLength: 0)
-                        PadFloatingCapsule(client: client, state: workspace, textScale: $textScale,
-                                           onTextScaleCommit: { dispatch(.textScaleCommitted) },
-                                           dispatch: animatedDispatch)
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    VStack {
-                        if workspace.capsule.edge == .bottom { Spacer(minLength: 0) }
-                        PadFloatingCapsule(client: client, state: workspace, textScale: $textScale,
-                                           onTextScaleCommit: { dispatch(.textScaleCommitted) },
-                                           dispatch: animatedDispatch)
-                            .padding(.horizontal, 12)
-                            .padding(.top, workspace.capsule.edge == .top ? 8 : 0)
-                            .padding(.bottom, workspace.capsule.edge == .bottom ? bottomClearance : 0)
-                        if workspace.capsule.edge == .top { Spacer(minLength: 0) }
-                    }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                if workspace.showsFloatingCapsule {
+                    PadFloatingCapsule(
+                        client: client,
+                        state: workspace,
+                        containerSize: size,
+                        insets: insets,
+                        textScale: $textScale,
+                        onTextScaleCommit: { dispatch(.textScaleCommitted) },
+                        dispatch: animatedDispatch
+                    )
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)

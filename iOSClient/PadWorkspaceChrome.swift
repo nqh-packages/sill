@@ -1,168 +1,327 @@
 import SwiftUI
 import UIKit
+import QuartzCore
 import StreamProtocol
 
-/// The iPad's floating capsule (the tactile workspace's pad chrome): a slim capsule over the stream
-/// edge — Liquid Glass on iPadOS 26, `TactileStyle`'s machined capsule on iPadOS 17 through the same
-/// calls — that holds what the old bars held, for a 4:3 canvas the bars crowded: the three windows
-/// front-most on the Mac, Apps, the Mac's menus, Aa, Keyboard, Trackpad, Controls and the tuck key.
-///
-/// Tucked (`CapsuleVisibility.tucked`), the whole capsule leaves the canvas: what stays is a 16×58
-/// machined pull-tab on the trailing edge, tapped or pulled inward to bring it back.
-///
-/// What the capsule changes goes to `StreamWorkspaceState` as an action (`dispatch`); the menus'
-/// open and close are actions too, so a hardware Escape or another modal can close them, and the
-/// Mac's own answers (picking a window from a pill, Aa's scale) go to `StreamClient` as the bars'
-/// did.
+/// PencilKit-style floating palette chrome for iPad, phone landscape, and Duo book mode:
+/// - Docks freely along all 4 edges (`.top`, `.bottom`, `.leading`, `.trailing`), morphing cleanly
+///   between horizontal and vertical layouts inside one unified tactile capsule.
+/// - Drags from anywhere on the chrome with velocity-projected snapping and a live magnetic dock
+///   silhouette preview.
+/// - Dragging toward any of the 4 corners (or tapping Minimize) collapses the palette into a 48×48
+///   circular corner orb displaying the active Mac app icon; tapping expands back onto its adjacent
+///   edge, and dragging the orb relocates or expands it onto any edge.
 struct PadFloatingCapsule: View {
     @ObservedObject var client: StreamClient
     let state: StreamWorkspaceState
+    let containerSize: CGSize
+    let insets: FullScreenPolicy.Insets
     @Binding var textScale: Double?
     var onTextScaleCommit: () -> Void = {}
     let dispatch: (StreamWorkspaceState.Action) -> Void
 
-    /// The Mac menu trigger's open state (`MacMenuTrigger` is UIKit: SwiftUI's `Menu` cannot fetch
-    /// a Mac menu lazily, so the capsule draws the key and the trigger sits on it, as
-    /// `MacMenuButton` does).
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     @State private var menusOpen = false
-    /// Aa's inline detent pill under the capsule.
     @State private var scaleOpen = false
+    @State private var isDragging = false
+    @State private var dragOffset: CGSize = .zero
+    @State private var previewTarget: CapsuleVisibility? = nil
+    @State private var lastDragEndTime: CFTimeInterval = 0
 
-    /// The window pills the capsule shows: the three front-most on the Mac.
-    private var recentWindows: [WindowInfo] { Array(client.orderedWindows.prefix(3)) }
+    private static let coordSpace = "PadPaletteDockSpace"
 
-    var body: some View {
-        if state.capsule.isTucked {
-            pullTab
-        } else {
-            capsule
+    private var paletteMotion: Animation {
+        TactileMotion.paletteDock(reduceMotion: reduceMotion)
+    }
+
+    private var recentWindows: [WindowInfo] {
+        Array(client.orderedWindows.prefix(3))
+    }
+
+    private var activeWindowIcon: UIImage? {
+        guard case .window(let id) = client.active,
+              let win = client.orderedWindows.first(where: { $0.id == id }) else {
+            return nil
+        }
+        return client.icons[win.bundleID]
+    }
+
+    private var activeFallbackSymbol: String {
+        switch client.active {
+        case .desktop: return "display"
+        case .window: return "macwindow"
+        case .none: return "slider.horizontal.3"
         }
     }
 
-    // MARK: Expanded
+    private var isCompactVertical: Bool {
+        state.capsule.edge.isVertical && containerSize.height > 0 && containerSize.height < 460
+    }
 
-    private var capsule: some View {
-        VStack(spacing: 8) {
-            TactileGlassGroup(spacing: 8) {
-                HStack(spacing: 8) {
-                    windowPills
-                    capsuleButton("square.grid.2x2", label: "Apps", lit: false) {
-                        dispatch(.openModal(.switcher(initialSearch: true)))
-                    }
-                    if client.menus.hasMenus { menusButton }
-                    aaButton
-                    capsuleButton("keyboard", label: "Keyboard", lit: state.personKeyboardUp) {
-                        dispatch(.tapKeyboardButton)
-                    }
-                    capsuleButton("rectangle.and.hand.point.up.left", label: "Trackpad",
-                                  lit: state.floatingPad.isVisible) {
-                        dispatch(.toggleFloatingPad)
-                    }
-                    capsuleButton("slider.horizontal.3", label: "Controls", lit: false) {
-                        dispatch(.openModal(.controlCenter(.root)))
-                    }
-                    capsuleButton("chevron.right", label: "Tuck controls", lit: false) {
-                        dispatch(.toggleCapsuleTuck)
-                    }
-                }
+    private var keySize: CGFloat { isCompactVertical ? 30 : 36 }
+    private var iconSize: CGFloat { isCompactVertical ? 24 : 28 }
+    private var shellPadding: CGFloat { isCompactVertical ? 5 : 6 }
+
+    private var topMargin: CGFloat { 10 }
+    private var bottomMargin: CGFloat { max(12, insets.bottom) }
+    private var sideMargin: CGFloat { max(12, max(insets.left, insets.right)) }
+
+    private var canFireTap: Bool {
+        !isDragging && (CACurrentMediaTime() - lastDragEndTime) > 0.16
+    }
+
+    var body: some View {
+        ZStack {
+            if isDragging, let target = previewTarget {
+                dockPreviewGhost(for: target)
+                    .allowsHitTesting(false)
+                    .transition(.opacity)
             }
-            if scaleOpen { scalePill }
+
+            dockedPaletteWithPopover
+                .padding(.top, topMargin)
+                .padding(.bottom, bottomMargin)
+                .padding(.leading, sideMargin)
+                .padding(.trailing, sideMargin)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment(for: state.capsule))
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .coordinateSpace(name: Self.coordSpace)
         .onChange(of: client.textScaleSelectable) { _, now in
             if !now { scaleOpen = false }
         }
         .onChange(of: state.modal) { _, now in
             if now != .menusPullDown { menusOpen = false }
         }
+        .onChange(of: state.capsule) { _, now in
+            if now.isMinimized { scaleOpen = false }
+        }
     }
 
-    /// The three front-most windows as round keys, the active one's rim lit; a flick across them
-    /// steps the window as the phone's chip does, and picking one asks the Mac for it.
-    private var windowPills: some View {
-        HStack(spacing: 6) {
+    // MARK: - Docked Palette + Edge-Aware Popover
+
+    @ViewBuilder
+    private var dockedPaletteWithPopover: some View {
+        switch state.capsule {
+        case .minimized:
+            minimizedOrb
+                .offset(dragOffset)
+                .scaleEffect(isDragging ? 1.08 : 1.0)
+                .animation(TactileMotion.buttonPress, value: isDragging)
+                .simultaneousGesture(paletteDragGesture)
+
+        case .expanded(let edge):
+            paletteWithPopover(for: edge)
+                .offset(dragOffset)
+                .scaleEffect(isDragging ? 1.03 : 1.0)
+                .animation(TactileMotion.buttonPress, value: isDragging)
+        }
+    }
+
+    @ViewBuilder
+    private func paletteWithPopover(for edge: CapsuleEdge) -> some View {
+        switch edge {
+        case .top:
+            VStack(spacing: 8) {
+                expandedCapsule(vertical: false)
+                if scaleOpen { scalePill(vertical: false) }
+            }
+        case .bottom:
+            VStack(spacing: 8) {
+                if scaleOpen { scalePill(vertical: false) }
+                expandedCapsule(vertical: false)
+            }
+        case .leading:
+            HStack(spacing: 8) {
+                expandedCapsule(vertical: true)
+                if scaleOpen { scalePill(vertical: true) }
+            }
+        case .trailing:
+            HStack(spacing: 8) {
+                if scaleOpen { scalePill(vertical: true) }
+                expandedCapsule(vertical: true)
+            }
+        }
+    }
+
+    // MARK: - Unified Expanded Capsule
+
+    private func expandedCapsule(vertical: Bool) -> some View {
+        let layout = vertical
+            ? AnyLayout(VStackLayout(spacing: isCompactVertical ? 4 : 6))
+            : AnyLayout(HStackLayout(spacing: 6))
+
+        return layout {
+            dragHandle(vertical: vertical)
+            windowIcons(vertical: vertical)
+            paletteDivider(vertical: vertical)
+            toolButtons(vertical: vertical)
+        }
+        .padding(.horizontal, vertical ? shellPadding : shellPadding + 4)
+        .padding(.vertical, vertical ? shellPadding + 4 : shellPadding)
+        .tactileSurface(.floatingChrome, shape: .capsule)
+        .contentShape(Capsule(style: .continuous))
+        .simultaneousGesture(paletteDragGesture)
+    }
+
+    private func dragHandle(vertical: Bool) -> some View {
+        Capsule(style: .continuous)
+            .fill(TactileTokens.specularRimTop)
+            .frame(width: vertical ? 16 : 3.5, height: vertical ? 3.5 : 16)
+            .padding(vertical ? .vertical : .horizontal, 2)
+            .accessibilityHidden(true)
+    }
+
+    private func paletteDivider(vertical: Bool) -> some View {
+        Capsule(style: .continuous)
+            .fill(TactileTokens.specularRimTop)
+            .frame(width: vertical ? 20 : 1, height: vertical ? 1 : 20)
+            .accessibilityHidden(true)
+    }
+
+    private func windowIcons(vertical: Bool) -> some View {
+        let layout = vertical
+            ? AnyLayout(VStackLayout(spacing: isCompactVertical ? 4 : 5))
+            : AnyLayout(HStackLayout(spacing: 5))
+
+        return layout {
             ForEach(recentWindows, id: \.id) { w in
                 Button {
+                    guard canFireTap else { return }
                     TactileHaptics.play(.tick)
                     client.select(.window(w.id))
                 } label: {
-                    TactileAppIcon(image: client.icons[w.bundleID], fallbackSymbol: "macwindow",
-                                   size: 30, cornerRadius: TactileRadius.icon)
-                        .tactileSelectionRim(client.active == .window(w.id),
-                                             shape: .rounded(TactileRadius.pill),
-                                             lineWidth: 1.5,
-                                             inset: -3)
+                    TactileAppIcon(
+                        image: client.icons[w.bundleID],
+                        fallbackSymbol: "macwindow",
+                        size: iconSize,
+                        cornerRadius: TactileRadius.icon
+                    )
+                    .tactileSelectionRim(
+                        client.active == .window(w.id),
+                        shape: .rounded(TactileRadius.pill),
+                        lineWidth: 1.5,
+                        inset: -2.5
+                    )
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(w.title.isEmpty ? w.appName : w.title)
             }
             if recentWindows.isEmpty {
-                Text("No windows")
-                    .font(.caption.weight(.medium))
+                Image(systemName: "macwindow")
+                    .font(.system(size: 14, weight: .medium))
                     .foregroundStyle(TactileTokens.textSecondary)
-                    .padding(.horizontal, 8)
+                    .frame(width: iconSize, height: iconSize)
             }
         }
-        .padding(.horizontal, 10)
-        .padding(.vertical, 5)
-        .tactileSurface(.floatingChrome, shape: .capsule)
-        .contentShape(Capsule())
-        .gesture(
-            DragGesture(minimumDistance: 10)
-                .onEnded { g in
-                    guard abs(g.translation.width) >= 28,
-                          abs(g.translation.width) > abs(g.translation.height) else { return }
-                    dispatch(.swipeWindowChip(direction: g.translation.width < 0 ? 1 : -1,
-                                              orderedWindowIDs: client.orderedWindows.map(\.id),
-                                              active: Self.workspaceSource(client.active)))
-                }
-        )
-        .accessibilityHint("Swipe for another window")
     }
 
-    /// The menus key: the capsule draws it (`MacMenuButton.symbol`, unenclosed), and the existing
-    /// `MacMenuTrigger` — the UIKit button whose UIMenu can offer submenus the Mac fetches only on
-    /// open — covers it, so iPadOS 17 gets the same lazy menus without a popover's fight for the
-    /// window.
-    private var menusButton: some View {
+    private func toolButtons(vertical: Bool) -> some View {
+        let layout = vertical
+            ? AnyLayout(VStackLayout(spacing: isCompactVertical ? 2 : 4))
+            : AnyLayout(HStackLayout(spacing: 4))
+
+        return layout {
+            paletteKey("square.grid.2x2", label: "Apps", lit: false) {
+                dispatch(.openModal(.switcher(initialSearch: true)))
+            }
+            if client.menus.hasMenus { menusKey }
+            aaKey
+            paletteKey("keyboard", label: "Keyboard", lit: state.personKeyboardUp) {
+                dispatch(.tapKeyboardButton)
+            }
+            paletteKey("rectangle.and.hand.point.up.left", label: "Trackpad", lit: state.floatingPad.isVisible) {
+                dispatch(.toggleFloatingPad)
+            }
+            paletteKey("slider.horizontal.3", label: "Controls", lit: false) {
+                dispatch(.openModal(.controlCenter(.root)))
+            }
+            paletteKey("arrow.down.right.and.arrow.up.left", label: "Minimize controls", lit: false) {
+                dispatch(.toggleCapsuleTuck)
+            }
+        }
+    }
+
+    private func paletteKey(
+        _ symbol: String,
+        label: String,
+        lit: Bool,
+        action: @escaping () -> Void
+    ) -> some View {
+        Button {
+            guard canFireTap else { return }
+            action()
+        } label: {
+            Image(systemName: symbol)
+                .font(.system(size: isCompactVertical ? 14 : 16, weight: .medium))
+                .foregroundStyle(lit ? TactileTokens.ledCyan : TactileTokens.textPrimary)
+                .frame(width: keySize, height: keySize)
+                .background {
+                    if lit {
+                        Circle().fill(TactileTokens.badgeFill)
+                    }
+                }
+                .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(label)
+    }
+
+    private var menusKey: some View {
         Image(systemName: MacMenuButton.symbol)
-            .font(.system(size: 19, weight: .medium))
-            .foregroundStyle(TactileTokens.textPrimary)
-            .frame(width: 44, height: 44)
-            .tactileSurface(.interactiveChrome, shape: .circle)
+            .font(.system(size: isCompactVertical ? 15 : 17, weight: .medium))
+            .foregroundStyle(menusOpen ? TactileTokens.ledCyan : TactileTokens.textPrimary)
+            .frame(width: keySize, height: keySize)
+            .background {
+                if menusOpen {
+                    Circle().fill(TactileTokens.badgeFill)
+                }
+            }
             .overlay {
-                MacMenuTrigger(client: client, open: $menusOpen,
-                               onOpen: { dispatch(.openModal(.menusPullDown)) },
-                               onClose: { dispatch(.closeModal(restoreKeyboard: false)) })
-                    .frame(width: 44, height: 44)
+                MacMenuTrigger(
+                    client: client,
+                    open: $menusOpen,
+                    onOpen: { dispatch(.openModal(.menusPullDown)) },
+                    onClose: { dispatch(.closeModal(restoreKeyboard: false)) }
+                )
+                .frame(width: keySize, height: keySize)
             }
     }
 
-    /// Aa: the same inline detent pill the Control Center's dial has, kept to a row of detent keys
-    /// under the capsule; dimmed to its hint while the Desktop streams (Aa sizes a window).
-    private var aaButton: some View {
+    private var aaKey: some View {
         Button {
-            guard client.textScaleSelectable else { return }
-            withAnimation(.easeOut(duration: 0.18)) { scaleOpen.toggle() }
+            guard canFireTap, client.textScaleSelectable else { return }
+            withAnimation(TactileMotion.barMorph) { scaleOpen.toggle() }
         } label: {
             Text("Aa")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: isCompactVertical ? 13 : 14.5, weight: .semibold))
                 .foregroundStyle(scaleOpen ? TactileTokens.ledCyan : TactileTokens.textPrimary)
-                .frame(width: 22, height: 22)
+                .frame(width: keySize, height: keySize)
+                .background {
+                    if scaleOpen {
+                        Circle().fill(TactileTokens.badgeFill)
+                    }
+                }
+                .contentShape(Circle())
         }
-        .tactileButton(.secondary, shape: .circle)
-        .opacity(client.textScaleSelectable ? 1 : 0.45)
+        .buttonStyle(.plain)
+        .opacity(client.textScaleSelectable ? 1 : 0.42)
         .accessibilityLabel("Text size")
-        .accessibilityValue(TextScale.spoken(at: TextScale.position(of: textScale, offered: client.textScaleOffersOff)))
+        .accessibilityValue(
+            TextScale.spoken(at: TextScale.position(of: textScale, offered: client.textScaleOffersOff))
+        )
         .accessibilityHint(client.textScaleSelectable ? "" : client.textScaleUnavailableHint)
     }
 
-    /// The compact detent row under the capsule: every `TextScale` detent a key, the live one's
-    /// title lit; a tap commits the scale at once (the binding is the commit — the stream's owner
-    /// re-sends the viewport on it, as `StreamScreen`'s `onChange(of: textScale)` does).
-    private var scalePill: some View {
+    private func scalePill(vertical: Bool) -> some View {
         let offered = client.textScaleOffersOff
         let position = TextScale.position(of: textScale, offered: offered)
-        return HStack(spacing: 0) {
+        let layout = vertical
+            ? AnyLayout(VStackLayout(spacing: 2))
+            : AnyLayout(HStackLayout(spacing: 0))
+
+        return layout {
             ForEach(TextScale.detents(offered: offered), id: \.self) { detent in
                 Button {
                     textScale = TextScale.scale(at: detent)
@@ -172,63 +331,134 @@ struct PadFloatingCapsule: View {
                         .font(.caption.weight(.semibold))
                         .foregroundStyle(detent == position ? TactileTokens.ledCyan : TactileTokens.textPrimary)
                         .frame(minWidth: 40, minHeight: 32)
+                        .background {
+                            if detent == position {
+                                Capsule(style: .continuous).fill(TactileTokens.badgeFill)
+                            }
+                        }
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(TextScale.spoken(at: detent))
             }
         }
-        .padding(.horizontal, 8)
-        .tactileSurface(.recessedHardware, shape: .capsule)
+        .padding(.horizontal, vertical ? 4 : 8)
+        .padding(.vertical, vertical ? 6 : 4)
+        .tactileSurface(.floatingChrome, shape: .capsule)
+        .transition(.scale(scale: 0.92).combined(with: .opacity))
     }
 
-    /// One round capsule key; its symbol unenclosed (the surface draws the enclosure), lit while
-    /// its thing is on.
-    private func capsuleButton(_ symbol: String, label: String, lit: Bool,
-                               action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: symbol)
-                .font(.system(size: 18, weight: .medium))
-                .foregroundStyle(lit ? TactileTokens.ledCyan : TactileTokens.textPrimary)
-                .frame(width: 22, height: 22)
-        }
-        .tactileButton(.secondary, shape: .circle)
-        .accessibilityLabel(label)
-    }
+    // MARK: - Minimized Corner Orb
 
-    // MARK: Tucked
-
-    /// What a tucked capsule leaves: a 16×58 machined tab on the trailing edge, all of the 4:3
-    /// canvas clear. A tap or an inward pull untucks it (`toggleCapsuleTuck` decides the rest).
-    private var pullTab: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 8, style: .continuous)
-                .fill(TactileTokens.chassisRaised)
-            Image(systemName: "chevron.left")
-                .font(.system(size: 11, weight: .bold))
-                .foregroundStyle(TactileTokens.textSecondary)
-        }
-        .frame(width: 16, height: 58)
-        .contentShape(Rectangle())
-        .highPriorityGesture(TapGesture().onEnded { dispatch(.toggleCapsuleTuck) })
-        .gesture(
-            DragGesture(minimumDistance: 8)
-                .onEnded { g in
-                    if g.translation.width < -20 { dispatch(.toggleCapsuleTuck) }
+    private var minimizedOrb: some View {
+        let hasActiveTool = state.floatingPad.isVisible || state.personKeyboardUp
+        return Button {
+            guard canFireTap else { return }
+            dispatch(.expandCapsule(edge: nil))
+        } label: {
+            ZStack {
+                TactileAppIcon(
+                    image: activeWindowIcon,
+                    fallbackSymbol: activeFallbackSymbol,
+                    size: 28,
+                    cornerRadius: TactileRadius.icon
+                )
+            }
+            .frame(width: 48, height: 48)
+            .overlay(alignment: .bottomTrailing) {
+                if hasActiveTool {
+                    TactileLED(isOn: true, color: TactileTokens.ledCyan, diameter: 6)
+                        .padding(7)
                 }
-        )
-        .accessibilityElement(children: .ignore)
+            }
+            .tactileSurface(.interactiveChrome, shape: .circle)
+            .contentShape(Circle())
+        }
+        .buttonStyle(.plain)
         .accessibilityLabel("Controls")
-        .accessibilityHint("Show the controls")
-        .accessibilityAddTraits(.isButton)
+        .accessibilityHint("Tap to expand controls, or drag to any edge or corner")
     }
 
-    /// The workspace's own stream source (`StreamWorkspaceState.swift` is pure Swift and cannot see
-    /// `StreamProtocol.StreamSource`): the same three cases carried to `swipeWindowChip`.
-    private static func workspaceSource(_ source: StreamSource) -> WorkspaceSource {
-        switch source {
-        case .none: return .none
-        case .desktop: return .desktop
-        case .window(let id): return .window(id)
+    // MARK: - Magnetic Snap Preview Silhouette
+
+    private func dockPreviewGhost(for target: CapsuleVisibility) -> some View {
+        Group {
+            if target.isMinimized {
+                Circle()
+                    .fill(TactileTokens.badgeFill)
+                    .overlay {
+                        Circle()
+                            .strokeBorder(TactileTokens.selectionRim.opacity(0.7), lineWidth: 1.5)
+                    }
+                    .frame(width: 48, height: 48)
+            } else {
+                let vertical = target.edge.isVertical
+                Capsule(style: .continuous)
+                    .fill(TactileTokens.badgeFill)
+                    .overlay {
+                        Capsule(style: .continuous)
+                            .strokeBorder(TactileTokens.selectionRim.opacity(0.7), lineWidth: 1.5)
+                    }
+                    .frame(width: vertical ? 48 : 260, height: vertical ? 260 : 48)
+            }
+        }
+        .padding(.top, topMargin)
+        .padding(.bottom, bottomMargin)
+        .padding(.leading, sideMargin)
+        .padding(.trailing, sideMargin)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: alignment(for: target))
+        .animation(TactileMotion.barMorph, value: target)
+    }
+
+    // MARK: - Drag Gesture & Snap Geometry
+
+    private var paletteDragGesture: some Gesture {
+        DragGesture(minimumDistance: 10, coordinateSpace: .named(Self.coordSpace))
+            .onChanged { value in
+                if !isDragging {
+                    isDragging = true
+                    if scaleOpen { scaleOpen = false }
+                    TactileHaptics.play(.tick)
+                }
+                dragOffset = value.translation
+                let norm = normalizedPoint(value.location)
+                let candidate = StreamWorkspaceState.capsuleSnapTarget(
+                    for: norm,
+                    currentEdge: state.capsule.edge
+                )
+                if candidate != previewTarget {
+                    previewTarget = candidate
+                    TactileHaptics.play(.tick)
+                }
+            }
+            .onEnded { value in
+                lastDragEndTime = CACurrentMediaTime()
+                let norm = normalizedPoint(value.predictedEndLocation)
+                withAnimation(paletteMotion) {
+                    isDragging = false
+                    dragOffset = .zero
+                    previewTarget = nil
+                    dispatch(.snapCapsule(normalizedProjectedPoint: norm))
+                }
+            }
+    }
+
+    private func normalizedPoint(_ point: CGPoint) -> WorkspacePoint {
+        WorkspacePoint(
+            x: Double(point.x / max(containerSize.width, 1)),
+            y: Double(point.y / max(containerSize.height, 1))
+        )
+    }
+
+    private func alignment(for visibility: CapsuleVisibility) -> Alignment {
+        switch visibility {
+        case .expanded(.top): return .top
+        case .expanded(.bottom): return .bottom
+        case .expanded(.leading): return .leading
+        case .expanded(.trailing): return .trailing
+        case .minimized(.topLeading, _): return .topLeading
+        case .minimized(.topTrailing, _): return .topTrailing
+        case .minimized(.bottomLeading, _): return .bottomLeading
+        case .minimized(.bottomTrailing, _): return .bottomTrailing
         }
     }
 }

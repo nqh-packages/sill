@@ -338,32 +338,95 @@ do {
             && textFX.contains(.haptic(.detent)))
 }
 
-// MARK: - 6. Capsule tuck/untuck & edge switching
+// MARK: - 6. PencilKit-style 4-edge docking, 4-corner minimization & velocity snap
 
 do {
     var pad = StreamWorkspaceState(form: .padFullCanvas)
-    check("initial capsule is expanded at top",
-          pad.capsule == .expanded(edge: .top) && !pad.capsule.isTucked && pad.capsule.edge == .top)
+    check("initial capsule is expanded at bottom (clears Mac toolbars like PencilKit)",
+          pad.capsule == .expanded(edge: .bottom) && !pad.capsule.isMinimized && !pad.capsule.isTucked
+            && pad.capsule.edge == .bottom && pad.capsule.corner == nil)
 
     let tuckFX = pad.send(.toggleCapsuleTuck)
-    check("toggleCapsuleTuck tucks at top with detent",
-          pad.capsule == .tucked(edge: .top) && pad.capsule.isTucked && tuckFX == [.haptic(.detent)])
+    check("toggleCapsuleTuck minimizes bottom capsule to bottomTrailing orb",
+          pad.capsule == .minimized(corner: .bottomTrailing, returnEdge: .bottom)
+            && pad.capsule.isMinimized && pad.capsule.isTucked
+            && pad.capsule.corner == .bottomTrailing && pad.capsule.edge == .bottom
+            && tuckFX == [.haptic(.detent)])
 
-    let edgeFX = pad.send(.setCapsuleEdge(.bottom))
-    check("setCapsuleEdge(.bottom) preserves tucked state",
-          pad.capsule == .tucked(edge: .bottom) && pad.capsule.isTucked && pad.capsule.edge == .bottom
+    let edgeFX = pad.send(.setCapsuleEdge(.top))
+    check("setCapsuleEdge(.top) while minimized preserves corner and updates returnEdge",
+          pad.capsule == .minimized(corner: .bottomTrailing, returnEdge: .top)
+            && pad.capsule.isMinimized && pad.capsule.edge == .top
             && edgeFX == [.haptic(.detent)])
 
-    let edgeNoop = pad.send(.setCapsuleEdge(.bottom))
+    let edgeNoop = pad.send(.setCapsuleEdge(.top))
     check("setCapsuleEdge to same edge is no-op", edgeNoop.isEmpty)
 
     let untuckFX = pad.send(.toggleCapsuleTuck)
-    check("toggleCapsuleTuck untucks at bottom",
-          pad.capsule == .expanded(edge: .bottom) && !pad.capsule.isTucked && untuckFX == [.haptic(.detent)])
+    check("toggleCapsuleTuck expands back to returnEdge (.top)",
+          pad.capsule == .expanded(edge: .top) && !pad.capsule.isMinimized && untuckFX == [.haptic(.detent)])
+
+    // 4-edge velocity-projected snapping
+    let snapLeading = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.08, y: 0.50)))
+    check("snap to mid-left docks vertical capsule at .leading",
+          pad.capsule == .expanded(edge: .leading) && pad.capsule.edge.isVertical
+            && snapLeading == [.haptic(.detent)])
+
+    let snapTrailing = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.92, y: 0.50)))
+    check("snap to mid-right docks vertical capsule at .trailing",
+          pad.capsule == .expanded(edge: .trailing) && pad.capsule.edge.isVertical
+            && snapTrailing == [.haptic(.detent)])
+
+    // Dragging from .trailing into bottom-trailing corner remembers adjacent .trailing returnEdge
+    let snapBRFromTrailing = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.92, y: 0.90)))
+    check("snap from .trailing into bottomTrailing corner remembers adjacent .trailing returnEdge",
+          pad.capsule == .minimized(corner: .bottomTrailing, returnEdge: .trailing)
+            && snapBRFromTrailing == [.haptic(.detent)])
+
+    // Dragging minimized orb across to top-leading corner switches corner and picks adjacent horizontal .top returnEdge
+    let snapTL = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.05, y: 0.08)))
+    check("snap orb to topLeading corner sets non-adjacent returnEdge to .top",
+          pad.capsule == .minimized(corner: .topLeading, returnEdge: .top)
+            && snapTL == [.haptic(.detent)])
+
+    // Tapping minimized orb expands along returnEdge (.top)
+    let expandOrb = pad.send(.expandCapsule())
+    check("expandCapsule() from topLeading orb expands onto .top",
+          pad.capsule == .expanded(edge: .top) && expandOrb == [.haptic(.detent)])
+
+    // Dragging from .top into bottom-left corner minimizes to bottomLeading with .bottom returnEdge
+    let snapBL = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.10, y: 0.92)))
+    check("snap to bottomLeading corner minimizes cleanly",
+          pad.capsule == .minimized(corner: .bottomLeading, returnEdge: .bottom)
+            && snapBL == [.haptic(.detent)])
+
+    // Dragging minimized orb straight onto bottom edge expands directly onto .bottom
+    let snapBottom = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.50, y: 0.92)))
+    check("snap minimized orb to bottom center expands onto .bottom",
+          pad.capsule == .expanded(edge: .bottom) && snapBottom == [.haptic(.detent)])
+
+    // Dropping in exact center preserves current edge without haptic churn
+    let snapCenter = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.50, y: 0.50)))
+    check("snap at exact center (0.5, 0.5) keeps current edge as no-op",
+          pad.capsule == .expanded(edge: .bottom) && snapCenter.isEmpty)
+
+    // NaN snap ignored safely
+    let snapNaN = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: .nan, y: 0.5)))
+    check("snapCapsule ignores NaN coordinates",
+          pad.capsule == .expanded(edge: .bottom) && snapNaN.isEmpty)
+
+    // Direct minimizeCapsule(corner:)
+    let minTR = pad.send(.minimizeCapsule(corner: .topTrailing))
+    check("minimizeCapsule(.topTrailing) collapses to topTrailing orb",
+          pad.capsule == .minimized(corner: .topTrailing, returnEdge: .top) && minTR == [.haptic(.detent)])
 
     var phone = StreamWorkspaceState(form: .phonePortrait)
-    check("phonePortrait ignores capsule tuck and edge actions",
-          phone.send(.toggleCapsuleTuck).isEmpty && phone.send(.setCapsuleEdge(.bottom)).isEmpty)
+    check("phonePortrait ignores capsule tuck, edge, snap, expand, and minimize actions",
+          phone.send(.toggleCapsuleTuck).isEmpty
+            && phone.send(.setCapsuleEdge(.bottom)).isEmpty
+            && phone.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.1, y: 0.1))).isEmpty
+            && phone.send(.expandCapsule(edge: .top)).isEmpty
+            && phone.send(.minimizeCapsule(corner: .bottomTrailing)).isEmpty)
 }
 
 // MARK: - 7. Floating pad visibility & anchor clamping
