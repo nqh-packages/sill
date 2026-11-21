@@ -176,30 +176,37 @@ struct UnifiedSwitcherSheet: View {
             dismiss()
         } label: {
             VStack(alignment: .leading, spacing: 7) {
-                ZStack(alignment: .bottomLeading) {
-                    RoundedRectangle(cornerRadius: 9, style: .continuous)
-                        .fill(TactileTokens.canvasBlack)
-                    if let thumb = client.thumbnails[w.id] {
-                        Image(uiImage: thumb)
-                            .resizable()
-                            .scaledToFill()
-                            .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
-                    } else {
-                        Image(systemName: "macwindow")
-                            .font(.system(size: 28, weight: .thin))
-                            .foregroundStyle(TactileTokens.textSecondary.opacity(0.5))
-                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                RoundedRectangle(cornerRadius: 9, style: .continuous)
+                    .fill(TactileTokens.canvasBlack)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 100)
+                    .overlay {
+                        if let thumb = client.thumbnails[w.id] {
+                            Image(uiImage: thumb)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        } else {
+                            Image(systemName: "macwindow")
+                                .font(.system(size: 28, weight: .thin))
+                                .foregroundStyle(TactileTokens.textSecondary.opacity(0.5))
+                        }
                     }
-                    if let icon = client.icons[w.bundleID] {
-                        Image(uiImage: icon)
-                            .resizable()
-                            .frame(width: 26, height: 26)
-                            .clipShape(RoundedRectangle(cornerRadius: 7, style: .continuous))
-                            .shadow(color: .black.opacity(0.5), radius: 3, y: 1)
-                            .padding(7)
+                    .overlay(alignment: .bottomLeading) {
+                        if let icon = client.icons[w.bundleID] {
+                            Image(uiImage: icon)
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .clipShape(RoundedRectangle(cornerRadius: 6, style: .continuous))
+                                .shadow(color: .black.opacity(0.6), radius: 3, y: 1)
+                                .padding(6)
+                        }
                     }
-                }
-                .frame(height: 96)
+                    .clipShape(RoundedRectangle(cornerRadius: 9, style: .continuous))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 9, style: .continuous)
+                            .strokeBorder(TactileTokens.specularRimTop.opacity(0.45), lineWidth: 0.5)
+                    )
                 Text(w.title.isEmpty ? w.appName : w.title)
                     .font(.caption.weight(.semibold))
                     .foregroundStyle(TactileTokens.textPrimary)
@@ -210,6 +217,7 @@ struct UnifiedSwitcherSheet: View {
                     .lineLimit(1)
             }
             .padding(8)
+            .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
         }
         .buttonStyle(.plain)
         .tactileSurface(.recessedHardware, shape: .rounded(14))

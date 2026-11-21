@@ -307,20 +307,22 @@ struct TactileConnectView: View {
             .fill(TactileTokens.chassisDark)
             .aspectRatio(1.6, contentMode: .fit)
             .overlay {
-                ZStack {
-                    TactileTokens.trackpadWell
-                    if let preview {
-                        Image(uiImage: preview)
-                            .resizable()
-                            .scaledToFill()
-                    } else {
-                        Image(systemName: "display")
-                            .font(.system(size: 26, weight: .light))
-                            .foregroundStyle(TactileTokens.textSecondary.opacity(0.55))
+                RoundedRectangle(cornerRadius: 8, style: .continuous)
+                    .fill(TactileTokens.trackpadWell)
+                    .overlay {
+                        if let preview {
+                            Image(uiImage: preview)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                        } else {
+                            Image(systemName: "display")
+                                .font(.system(size: 26, weight: .light))
+                                .foregroundStyle(TactileTokens.textSecondary.opacity(0.55))
+                        }
                     }
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-                .padding(8)
+                    .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
+                    .padding(8)
             }
             .overlay(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
