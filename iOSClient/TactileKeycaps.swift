@@ -281,12 +281,188 @@ private final class TactileAccessoryModel: ObservableObject {
     }
 }
 
-/// The bar itself: esc, ⇥ and the modifiers with their LEDs (`.compactWithArrows`), the swipeable
-/// arrow caps and the dismiss key, in a horizontal scroll so the narrowest phone keeps every cap.
+// MARK: - Tactile Arrow Joystick
+
+/// A physical thumbstick keycap sitting in the accessory bar's arrow slot:
+/// - Drag left/right/up/down directly on the cap to fire USB HID arrows (respecting latched
+///   modifiers) with visual puck deflection, directional LED glow, and hold-to-repeat.
+/// - Tap the cap to expand into the full four-arrow sculpted keycap cluster inline.
+private struct TactileArrowJoystick: View {
+    @Binding var latched: KeyModifiers
+    let send: (InputEvent) -> Void
+    let onExpand: () -> Void
+
+    private enum Direction: Equatable {
+        case left, right, up, down
+
+        var usage: UInt16 {
+            switch self {
+            case .left: return HIDKey.leftArrow
+            case .right: return HIDKey.rightArrow
+            case .up: return HIDKey.upArrow
+            case .down: return HIDKey.downArrow
+            }
+        }
+    }
+
+    @State private var puckOffset: CGSize = .zero
+    @State private var activeDirection: Direction? = nil
+    @State private var dragged = false
+    @State private var repeatTask: Task<Void, Never>? = nil
+
+    private static let activationDistance: CGFloat = 10
+    private static let maxTravel: CGFloat = 7.5
+    private static let shape = RoundedRectangle(cornerRadius: 9, style: .continuous)
+
+    var body: some View {
+        ZStack {
+            // Recessed anodized joystick well
+            Self.shape
+                .fill(
+                    LinearGradient(
+                        colors: [TactileTokens.trackpadWell, TactileTokens.chassisDark],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+            Self.shape
+                .strokeBorder(
+                    LinearGradient(
+                        colors: [
+                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.65) : TactileTokens.specularRimTop,
+                            TactileTokens.specularRimBottom
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    ),
+                    lineWidth: activeDirection != nil ? 1.0 : 0.75
+                )
+
+            // Four cardinal micro-indicators
+            chevron("chevron.up", active: activeDirection == .up)
+                .frame(maxHeight: .infinity, alignment: .top)
+                .padding(.top, 2.5)
+            chevron("chevron.down", active: activeDirection == .down)
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .padding(.bottom, 2.5)
+            chevron("chevron.left", active: activeDirection == .left)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.leading, 3.5)
+            chevron("chevron.right", active: activeDirection == .right)
+                .frame(maxWidth: .infinity, alignment: .trailing)
+                .padding(.trailing, 3.5)
+
+            // Machined thumbstick puck
+            Circle()
+                .fill(
+                    LinearGradient(
+                        colors: [
+                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.45) : TactileTokens.keycapTop,
+                            TactileTokens.keycapPressed
+                        ],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                )
+                .overlay {
+                    Circle()
+                        .strokeBorder(
+                            activeDirection != nil ? TactileTokens.ledBlue.opacity(0.85) : TactileTokens.specularRimTop,
+                            lineWidth: 0.75
+                        )
+                }
+                .frame(width: 16, height: 16)
+                .shadow(color: activeDirection != nil ? TactileTokens.ledBlue.opacity(0.45) : .black.opacity(0.55),
+                        radius: activeDirection != nil ? 4 : 2, y: 1)
+                .offset(puckOffset)
+                .animation(.interactiveSpring(response: 0.16, dampingFraction: 0.72), value: puckOffset)
+        }
+        .frame(maxWidth: .infinity, minHeight: 38, maxHeight: 38)
+        .contentShape(Self.shape)
+        .gesture(joystickGesture)
+        .onDisappear { stopRepeating() }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("Arrow joystick")
+        .accessibilityHint("Drag in any direction for arrow keys, or tap to expand individual arrow keys")
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction { onExpand() }
+    }
+
+    private func chevron(_ name: String, active: Bool) -> some View {
+        Image(systemName: name)
+            .font(.system(size: 6.5, weight: .bold))
+            .foregroundStyle(active ? TactileTokens.ledBlue : TactileTokens.textSecondary.opacity(0.55))
+    }
+
+    private var joystickGesture: some Gesture {
+        DragGesture(minimumDistance: 0)
+            .onChanged { value in
+                let dx = value.translation.width
+                let dy = value.translation.height
+                let dist = hypot(dx, dy)
+
+                if dist > 0 {
+                    let scale = min(dist, Self.maxTravel) / dist
+                    puckOffset = CGSize(width: dx * scale, height: dy * scale)
+                } else {
+                    puckOffset = .zero
+                }
+
+                guard dist >= Self.activationDistance else { return }
+                dragged = true
+                let dir: Direction = abs(dx) >= abs(dy)
+                    ? (dx < 0 ? .left : .right)
+                    : (dy < 0 ? .up : .down)
+                if dir != activeDirection {
+                    activeDirection = dir
+                    fire(dir)
+                    startRepeating(dir)
+                }
+            }
+            .onEnded { _ in
+                let wasDrag = dragged
+                stopRepeating()
+                activeDirection = nil
+                puckOffset = .zero
+                dragged = false
+                if !wasDrag {
+                    TactileHaptics.play(.detent)
+                    onExpand()
+                }
+            }
+    }
+
+    private func fire(_ dir: Direction) {
+        KeyChord.press(dir.usage, with: latched).forEach(send)
+        if !latched.isEmpty { latched = [] }
+        TactileHaptics.play(.tick)
+    }
+
+    private func startRepeating(_ dir: Direction) {
+        stopRepeating()
+        repeatTask = Task { @MainActor in
+            try? await Task.sleep(for: .milliseconds(320))
+            while !Task.isCancelled {
+                fire(dir)
+                try? await Task.sleep(for: .milliseconds(85))
+            }
+        }
+    }
+
+    private func stopRepeating() {
+        repeatTask?.cancel()
+        repeatTask = nil
+    }
+}
+
+/// The bar itself: fits cleanly across the full width with zero horizontal scroll so joystick
+/// swipes never conflict with scrolling. Default: [esc] [⇥] [⌃] [⌥] [⌘] [⇧] [joystick] [dismiss].
+/// Tapping the joystick expands inline into [⌃] [⌥] [⌘] [⇧] [←] [↓] [↑] [→] [collapse].
 private struct TactileAccessoryBar: View {
     @ObservedObject var model: TactileAccessoryModel
-    /// Escape and tab held down (HeldCap), as the row's held caps are.
+    /// Escape, tab, and expanded arrow keys held down (HeldCap).
     @State private var heldCap = HeldCap()
+    @State private var arrowsExpanded = false
 
     /// The row's latch binding: bar writes go to the model (so `update` and the bar agree) and
     /// through `apply` to the caller's binding.
@@ -296,19 +472,42 @@ private struct TactileAccessoryBar: View {
     }
 
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 6) {
+        HStack(spacing: 5) {
+            if !arrowsExpanded {
                 heldKey(label: .text("esc"), usage: HIDKey.escape, name: "Escape")
                 heldKey(label: .text("⇥"), usage: HIDKey.tab, name: "Tab")
-                TactileKeycapRow(style: .compactWithArrows, latched: latched, send: model.send)
+            }
+            modifier(.control, symbol: "control", name: "Control")
+            modifier(.option, symbol: "option", name: "Option")
+            modifier(.command, symbol: "command", name: "Command")
+            modifier(.shift, symbol: "shift", name: "Shift")
+            if arrowsExpanded {
+                heldKey(label: .symbol("arrow.left"), usage: HIDKey.leftArrow, name: "Left arrow")
+                heldKey(label: .symbol("arrow.down"), usage: HIDKey.downArrow, name: "Down arrow")
+                heldKey(label: .symbol("arrow.up"), usage: HIDKey.upArrow, name: "Up arrow")
+                heldKey(label: .symbol("arrow.right"), usage: HIDKey.rightArrow, name: "Right arrow")
+                TactileKeycap(label: .symbol("xmark"),
+                              accessibilityLabel: "Collapse arrow keys", minHeight: 38) {
+                    heldCap.releaseAll().forEach(model.send)
+                    TactileHaptics.play(.detent)
+                    withAnimation(.spring(response: 0.24, dampingFraction: 0.85)) {
+                        arrowsExpanded = false
+                    }
+                }
+            } else {
+                TactileArrowJoystick(latched: latched, send: model.send) {
+                    withAnimation(.spring(response: 0.24, dampingFraction: 0.85)) {
+                        arrowsExpanded = true
+                    }
+                }
                 TactileKeycap(label: .symbol("keyboard.chevron.compact.down"),
                               accessibilityLabel: "Hide keyboard", minHeight: 38,
                               onTap: model.onDismiss)
-                    .frame(width: 44)
             }
-            .padding(.horizontal, 8)
-            .frame(height: 52)
         }
+        .padding(.horizontal, 8)
+        .frame(maxWidth: .infinity)
+        .frame(height: 52)
         .background(TactileTokens.chassisDark)
         .onDisappear { heldCap.releaseAll().forEach(model.send) }
     }
@@ -317,7 +516,20 @@ private struct TactileAccessoryBar: View {
         TactileKeycap(label: label, accessibilityLabel: name, minHeight: 38,
                       onHoldChange: { touch(usage, down: $0) },
                       onTap: { activate(usage) })
-            .frame(width: 44)
+    }
+
+    private func modifier(_ flag: KeyModifiers, symbol: String, name: String) -> some View {
+        let on = model.latched.contains(flag)
+        return TactileKeycap(label: .symbol(symbol),
+                             accessibilityLabel: on ? "\(name), held. Tap to release."
+                                                    : "\(name), hold for the next key",
+                             ledColor: TactileTokens.ledAmber, isLit: on, minHeight: 38) {
+            let wasOn = model.latched.contains(flag)
+            var next = model.latched
+            next.formSymmetricDifference(flag)
+            latched.wrappedValue = next
+            TactileHaptics.play(wasOn ? .modifierRelease : .modifierLatch)
+        }
     }
 
     private func touch(_ usage: UInt16, down: Bool) {
