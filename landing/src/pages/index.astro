@@ -10,6 +10,7 @@ const originalSiteUrl = "https://getsill.app";
   title="Sill Tactile — A different take on Sill for iOS & iPadOS"
   description="A tactile, Liquid Glass take on Noah Saffer's open-source Sill for iOS & iPadOS. Tested only on my iPhone 17 & iPad Pro."
   canonicalPath="/"
+  preloadImage="/media/pencilkit-poster.jpg"
 >
   <div class="ambient-bg" aria-hidden="true"></div>
 
@@ -55,18 +56,25 @@ const originalSiteUrl = "https://getsill.app";
         <div class="apple-device apple-ipad-land hero-ipad">
           <div class="apple-screen apple-ipad-land-screen">
             <video
+              id="hero-video"
               src="/media/pencilkit-chrome.mp4"
               poster="/media/pencilkit-poster.jpg"
+              width="1194"
+              height="834"
               autoplay
               muted
               loop
               playsinline
+              preload="metadata"
               aria-label="Live Blender 5.2.3 LTS streamed from Mac to iPad Pro in landscape with Sill Tactile PencilKit floating chrome docking across edges and corners"
             ></video>
           </div>
-          <img class="apple-bezel" src="/bezels/ipad-pro-11-landscape.png" alt="" aria-hidden="true" draggable="false" />
+          <img class="apple-bezel" src="/bezels/ipad-pro-11-landscape.png" width="1050" height="748" fetchpriority="high" alt="" aria-hidden="true" draggable="false" />
         </div>
-        <div class="stage-caption">Live Mac capture (Blender 5.2) · Drag to orb · 4-edge dock · 4-corner minimize</div>
+        <div class="stage-caption">
+          <span>Live Mac capture (Blender 5.2) · Drag to orb · 4-edge dock · 4-corner minimize</span>
+          <button type="button" class="video-toggle" id="hero-video-toggle">Pause</button>
+        </div>
       </div>
     </section>
 
@@ -79,27 +87,27 @@ const originalSiteUrl = "https://getsill.app";
         <figure class="card card-wide reveal" style="--sd: 0ms">
           <div class="apple-device apple-ipad-land">
             <div class="apple-screen apple-ipad-land-screen">
-              <img src="/shots/pad-trackpad.jpg" alt="iPad landscape VS Code stream with vertical PencilKit side rail and floating trackpad" loading="lazy" decoding="async" />
+              <img src="/shots/pad-trackpad.jpg" width="1320" height="922" alt="iPad landscape VS Code stream with vertical PencilKit side rail and floating trackpad" loading="lazy" decoding="async" fetchpriority="low" />
             </div>
-            <img class="apple-bezel" src="/bezels/ipad-pro-11-landscape.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            <img class="apple-bezel" src="/bezels/ipad-pro-11-landscape.png" width="1050" height="748" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low" />
           </div>
           <figcaption>Side Rail &amp; Floating Trackpad (VS Code)</figcaption>
         </figure>
         <figure class="card reveal" style="--sd: 90ms">
           <div class="apple-device apple-ipad-port">
             <div class="apple-screen apple-ipad-port-screen">
-              <img src="/shots/switcher.jpg" alt="iPad Unified Switcher for Desktop, Mac windows, and installed apps" loading="lazy" decoding="async" />
+              <img src="/shots/switcher.jpg" width="900" height="1288" alt="iPad Unified Switcher for Desktop, Mac windows, and installed apps" loading="lazy" decoding="async" fetchpriority="low" />
             </div>
-            <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" width="641" height="900" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low" />
           </div>
           <figcaption>Unified Switcher</figcaption>
         </figure>
         <figure class="card reveal" style="--sd: 180ms">
           <div class="apple-device apple-ipad-port">
             <div class="apple-screen apple-ipad-port-screen">
-              <img src="/shots/connect.jpg" alt="iPad Connect screen discovering live Mac host over Wired connection" loading="lazy" decoding="async" />
+              <img src="/shots/connect.jpg" width="900" height="1288" alt="iPad Connect screen discovering live Mac host over Wired connection" loading="lazy" decoding="async" fetchpriority="low" />
             </div>
-            <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" width="641" height="900" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low" />
           </div>
           <figcaption>Connect</figcaption>
         </figure>
@@ -119,36 +127,36 @@ const originalSiteUrl = "https://getsill.app";
         <figure class="card reveal" style="--sd: 0ms">
           <div class="apple-device apple-iphone-port">
             <div class="apple-screen apple-iphone-port-screen">
-              <img src="/shots/phone-pill.jpg" alt="iPhone full-screen Chrome window with compact Liquid Glass floating pill" loading="lazy" decoding="async" />
+              <img src="/shots/phone-pill.jpg" width="620" height="1348" alt="iPhone full-screen Chrome window with compact Liquid Glass floating pill" loading="lazy" decoding="async" fetchpriority="low" />
             </div>
-            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" width="421" height="860" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low" />
           </div>
           <figcaption>Full-Screen &amp; Pill</figcaption>
         </figure>
         <figure class="card reveal" style="--sd: 70ms">
           <div class="apple-device apple-iphone-port">
             <div class="apple-screen apple-iphone-port-screen">
-              <img src="/shots/phone-orb.jpg" alt="iPhone letterboxed Blender window shifted upward with natural bottom trackpad and 48pt corner orb" loading="lazy" decoding="async" />
+              <img src="/shots/phone-orb.jpg" width="620" height="1348" alt="iPhone letterboxed Blender window shifted upward with natural bottom trackpad and 48pt corner orb" loading="lazy" decoding="async" fetchpriority="low" />
             </div>
-            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" width="421" height="860" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low" />
           </div>
           <figcaption>Corner Orb &amp; Natural Pad</figcaption>
         </figure>
         <figure class="card reveal" style="--sd: 140ms">
           <div class="apple-device apple-iphone-port">
             <div class="apple-screen apple-iphone-port-screen">
-              <img src="/shots/phone-deck.jpg" alt="iPhone VS Code stream with iOS keyboard and tactile modifier keycap bar" loading="lazy" decoding="async" />
+              <img src="/shots/phone-deck.jpg" width="620" height="1348" alt="iPhone VS Code stream with iOS keyboard and tactile modifier keycap bar" loading="lazy" decoding="async" fetchpriority="low" />
             </div>
-            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" width="421" height="860" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low" />
           </div>
           <figcaption>Keyboard &amp; Keycaps</figcaption>
         </figure>
         <figure class="card reveal" style="--sd: 210ms">
           <div class="apple-device apple-iphone-port">
             <div class="apple-screen apple-iphone-port-screen">
-              <img src="/shots/phone-controls.jpg" alt="iPhone Liquid Glass Control Center over live Mac Blender stream" loading="lazy" decoding="async" />
+              <img src="/shots/phone-controls.jpg" width="620" height="1348" alt="iPhone Liquid Glass Control Center over live Mac Blender stream" loading="lazy" decoding="async" fetchpriority="low" />
             </div>
-            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" decoding="async" />
+            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" width="421" height="860" alt="" aria-hidden="true" loading="lazy" decoding="async" fetchpriority="low" />
           </div>
           <figcaption>Control Center</figcaption>
         </figure>
@@ -170,8 +178,10 @@ const originalSiteUrl = "https://getsill.app";
 </Layout>
 
 <script>
+  const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const reveals = document.querySelectorAll<HTMLElement>(".reveal");
-  if ("IntersectionObserver" in window) {
+  if (!prefersReduced && "IntersectionObserver" in window) {
+    reveals.forEach((el) => el.classList.add("will-reveal"));
     const io = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -181,11 +191,50 @@ const originalSiteUrl = "https://getsill.app";
           }
         }
       },
-      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+      { threshold: 0.1, rootMargin: "0px 0px -32px 0px" },
     );
     reveals.forEach((el) => io.observe(el));
-  } else {
-    reveals.forEach((el) => el.classList.add("is-visible"));
+  }
+
+  const heroVideo = document.getElementById("hero-video") as HTMLVideoElement | null;
+  const videoToggle = document.getElementById("hero-video-toggle") as HTMLButtonElement | null;
+  if (heroVideo && videoToggle) {
+    let userPaused = prefersReduced;
+    const syncLabel = () => {
+      videoToggle.textContent = heroVideo.paused ? "Play" : "Pause";
+    };
+    if (prefersReduced) {
+      heroVideo.pause();
+      syncLabel();
+    }
+    videoToggle.addEventListener("click", () => {
+      if (heroVideo.paused) {
+        userPaused = false;
+        heroVideo.play().catch(() => {});
+      } else {
+        userPaused = true;
+        heroVideo.pause();
+      }
+      syncLabel();
+    });
+    heroVideo.addEventListener("play", syncLabel);
+    heroVideo.addEventListener("pause", syncLabel);
+
+    if ("IntersectionObserver" in window) {
+      const videoIo = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) {
+              if (!userPaused) heroVideo.play().catch(() => {});
+            } else if (!heroVideo.paused) {
+              heroVideo.pause();
+            }
+          }
+        },
+        { threshold: 0.15 },
+      );
+      videoIo.observe(heroVideo);
+    }
   }
 </script>
 
@@ -200,27 +249,26 @@ const originalSiteUrl = "https://getsill.app";
       radial-gradient(560px 380px at 18% 12%, rgba(255, 255, 255, 0.035), transparent 72%);
   }
 
-  .enter {
-    opacity: 0;
-    transform: translateY(18px);
-    animation: enterUp 680ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
-    animation-delay: var(--d, 0ms);
+  @media (prefers-reduced-motion: no-preference) {
+    .enter {
+      opacity: 0;
+      transform: translateY(18px);
+      animation: enterUp 680ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      animation-delay: var(--d, 0ms);
+    }
+    .reveal.will-reveal {
+      opacity: 0;
+      transform: translateY(24px) scale(0.985);
+      transition: opacity 640ms cubic-bezier(0.22, 1, 0.36, 1), transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+      transition-delay: var(--sd, 0ms);
+    }
+    .reveal.will-reveal.is-visible {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   }
   @keyframes enterUp {
     to { opacity: 1; transform: translateY(0); }
-  }
-  .reveal {
-    opacity: 0;
-    transform: translateY(24px) scale(0.985);
-    transition: opacity 640ms cubic-bezier(0.22, 1, 0.36, 1), transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
-    transition-delay: var(--sd, 0ms);
-  }
-  .reveal.is-visible {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-  @media (prefers-reduced-motion: reduce) {
-    .enter, .reveal { animation: none; transition: none; opacity: 1; transform: none; }
   }
 
   header {
@@ -370,9 +418,31 @@ const originalSiteUrl = "https://getsill.app";
 
   .stage-caption {
     margin-top: 14px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     text-align: center;
     font-size: 12.5px;
     color: var(--ink-3);
+  }
+  .video-toggle {
+    appearance: none;
+    padding: 3px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--rim);
+    background: var(--raised);
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: color 140ms ease, border-color 140ms ease;
+  }
+  .video-toggle:hover {
+    color: var(--ink);
+    border-color: rgba(255, 255, 255, 0.28);
   }
 
   .chapter { padding: 52px 0; }

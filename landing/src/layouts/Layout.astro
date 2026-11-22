@@ -3,9 +3,10 @@ interface Props {
   title: string;
   description: string;
   canonicalPath?: string;
+  preloadImage?: string;
 }
 
-const { title, description, canonicalPath = "/" } = Astro.props;
+const { title, description, canonicalPath = "/", preloadImage } = Astro.props;
 const canonical = `https://sill.uxheavy.com${canonicalPath}`;
 ---
 <!doctype html>
@@ -17,6 +18,7 @@ const canonical = `https://sill.uxheavy.com${canonicalPath}`;
   <title>{title}</title>
   <meta name="description" content={description} />
   <link rel="canonical" href={canonical} />
+  {preloadImage && <link rel="preload" as="image" href={preloadImage} fetchpriority="high" />}
   <link rel="icon" href="/icon.png" type="image/png" />
   <link rel="apple-touch-icon" href="/icon.png" />
   <meta property="og:type" content="website" />
