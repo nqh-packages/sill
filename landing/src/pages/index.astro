@@ -53,65 +53,77 @@ const originalSiteUrl = "https://getsill.app";
       </div>
 
       <div class="hero-stage enter" style="--d: 140ms">
-        <div class="apple-device apple-ipad-port hero-ipad">
-          <div class="apple-screen apple-ipad-port-screen">
-            <video
-              src="/media/pencilkit-chrome.mp4"
-              poster="/media/pencilkit-poster.jpg"
-              autoplay
-              muted
-              loop
-              playsinline
-              aria-label="Sill Tactile PencilKit floating bar collapsing into a 48pt orb on drag and docking across all four edges and corners over a Mac Swift window"
-            ></video>
+        <div class="stage-frame stage-hero">
+          <img class="stage-photo" src="/backdrops/hero-ocean.jpg" alt="" aria-hidden="true" draggable="false" />
+          <div class="stage-scrim" aria-hidden="true"></div>
+          <div class="apple-device apple-ipad-port hero-ipad">
+            <div class="apple-screen apple-ipad-port-screen">
+              <video
+                src="/media/pencilkit-chrome.mp4"
+                poster="/media/pencilkit-poster.jpg"
+                autoplay
+                muted
+                loop
+                playsinline
+                aria-label="Sill Tactile PencilKit floating bar collapsing into a 48pt orb on drag and docking across all four edges and corners over a Mac Swift window"
+              ></video>
+            </div>
+            <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" alt="" aria-hidden="true" draggable="false" />
           </div>
-          <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" alt="" aria-hidden="true" draggable="false" />
         </div>
         <div class="stage-caption">Real simulator capture · Drag to orb · 4-edge dock · 4-corner minimize</div>
       </div>
     </section>
 
-    <!-- Interactive Playground: Drag the PencilKit bar yourself inside an official Apple iPad Pro M5 bezel -->
     <section class="chapter reveal" id="playground">
       <div class="chapter-head">
         <span class="eyebrow">Interactive Demo</span>
         <h2>Grab the bar. Flick it anywhere.</h2>
       </div>
       <div class="playground-shell">
-        <div class="apple-device apple-ipad-land">
-          <div class="apple-screen apple-ipad-land-screen playground-screen" id="pk-stage">
-            <img class="stage-bg" src="/media/pencilkit-poster.jpg" alt="" draggable="false" />
-            <div class="stage-mask" aria-hidden="true"></div>
-            <div class="pk-ghost" id="pk-ghost" aria-hidden="true"></div>
-            <button
-              type="button"
-              class="pk-pill"
-              id="pk-pill"
-              data-edge="bottom"
-              data-minimized="false"
-              aria-label="Draggable Sill floating bar — drag to any edge or corner"
-            >
-              <span class="pk-orb-badge" aria-hidden="true">Co</span>
-              <span class="pk-expanded" aria-hidden="true">
-                <span class="pk-grip"></span>
-                <span class="pk-app fi">Fi</span>
-                <span class="pk-app co active">Co</span>
-                <span class="pk-app no">No</span>
-                <span class="pk-div"></span>
-                <span class="pk-dot"></span>
-                <span class="pk-dot"></span>
-                <span class="pk-dot"></span>
-                <span class="pk-dot"></span>
-              </span>
-            </button>
-            <div class="pk-hint" id="pk-hint">Drag the bar to any edge or corner</div>
+        <div class="stage-frame stage-playground">
+          <img class="stage-photo" src="/backdrops/playground-nasa.jpg" alt="" aria-hidden="true" draggable="false" />
+          <div class="stage-scrim" aria-hidden="true"></div>
+          <div class="apple-device apple-ipad-land">
+            <div class="apple-screen apple-ipad-land-screen playground-screen" id="pk-stage">
+              <img class="stage-bg" id="pk-bg" src="/media/pencilkit-poster.jpg" alt="" draggable="false" />
+              <div class="stage-mask" id="pk-mask" aria-hidden="true"></div>
+              <div class="pk-ghost" id="pk-ghost" aria-hidden="true"></div>
+              <button
+                type="button"
+                class="pk-pill"
+                id="pk-pill"
+                data-edge="bottom"
+                data-minimized="false"
+                aria-label="Draggable Sill floating bar — drag to any edge or corner"
+              >
+                <span class="pk-orb-badge" aria-hidden="true">Co</span>
+                <span class="pk-expanded" aria-hidden="true">
+                  <span class="pk-grip"></span>
+                  <span class="pk-app fi">Fi</span>
+                  <span class="pk-app co active">Co</span>
+                  <span class="pk-app no">No</span>
+                  <span class="pk-div"></span>
+                  <span class="pk-dot"></span>
+                  <span class="pk-dot"></span>
+                  <span class="pk-dot"></span>
+                  <span class="pk-dot"></span>
+                </span>
+              </button>
+              <div class="pk-scenes" role="group" aria-label="Demo backdrop">
+                <button type="button" class="pk-scene active" data-src="/media/pencilkit-poster.jpg" data-mask="true">Code</button>
+                <button type="button" class="pk-scene" data-src="/backdrops/ipad-glacier.jpg" data-mask="false">Glacier</button>
+                <button type="button" class="pk-scene" data-src="/backdrops/ipad-clouds.jpg" data-mask="false">Twilight</button>
+                <button type="button" class="pk-scene" data-src="/backdrops/iphone-cosmos.jpg" data-mask="false">Cosmos</button>
+              </div>
+              <div class="pk-hint" id="pk-hint">Drag the bar to any edge or corner</div>
+            </div>
+            <img class="apple-bezel" src="/bezels/ipad-pro-11-landscape.png" alt="" aria-hidden="true" draggable="false" />
           </div>
-          <img class="apple-bezel" src="/bezels/ipad-pro-11-landscape.png" alt="" aria-hidden="true" draggable="false" />
         </div>
       </div>
     </section>
 
-    <!-- iPad Gallery -->
     <section class="chapter reveal" id="ipad">
       <div class="chapter-head">
         <span class="eyebrow">iPad</span>
@@ -119,36 +131,47 @@ const originalSiteUrl = "https://getsill.app";
       </div>
       <div class="grid-3">
         <figure class="card reveal" style="--sd: 0ms">
-          <div class="apple-device apple-ipad-port">
-            <div class="apple-screen apple-ipad-port-screen">
-              <img src="/shots/pad-trackpad.png" alt="iPad vertical PencilKit rail with floating trackpad over a Mac Swift window" loading="lazy" />
+          <div class="stage-frame stage-card">
+            <img class="stage-photo" src="/backdrops/ipad-glacier.jpg" alt="" aria-hidden="true" loading="lazy" />
+            <div class="stage-scrim" aria-hidden="true"></div>
+            <div class="apple-device apple-ipad-port">
+              <div class="apple-screen apple-ipad-port-screen">
+                <img src="/shots/pad-trackpad.png" alt="iPad vertical PencilKit rail with floating trackpad over a Mac Swift window" loading="lazy" />
+              </div>
+              <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" alt="" aria-hidden="true" loading="lazy" />
             </div>
-            <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" alt="" aria-hidden="true" loading="lazy" />
           </div>
           <figcaption>Side Rail &amp; Floating Trackpad</figcaption>
         </figure>
         <figure class="card reveal" style="--sd: 90ms">
-          <div class="apple-device apple-ipad-port">
-            <div class="apple-screen apple-ipad-port-screen">
-              <img src="/shots/switcher.png" alt="iPad Unified Switcher for Desktop, Mac windows, and installed apps" loading="lazy" />
+          <div class="stage-frame stage-card">
+            <img class="stage-photo" src="/backdrops/ipad-clouds.jpg" alt="" aria-hidden="true" loading="lazy" />
+            <div class="stage-scrim" aria-hidden="true"></div>
+            <div class="apple-device apple-ipad-port">
+              <div class="apple-screen apple-ipad-port-screen">
+                <img src="/shots/switcher.png" alt="iPad Unified Switcher for Desktop, Mac windows, and installed apps" loading="lazy" />
+              </div>
+              <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" alt="" aria-hidden="true" loading="lazy" />
             </div>
-            <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" alt="" aria-hidden="true" loading="lazy" />
           </div>
           <figcaption>Unified Switcher</figcaption>
         </figure>
         <figure class="card reveal" style="--sd: 180ms">
-          <div class="apple-device apple-ipad-port">
-            <div class="apple-screen apple-ipad-port-screen">
-              <img src="/shots/connect.png" alt="iPad Connect screen with machined display bezels and route LEDs" loading="lazy" />
+          <div class="stage-frame stage-card">
+            <img class="stage-photo" src="/backdrops/ipad-mist.jpg" alt="" aria-hidden="true" loading="lazy" />
+            <div class="stage-scrim" aria-hidden="true"></div>
+            <div class="apple-device apple-ipad-port">
+              <div class="apple-screen apple-ipad-port-screen">
+                <img src="/shots/connect.png" alt="iPad Connect screen with machined display bezels and route LEDs" loading="lazy" />
+              </div>
+              <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" alt="" aria-hidden="true" loading="lazy" />
             </div>
-            <img class="apple-bezel" src="/bezels/ipad-pro-11-portrait.png" alt="" aria-hidden="true" loading="lazy" />
           </div>
           <figcaption>Connect</figcaption>
         </figure>
       </div>
     </section>
 
-    <!-- iPhone Gallery -->
     <section class="chapter reveal" id="iphone">
       <div class="chapter-head">
         <span class="eyebrow">iPhone · iOS 27 Liquid Glass</span>
@@ -156,38 +179,54 @@ const originalSiteUrl = "https://getsill.app";
       </div>
       <div class="grid-4">
         <figure class="card reveal" style="--sd: 0ms">
-          <div class="apple-device apple-iphone-port">
-            <div class="apple-screen apple-iphone-port-screen">
-              <img src="/shots/phone-pill.png" alt="iPhone compact Liquid Glass floating pill over a Mac Swift window" loading="lazy" />
+          <div class="stage-frame stage-card stage-phone">
+            <img class="stage-photo" src="/backdrops/iphone-lake.jpg" alt="" aria-hidden="true" loading="lazy" />
+            <div class="stage-scrim" aria-hidden="true"></div>
+            <div class="apple-device apple-iphone-port">
+              <div class="apple-screen apple-iphone-port-screen">
+                <img src="/shots/phone-pill.png" alt="iPhone compact Liquid Glass floating pill over a Mac Swift window" loading="lazy" />
+              </div>
+              <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" />
             </div>
-            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" />
           </div>
           <figcaption>Compact Pill</figcaption>
         </figure>
         <figure class="card reveal" style="--sd: 70ms">
-          <div class="apple-device apple-iphone-port">
-            <div class="apple-screen apple-iphone-port-screen">
-              <img src="/shots/phone-orb.png" alt="iPhone minimized 48pt corner orb over a full-bleed Mac window" loading="lazy" />
+          <div class="stage-frame stage-card stage-phone">
+            <img class="stage-photo" src="/backdrops/iphone-ridge.jpg" alt="" aria-hidden="true" loading="lazy" />
+            <div class="stage-scrim" aria-hidden="true"></div>
+            <div class="apple-device apple-iphone-port">
+              <div class="apple-screen apple-iphone-port-screen">
+                <img src="/shots/phone-orb.png" alt="iPhone minimized 48pt corner orb over a full-bleed Mac window" loading="lazy" />
+              </div>
+              <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" />
             </div>
-            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" />
           </div>
           <figcaption>Corner Orb</figcaption>
         </figure>
         <figure class="card reveal" style="--sd: 140ms">
-          <div class="apple-device apple-iphone-port">
-            <div class="apple-screen apple-iphone-port-screen">
-              <img src="/shots/phone-deck.png" alt="iPhone bottom-anchored tactile Control Deck over a Mac window" loading="lazy" />
+          <div class="stage-frame stage-card stage-phone">
+            <img class="stage-photo" src="/backdrops/iphone-cosmos.jpg" alt="" aria-hidden="true" loading="lazy" />
+            <div class="stage-scrim" aria-hidden="true"></div>
+            <div class="apple-device apple-iphone-port">
+              <div class="apple-screen apple-iphone-port-screen">
+                <img src="/shots/phone-deck.png" alt="iPhone bottom-anchored tactile Control Deck over a Mac window" loading="lazy" />
+              </div>
+              <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" />
             </div>
-            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" />
           </div>
           <figcaption>Control Deck</figcaption>
         </figure>
         <figure class="card reveal" style="--sd: 210ms">
-          <div class="apple-device apple-iphone-port">
-            <div class="apple-screen apple-iphone-port-screen">
-              <img src="/shots/phone-controls.png" alt="iPhone Control Center with native Liquid Glass header" loading="lazy" />
+          <div class="stage-frame stage-card stage-phone">
+            <img class="stage-photo" src="/backdrops/iphone-fog.jpg" alt="" aria-hidden="true" loading="lazy" />
+            <div class="stage-scrim" aria-hidden="true"></div>
+            <div class="apple-device apple-iphone-port">
+              <div class="apple-screen apple-iphone-port-screen">
+                <img src="/shots/phone-controls.png" alt="iPhone Control Center with native Liquid Glass header" loading="lazy" />
+              </div>
+              <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" />
             </div>
-            <img class="apple-bezel" src="/bezels/iphone-17-portrait.png" alt="" aria-hidden="true" loading="lazy" />
           </div>
           <figcaption>Control Center</figcaption>
         </figure>
@@ -197,7 +236,7 @@ const originalSiteUrl = "https://getsill.app";
 
   <footer>
     <div class="wrap footer-inner">
-      <span>Fork of <a href={upstreamRepoUrl}>Saffsanity/sill</a> by Noah Saffer &middot; Apache-2.0 &middot; Tested only on Huy’s iPhone 17 &amp; iPad Pro</span>
+      <span>Fork of <a href={upstreamRepoUrl}>Saffsanity/sill</a> by Noah Saffer &middot; Apache-2.0 &middot; Backdrops via Unsplash &amp; NASA</span>
       <div class="footer-links">
         <a href={testflightUrl}>TestFlight</a>
         <a href={forkRepoUrl}>Fork</a>
@@ -346,6 +385,18 @@ const originalSiteUrl = "https://getsill.app";
 
     pill.addEventListener("pointerup", finishDrag);
     pill.addEventListener("pointercancel", finishDrag);
+
+    const bgImg = document.getElementById("pk-bg") as HTMLImageElement | null;
+    const bgMask = document.getElementById("pk-mask");
+    const sceneBtns = document.querySelectorAll<HTMLButtonElement>(".pk-scene");
+    sceneBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const src = btn.dataset.src;
+        if (bgImg && src) bgImg.src = src;
+        if (bgMask) bgMask.style.opacity = btn.dataset.mask === "true" ? "1" : "0";
+        sceneBtns.forEach((b) => b.classList.toggle("active", b === btn));
+      });
+    });
   }
 </script>
 
@@ -356,13 +407,20 @@ const originalSiteUrl = "https://getsill.app";
     pointer-events: none;
     z-index: -1;
     background:
-      radial-gradient(640px 420px at 74% 18%, rgba(10, 132, 255, 0.14), transparent 70%),
-      radial-gradient(520px 360px at 22% 12%, rgba(100, 210, 255, 0.08), transparent 72%);
-    animation: auraDrift 12s ease-in-out infinite alternate;
+      radial-gradient(900px 560px at 76% 14%, rgba(10, 132, 255, 0.16), transparent 68%),
+      radial-gradient(640px 420px at 18% 12%, rgba(100, 210, 255, 0.08), transparent 72%);
   }
-  @keyframes auraDrift {
-    from { transform: translate3d(0, 0, 0) scale(1); }
-    to { transform: translate3d(0, 14px, 0) scale(1.04); }
+  .ambient-bg::before {
+    content: "";
+    position: absolute;
+    inset: 0 0 auto 0;
+    height: 78vh;
+    background: url("/backdrops/hero-ocean.jpg") center / cover no-repeat;
+    opacity: 0.24;
+    filter: blur(28px) saturate(135%);
+    transform: scale(1.08);
+    mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 55%, transparent 100%);
+    -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.4) 55%, transparent 100%);
   }
 
   /* Entrance & scroll reveals */
@@ -386,8 +444,7 @@ const originalSiteUrl = "https://getsill.app";
     transform: translateY(0) scale(1);
   }
   @media (prefers-reduced-motion: reduce) {
-    .ambient-bg { animation: none; }
-    .enter, .reveal { animation: none; transition: none; opacity: 1; transform: none; }
+    .enter, .reveal, .stage-photo { animation: none; transition: none; opacity: 1; transform: none; }
   }
 
   /* Header */
@@ -418,7 +475,7 @@ const originalSiteUrl = "https://getsill.app";
   /* Hero */
   .hero {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+    grid-template-columns: minmax(0, 1fr) minmax(340px, 440px);
     gap: 52px;
     align-items: center;
     padding: 56px 0 72px;
@@ -470,16 +527,65 @@ const originalSiteUrl = "https://getsill.app";
   .disclaimer { margin: 0; font-size: 13px; color: var(--ink-3); line-height: 1.65; }
   .disclaimer strong { color: var(--amber); font-weight: 600; }
 
-  /* Official Apple Design Resources Product Bezels (iPad Pro M5 11" & iPhone 17) */
+  .stage-frame {
+    position: relative;
+    overflow: hidden;
+    border-radius: 26px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    background: var(--well);
+  }
+  .stage-photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transform: scale(1.02);
+    transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+    pointer-events: none;
+    user-select: none;
+  }
+  .stage-scrim {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 50% 42%, rgba(0, 0, 0, 0.04), rgba(0, 0, 0, 0.34) 100%);
+    pointer-events: none;
+  }
+  .stage-frame > .apple-device {
+    position: relative;
+    z-index: 2;
+  }
+  .stage-hero {
+    padding: 26px 28px;
+    border-radius: 30px;
+  }
+  .stage-playground {
+    padding: clamp(20px, 4vw, 44px);
+    border-radius: 30px;
+  }
+  .stage-card {
+    padding: 20px 20px 18px;
+  }
+  .stage-phone {
+    padding: 18px 22px;
+  }
+  .card:hover .stage-photo,
+  .stage-hero:hover .stage-photo {
+    transform: scale(1.06);
+  }
+
   .apple-device {
     position: relative;
     width: 100%;
-    filter: drop-shadow(0 28px 56px rgba(0, 0, 0, 0.72));
+    filter: drop-shadow(0 24px 44px rgba(0, 0, 0, 0.62));
     transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), filter 320ms ease;
   }
   .card:hover .apple-device {
     transform: translateY(-4px);
-    filter: drop-shadow(0 36px 68px rgba(0, 0, 0, 0.85));
+    filter: drop-shadow(0 32px 56px rgba(0, 0, 0, 0.74));
   }
   .apple-ipad-port { aspect-ratio: 1880 / 2640; }
   .apple-ipad-land { aspect-ratio: 2640 / 1880; }
@@ -555,8 +661,7 @@ const originalSiteUrl = "https://getsill.app";
     letter-spacing: -0.025em;
   }
 
-  /* Interactive PencilKit Playground */
-  .playground-shell { max-width: 760px; margin: 0 auto; }
+  .playground-shell { max-width: 860px; margin: 0 auto; }
   .playground-screen {
     user-select: none;
     touch-action: none;
@@ -568,8 +673,8 @@ const originalSiteUrl = "https://getsill.app";
     width: 100%;
     height: 100%;
     object-fit: cover;
-    object-position: top;
-    opacity: 0.94;
+    object-position: center;
+    opacity: 0.96;
     pointer-events: none;
   }
   .stage-mask {
@@ -578,6 +683,39 @@ const originalSiteUrl = "https://getsill.app";
     height: 22%;
     background: linear-gradient(180deg, transparent, rgba(15, 16, 20, 0.96) 80%);
     pointer-events: none;
+    transition: opacity 220ms ease;
+  }
+  .pk-scenes {
+    position: absolute;
+    top: 14px;
+    left: 16px;
+    z-index: 4;
+    display: inline-flex;
+    gap: 4px;
+    padding: 3px;
+    border-radius: 999px;
+    background: rgba(20, 20, 22, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+  .pk-scene {
+    appearance: none;
+    border: 0;
+    background: transparent;
+    color: var(--ink-2);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 9px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: background 140ms ease, color 140ms ease;
+  }
+  .pk-scene:hover { color: var(--ink); }
+  .pk-scene.active {
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
   }
   .pk-hint {
     position: absolute;
