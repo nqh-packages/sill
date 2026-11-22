@@ -11,6 +11,8 @@ const originalSiteUrl = "https://getsill.app";
   description="A tactile, Liquid Glass take on Noah Saffer's open-source Sill for iOS & iPadOS. Tested only on my iPhone 17 & iPad Pro."
   canonicalPath="/"
 >
+  <div class="ambient-bg" aria-hidden="true"></div>
+
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
@@ -18,89 +20,185 @@ const originalSiteUrl = "https://getsill.app";
         <span>Sill Tactile</span>
       </a>
       <nav class="nav-links" aria-label="Primary">
-        <a href={testflightUrl}>TestFlight</a>
+        <a href="#playground">Try Chrome</a>
+        <a href="#ipad">iPad</a>
+        <a href="#iphone">iPhone</a>
         <a href={forkRepoUrl}>GitHub</a>
-        <a href={upstreamRepoUrl}>Original by Noah Saffer</a>
+        <a class="nav-cta" href={testflightUrl}>TestFlight</a>
       </nav>
     </div>
   </header>
 
   <main class="wrap">
-    <!-- Hero: Show the PencilKit drag-to-orb & 4-edge morph live above the fold -->
+    <!-- Hero: Live looping iPad Pro hardware frame with zero empty screens -->
     <section class="hero">
       <div class="hero-copy">
-        <div class="icon-pair">
-          <img class="app-icon" src="/icon.png" alt="Sill Tactile dark Liquid Glass icon" width="76" height="76" />
-          <img class="app-icon" src="/icon-light.png" alt="Sill Tactile light Liquid Glass icon" width="76" height="76" />
+        <div class="icon-pair enter" style="--d: 0ms">
+          <img class="app-icon" src="/icon.png" alt="Sill Tactile dark Liquid Glass icon" width="72" height="72" />
+          <img class="app-icon" src="/icon-light.png" alt="Sill Tactile light Liquid Glass icon" width="72" height="72" />
         </div>
-        <h1>Sill, reimagined for touch.</h1>
-        <p class="lede">
+        <h1 class="enter" style="--d: 70ms">Sill, reimagined<br />for touch.</h1>
+        <p class="lede enter" style="--d: 140ms">
           A different take on <a href={upstreamRepoUrl}>Noah Saffer’s Sill</a> for iOS &amp; iPadOS.
           Same <a href={`${originalSiteUrl}/download.html`}>Sill for Mac</a> &amp; encrypted protocol.
         </p>
-        <div class="cta-row">
-          <a class="btn btn-primary" href={testflightUrl}>Join TestFlight</a>
-          <a class="btn btn-secondary" href={forkRepoUrl}>GitHub</a>
+        <div class="cta-row enter" style="--d: 210ms">
+          <a class="btn btn-primary" href={testflightUrl}>Join TestFlight Beta</a>
+          <a class="btn btn-secondary" href={forkRepoUrl}>View on GitHub</a>
         </div>
-        <p class="disclaimer">
+        <p class="disclaimer enter" style="--d: 280ms">
           All credit to <a href="https://github.com/Saffsanity">Noah Saffer</a> (<a href={upstreamRepoUrl}>Saffsanity/sill</a>).<br />
-          <strong>Tested only on my own iPhone 17 &amp; iPad Pro</strong> — for the official app, use <a href={originalSiteUrl}>getsill.app</a>.
+          <strong>Only tested on my own iPhone 17 &amp; iPad Pro</strong> — for the official app, use <a href={originalSiteUrl}>getsill.app</a>.
         </p>
       </div>
 
-      <div class="hero-stage">
-        <figure class="device-bezel ipad-stage">
-          <video
-            src="/media/pencilkit-chrome.mp4"
-            poster="/media/pencilkit-poster.jpg"
-            autoplay
-            muted
-            loop
-            playsinline
-            aria-label="Sill Tactile PencilKit floating bar collapsing into a 48pt orb on drag and docking across all four edges and corners"
-          ></video>
-        </figure>
-        <div class="stage-caption">Drag to minimize · 4-edge dock · 4-corner orb</div>
+      <div class="hero-stage enter" style="--d: 140ms">
+        <div class="device ipad-frame hero-ipad">
+          <span class="hw-btn ipad-btn-top" aria-hidden="true"></span>
+          <span class="hw-btn ipad-btn-vol1" aria-hidden="true"></span>
+          <span class="hw-btn ipad-btn-vol2" aria-hidden="true"></span>
+          <div class="device-screen ipad-screen">
+            <video
+              src="/media/pencilkit-chrome.mp4"
+              poster="/media/pencilkit-poster.jpg"
+              autoplay
+              muted
+              loop
+              playsinline
+              aria-label="Sill Tactile PencilKit floating bar collapsing into a 48pt orb on drag and docking across all four edges and corners over a Mac Swift window"
+            ></video>
+          </div>
+        </div>
+        <div class="stage-caption">Real simulator capture · Drag to orb · 4-edge dock · 4-corner minimize</div>
       </div>
     </section>
 
-    <!-- iPad Screens -->
-    <section class="gallery">
-      <div class="section-label">iPad</div>
+    <!-- Interactive Playground: Drag the PencilKit bar yourself -->
+    <section class="chapter reveal" id="playground">
+      <div class="chapter-head">
+        <span class="eyebrow">Interactive Demo</span>
+        <h2>Grab the bar. Flick it anywhere.</h2>
+      </div>
+      <div class="playground-shell">
+        <div class="device ipad-frame playground-ipad">
+          <div class="device-screen playground-screen" id="pk-stage">
+            <img class="stage-bg" src="/media/pencilkit-poster.jpg" alt="" draggable="false" />
+            <div class="stage-mask" aria-hidden="true"></div>
+            <div class="pk-ghost" id="pk-ghost" aria-hidden="true"></div>
+            <button
+              type="button"
+              class="pk-pill"
+              id="pk-pill"
+              data-edge="bottom"
+              data-minimized="false"
+              aria-label="Draggable Sill floating bar — drag to any edge or corner"
+            >
+              <span class="pk-orb-badge" aria-hidden="true">Co</span>
+              <span class="pk-expanded" aria-hidden="true">
+                <span class="pk-grip"></span>
+                <span class="pk-app fi">Fi</span>
+                <span class="pk-app co active">Co</span>
+                <span class="pk-app no">No</span>
+                <span class="pk-div"></span>
+                <span class="pk-dot"></span>
+                <span class="pk-dot"></span>
+                <span class="pk-dot"></span>
+                <span class="pk-dot"></span>
+              </span>
+            </button>
+            <div class="pk-hint" id="pk-hint">Drag the bar to any edge or corner</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- iPad Gallery -->
+    <section class="chapter reveal" id="ipad">
+      <div class="chapter-head">
+        <span class="eyebrow">iPad</span>
+        <h2>Full canvas. Zero clutter.</h2>
+      </div>
       <div class="grid-3">
-        <figure class="frame">
-          <img src="/shots/pad-trackpad.png" alt="iPad vertical PencilKit rail with floating trackpad" loading="lazy" />
+        <figure class="card reveal" style="--sd: 0ms">
+          <div class="device ipad-frame compact-ipad">
+            <div class="device-screen ipad-screen">
+              <img src="/shots/pad-trackpad.png" alt="iPad vertical PencilKit rail with floating trackpad over a Mac Swift window" loading="lazy" />
+            </div>
+          </div>
           <figcaption>Side Rail &amp; Floating Trackpad</figcaption>
         </figure>
-        <figure class="frame">
-          <img src="/shots/switcher.png" alt="iPad Unified Switcher for Desktop, windows, and Mac apps" loading="lazy" />
+        <figure class="card reveal" style="--sd: 90ms">
+          <div class="device ipad-frame compact-ipad">
+            <div class="device-screen ipad-screen">
+              <img src="/shots/switcher.png" alt="iPad Unified Switcher for Desktop, Mac windows, and installed apps" loading="lazy" />
+            </div>
+          </div>
           <figcaption>Unified Switcher</figcaption>
         </figure>
-        <figure class="frame">
-          <img src="/shots/connect.png" alt="iPad Connect screen with semantic route LEDs" loading="lazy" />
+        <figure class="card reveal" style="--sd: 180ms">
+          <div class="device ipad-frame compact-ipad">
+            <div class="device-screen ipad-screen">
+              <img src="/shots/connect.png" alt="iPad Connect screen with machined display bezels and route LEDs" loading="lazy" />
+            </div>
+          </div>
           <figcaption>Connect</figcaption>
         </figure>
       </div>
     </section>
 
-    <!-- iPhone Screens -->
-    <section class="gallery">
-      <div class="section-label">iPhone</div>
+    <!-- iPhone Gallery -->
+    <section class="chapter reveal" id="iphone">
+      <div class="chapter-head">
+        <span class="eyebrow">iPhone · iOS 27 Liquid Glass</span>
+        <h2>One chrome, adapted to your pocket.</h2>
+      </div>
       <div class="grid-4">
-        <figure class="frame phone-frame">
-          <img src="/shots/phone-pill.png" alt="iPhone compact Liquid Glass floating pill" loading="lazy" />
+        <figure class="card reveal" style="--sd: 0ms">
+          <div class="device iphone-frame">
+            <span class="hw-btn iphone-btn-power" aria-hidden="true"></span>
+            <span class="hw-btn iphone-btn-vol1" aria-hidden="true"></span>
+            <span class="hw-btn iphone-btn-vol2" aria-hidden="true"></span>
+            <div class="device-screen iphone-screen">
+              <span class="dynamic-island" aria-hidden="true"></span>
+              <img src="/shots/phone-pill.png" alt="iPhone compact Liquid Glass floating pill over a Mac Swift window" loading="lazy" />
+            </div>
+          </div>
           <figcaption>Compact Pill</figcaption>
         </figure>
-        <figure class="frame phone-frame">
-          <img src="/shots/phone-orb.png" alt="iPhone minimized 48pt corner orb" loading="lazy" />
+        <figure class="card reveal" style="--sd: 70ms">
+          <div class="device iphone-frame">
+            <span class="hw-btn iphone-btn-power" aria-hidden="true"></span>
+            <span class="hw-btn iphone-btn-vol1" aria-hidden="true"></span>
+            <span class="hw-btn iphone-btn-vol2" aria-hidden="true"></span>
+            <div class="device-screen iphone-screen">
+              <span class="dynamic-island" aria-hidden="true"></span>
+              <img src="/shots/phone-orb.png" alt="iPhone minimized 48pt corner orb over a full-bleed Mac window" loading="lazy" />
+            </div>
+          </div>
           <figcaption>Corner Orb</figcaption>
         </figure>
-        <figure class="frame phone-frame">
-          <img src="/shots/phone-deck.png" alt="iPhone bottom-anchored tactile Control Deck" loading="lazy" />
+        <figure class="card reveal" style="--sd: 140ms">
+          <div class="device iphone-frame">
+            <span class="hw-btn iphone-btn-power" aria-hidden="true"></span>
+            <span class="hw-btn iphone-btn-vol1" aria-hidden="true"></span>
+            <span class="hw-btn iphone-btn-vol2" aria-hidden="true"></span>
+            <div class="device-screen iphone-screen">
+              <span class="dynamic-island" aria-hidden="true"></span>
+              <img src="/shots/phone-deck.png" alt="iPhone bottom-anchored tactile Control Deck over a Mac window" loading="lazy" />
+            </div>
+          </div>
           <figcaption>Control Deck</figcaption>
         </figure>
-        <figure class="frame phone-frame">
-          <img src="/shots/phone-controls.png" alt="iPhone Control Center with Liquid Glass header" loading="lazy" />
+        <figure class="card reveal" style="--sd: 210ms">
+          <div class="device iphone-frame">
+            <span class="hw-btn iphone-btn-power" aria-hidden="true"></span>
+            <span class="hw-btn iphone-btn-vol1" aria-hidden="true"></span>
+            <span class="hw-btn iphone-btn-vol2" aria-hidden="true"></span>
+            <div class="device-screen iphone-screen">
+              <span class="dynamic-island" aria-hidden="true"></span>
+              <img src="/shots/phone-controls.png" alt="iPhone Control Center with native Liquid Glass header" loading="lazy" />
+            </div>
+          </div>
           <figcaption>Control Center</figcaption>
         </figure>
       </div>
@@ -109,7 +207,7 @@ const originalSiteUrl = "https://getsill.app";
 
   <footer>
     <div class="wrap footer-inner">
-      <span>Fork of <a href={upstreamRepoUrl}>Saffsanity/sill</a> by Noah Saffer &middot; Apache-2.0 &middot; Tested only on Huy’s devices</span>
+      <span>Fork of <a href={upstreamRepoUrl}>Saffsanity/sill</a> by Noah Saffer &middot; Apache-2.0 &middot; Tested only on Huy’s iPhone 17 &amp; iPad Pro</span>
       <div class="footer-links">
         <a href={testflightUrl}>TestFlight</a>
         <a href={forkRepoUrl}>Fork</a>
@@ -120,53 +218,244 @@ const originalSiteUrl = "https://getsill.app";
   </footer>
 </Layout>
 
+<script>
+  // Scroll-triggered Apple-style spring reveals
+  const reveals = document.querySelectorAll<HTMLElement>(".reveal");
+  if ("IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            io.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.12, rootMargin: "0px 0px -40px 0px" },
+    );
+    reveals.forEach((el) => io.observe(el));
+  } else {
+    reveals.forEach((el) => el.classList.add("is-visible"));
+  }
+
+  // Interactive PencilKit-style floating bar demo
+  const stage = document.getElementById("pk-stage");
+  const pill = document.getElementById("pk-pill");
+  const ghost = document.getElementById("pk-ghost");
+  const hint = document.getElementById("pk-hint");
+
+  if (stage && pill && ghost) {
+    type Dock =
+      | { kind: "edge"; edge: "top" | "bottom" | "leading" | "trailing" }
+      | { kind: "corner"; corner: "tl" | "tr" | "bl" | "br"; returnEdge: "top" | "bottom" | "leading" | "trailing" };
+
+    let dock: Dock = { kind: "edge", edge: "bottom" };
+    let dragging = false;
+    let moved = false;
+    let startX = 0;
+    let startY = 0;
+
+    const restPos = (d: Dock, w: number, h: number) => {
+      const m = 22;
+      const half = 22;
+      if (d.kind === "edge") {
+        if (d.edge === "top") return { x: w / 2, y: m + half };
+        if (d.edge === "bottom") return { x: w / 2, y: h - m - half };
+        if (d.edge === "leading") return { x: m + half, y: h / 2 };
+        return { x: w - m - half, y: h / 2 };
+      }
+      const x = d.corner === "tl" || d.corner === "bl" ? m + half : w - m - half;
+      const y = d.corner === "tl" || d.corner === "tr" ? m + half : h - m - half;
+      return { x, y };
+    };
+
+    const snapFor = (nx: number, ny: number, prevEdge: "top" | "bottom" | "leading" | "trailing"): Dock => {
+      const x = Math.max(0, Math.min(1, nx));
+      const y = Math.max(0, Math.min(1, ny));
+      const cX = 0.22;
+      const cY = 0.24;
+      if (x <= cX && y <= cY) return { kind: "corner", corner: "tl", returnEdge: prevEdge === "leading" ? "leading" : "top" };
+      if (x >= 1 - cX && y <= cY) return { kind: "corner", corner: "tr", returnEdge: prevEdge === "trailing" ? "trailing" : "top" };
+      if (x <= cX && y >= 1 - cY) return { kind: "corner", corner: "bl", returnEdge: prevEdge === "leading" ? "leading" : "bottom" };
+      if (x >= 1 - cX && y >= 1 - cY) return { kind: "corner", corner: "br", returnEdge: prevEdge === "trailing" ? "trailing" : "bottom" };
+      const dists: Array<["top" | "bottom" | "leading" | "trailing", number]> = [
+        ["bottom", 1 - y],
+        ["top", y],
+        ["trailing", 1 - x],
+        ["leading", x],
+      ];
+      dists.sort((a, b) => a[1] - b[1]);
+      return { kind: "edge", edge: dists[0][0] };
+    };
+
+    const applyDock = (animate = true) => {
+      const r = stage.getBoundingClientRect();
+      const pos = restPos(dock, r.width, r.height);
+      pill.style.transition = animate
+        ? "left 340ms cubic-bezier(0.22, 1, 0.36, 1), top 340ms cubic-bezier(0.22, 1, 0.36, 1), width 340ms cubic-bezier(0.22, 1, 0.36, 1), height 340ms cubic-bezier(0.22, 1, 0.36, 1), transform 180ms ease"
+        : "none";
+      pill.style.left = `${pos.x}px`;
+      pill.style.top = `${pos.y}px`;
+      pill.dataset.minimized = dock.kind === "corner" ? "true" : "false";
+      pill.dataset.edge = dock.kind === "edge" ? dock.edge : dock.returnEdge;
+      pill.classList.remove("is-dragging");
+      ghost.classList.remove("visible");
+    };
+
+    const showGhost = (target: Dock) => {
+      const r = stage.getBoundingClientRect();
+      const pos = restPos(target, r.width, r.height);
+      ghost.style.left = `${pos.x}px`;
+      ghost.style.top = `${pos.y}px`;
+      ghost.dataset.shape = target.kind === "corner" ? "orb" : target.edge === "leading" || target.edge === "trailing" ? "vert" : "horiz";
+      ghost.classList.add("visible");
+    };
+
+    applyDock(false);
+    window.addEventListener("resize", () => applyDock(false));
+
+    pill.addEventListener("pointerdown", (e) => {
+      dragging = true;
+      moved = false;
+      startX = e.clientX;
+      startY = e.clientY;
+      pill.setPointerCapture(e.pointerId);
+      if (hint) hint.classList.add("hidden");
+    });
+
+    pill.addEventListener("pointermove", (e) => {
+      if (!dragging) return;
+      const dist = Math.hypot(e.clientX - startX, e.clientY - startY);
+      if (!moved && dist < 8) return;
+      moved = true;
+      const r = stage.getBoundingClientRect();
+      const x = Math.max(32, Math.min(r.width - 32, e.clientX - r.left));
+      const y = Math.max(32, Math.min(r.height - 32, e.clientY - r.top));
+      pill.classList.add("is-dragging");
+      pill.dataset.minimized = "true";
+      pill.style.transition = "width 180ms cubic-bezier(0.22, 1, 0.36, 1), height 180ms cubic-bezier(0.22, 1, 0.36, 1), transform 160ms ease";
+      pill.style.left = `${x}px`;
+      pill.style.top = `${y}px`;
+      const prevEdge = dock.kind === "edge" ? dock.edge : dock.returnEdge;
+      showGhost(snapFor(x / r.width, y / r.height, prevEdge));
+    });
+
+    const finishDrag = (e: PointerEvent) => {
+      if (!dragging) return;
+      dragging = false;
+      if (moved) {
+        const r = stage.getBoundingClientRect();
+        const prevEdge = dock.kind === "edge" ? dock.edge : dock.returnEdge;
+        dock = snapFor((e.clientX - r.left) / r.width, (e.clientY - r.top) / r.height, prevEdge);
+        applyDock(true);
+      } else if (dock.kind === "corner") {
+        dock = { kind: "edge", edge: dock.returnEdge };
+        applyDock(true);
+      }
+    };
+
+    pill.addEventListener("pointerup", finishDrag);
+    pill.addEventListener("pointercancel", finishDrag);
+  }
+</script>
+
 <style>
+  .ambient-bg {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+    background:
+      radial-gradient(640px 420px at 74% 18%, rgba(10, 132, 255, 0.14), transparent 70%),
+      radial-gradient(520px 360px at 22% 12%, rgba(100, 210, 255, 0.08), transparent 72%);
+    animation: auraDrift 12s ease-in-out infinite alternate;
+  }
+  @keyframes auraDrift {
+    from { transform: translate3d(0, 0, 0) scale(1); }
+    to { transform: translate3d(0, 14px, 0) scale(1.04); }
+  }
+
+  /* Entrance & scroll reveals */
+  .enter {
+    opacity: 0;
+    transform: translateY(18px);
+    animation: enterUp 680ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: var(--d, 0ms);
+  }
+  @keyframes enterUp {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px) scale(0.985);
+    transition: opacity 640ms cubic-bezier(0.22, 1, 0.36, 1), transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition-delay: var(--sd, 0ms);
+  }
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .ambient-bg { animation: none; }
+    .enter, .reveal { animation: none; transition: none; opacity: 1; transform: none; }
+  }
+
+  /* Header */
   header {
     position: sticky;
     top: 0;
-    z-index: 20;
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
-    background: rgba(0, 0, 0, 0.72);
+    z-index: 30;
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    background: rgba(0, 0, 0, 0.7);
     border-bottom: 1px solid var(--rim-soft);
   }
   .nav { display: flex; align-items: center; justify-content: space-between; height: 56px; }
   .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
   .brand img { border-radius: 7px; }
-  .nav-links { display: flex; align-items: center; gap: 20px; font-size: 13.5px; }
-  .nav-links a { color: var(--ink-2); }
+  .nav-links { display: flex; align-items: center; gap: 18px; font-size: 13.5px; }
+  .nav-links a { color: var(--ink-2); transition: color 140ms ease; }
   .nav-links a:hover { color: var(--ink); text-decoration: none; }
+  .nav-cta {
+    padding: 6px 13px;
+    border-radius: 999px;
+    background: rgba(10, 132, 255, 0.16);
+    border: 1px solid rgba(100, 210, 255, 0.3);
+    color: var(--cyan) !important;
+    font-weight: 600;
+  }
 
-  /* Split visual hero */
+  /* Hero */
   .hero {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
-    gap: 48px;
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 400px);
+    gap: 52px;
     align-items: center;
-    padding: 56px 0 64px;
+    padding: 56px 0 72px;
   }
-  @media (max-width: 820px) {
-    .hero { grid-template-columns: 1fr; gap: 36px; padding: 36px 0 48px; }
+  @media (max-width: 840px) {
+    .hero { grid-template-columns: 1fr; gap: 36px; padding: 36px 0 56px; }
     .hero-stage { max-width: 360px; margin: 0 auto; width: 100%; }
   }
   .icon-pair { display: flex; gap: 14px; margin-bottom: 24px; }
   .app-icon {
-    border-radius: 18px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--rim);
+    border-radius: 17px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.65), 0 0 0 1px var(--rim);
+    transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1);
   }
+  .app-icon:hover { transform: translateY(-3px) scale(1.03); }
   h1 {
-    margin: 0 0 14px;
-    font-size: clamp(38px, 5.5vw, 54px);
+    margin: 0 0 16px;
+    font-size: clamp(40px, 5.8vw, 58px);
     font-weight: 700;
-    letter-spacing: -0.035em;
-    line-height: 1.04;
+    letter-spacing: -0.038em;
+    line-height: 1.03;
+    background: linear-gradient(180deg, #ffffff 0%, #c8ccd6 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
-  .lede {
-    margin: 0 0 26px;
-    font-size: 18px;
-    color: var(--ink-2);
-    max-width: 480px;
-  }
+  .lede { margin: 0 0 26px; font-size: 18px; color: var(--ink-2); max-width: 470px; }
   .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
   .btn {
     display: inline-flex;
@@ -175,104 +464,297 @@ const originalSiteUrl = "https://getsill.app";
     border-radius: 999px;
     font-size: 15px;
     font-weight: 600;
-    transition: transform 0.15s ease;
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 180ms ease;
   }
-  .btn:hover { transform: translateY(-1px); text-decoration: none; }
+  .btn:hover { transform: translateY(-1.5px); text-decoration: none; }
   .btn-primary {
     background: var(--blue);
     color: #fff;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 24px rgba(10, 132, 255, 0.35);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28), 0 10px 28px rgba(10, 132, 255, 0.38);
   }
   .btn-secondary {
     background: var(--raised);
     color: var(--ink);
     border: 1px solid var(--rim);
   }
-  .disclaimer {
-    margin: 0;
-    font-size: 13px;
-    color: var(--ink-3);
-    line-height: 1.6;
-  }
+  .disclaimer { margin: 0; font-size: 13px; color: var(--ink-3); line-height: 1.65; }
   .disclaimer strong { color: var(--amber); font-weight: 600; }
 
-  /* Hero looping iPad video */
-  .device-bezel {
-    margin: 0;
-    padding: 10px;
+  /* Apple-style hardware device frames (device-frames geometry) */
+  .device {
+    position: relative;
+    background: linear-gradient(155deg, #3c3d42 0%, #1d1e22 45%, #2b2c31 100%);
+    box-shadow:
+      0 32px 72px rgba(0, 0, 0, 0.78),
+      0 0 0 1px rgba(255, 255, 255, 0.16) inset,
+      0 1px 0 rgba(255, 255, 255, 0.22) inset;
+    transition: transform 320ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 320ms ease;
+  }
+  .card:hover .device {
+    transform: translateY(-4px);
+    box-shadow:
+      0 40px 84px rgba(0, 0, 0, 0.85),
+      0 0 0 1px rgba(255, 255, 255, 0.24) inset;
+  }
+  .ipad-frame {
+    padding: 11px;
     border-radius: 28px;
-    background: var(--surface);
-    border: 1px solid var(--rim);
-    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
   }
-  .device-bezel video {
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 20px;
+  .compact-ipad {
+    padding: 8px;
+    border-radius: 22px;
+  }
+  .iphone-frame {
+    padding: 8px;
+    border-radius: 34px;
+  }
+  .device-screen {
+    position: relative;
+    overflow: hidden;
     background: #000;
+    box-shadow: 0 0 0 2px #050507;
   }
+  .ipad-screen { border-radius: 18px; aspect-ratio: 834 / 1194; }
+  .compact-ipad .ipad-screen { border-radius: 14px; }
+  .iphone-screen { border-radius: 27px; aspect-ratio: 402 / 874; }
+  .device-screen img,
+  .device-screen video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Subtle hardware buttons & Dynamic Island */
+  .hw-btn {
+    position: absolute;
+    background: #35363c;
+    border-radius: 2px;
+  }
+  .ipad-btn-top { top: -2.5px; right: 44px; width: 32px; height: 2.5px; }
+  .ipad-btn-vol1 { right: -2.5px; top: 54px; width: 2.5px; height: 26px; }
+  .ipad-btn-vol2 { right: -2.5px; top: 88px; width: 2.5px; height: 26px; }
+  .iphone-btn-power { right: -2px; top: 26%; width: 2px; height: 34px; }
+  .iphone-btn-vol1 { left: -2px; top: 21%; width: 2px; height: 24px; }
+  .iphone-btn-vol2 { left: -2px; top: 28%; width: 2px; height: 24px; }
+  .dynamic-island {
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28%;
+    height: 15px;
+    border-radius: 999px;
+    background: #000;
+    z-index: 4;
+    box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.08);
+  }
+
   .stage-caption {
-    margin-top: 12px;
+    margin-top: 14px;
     text-align: center;
     font-size: 12.5px;
     color: var(--ink-3);
-    letter-spacing: 0.01em;
   }
 
-  /* Galleries */
-  .gallery { padding: 20px 0 40px; }
-  .section-label {
+  /* Chapters */
+  .chapter { padding: 48px 0; }
+  .chapter-head { margin-bottom: 24px; }
+  .eyebrow {
+    display: inline-block;
     font-size: 12px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--ink-3);
-    margin-bottom: 14px;
+    color: var(--cyan);
+    margin-bottom: 6px;
   }
-  .grid-3 {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-  }
-  .grid-4 {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 16px;
-  }
-  @media (max-width: 820px) {
-    .grid-3 { grid-template-columns: 1fr; }
-    .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-  .frame {
+  h2 {
     margin: 0;
-    padding: 8px;
-    border-radius: 22px;
-    background: var(--surface);
-    border: 1px solid var(--rim-soft);
-    display: flex;
-    flex-direction: column;
+    font-size: clamp(26px, 3.6vw, 36px);
+    font-weight: 700;
+    letter-spacing: -0.025em;
   }
-  .frame img {
+
+  /* Interactive PencilKit Playground */
+  .playground-shell { max-width: 720px; margin: 0 auto; }
+  .playground-ipad { padding: 12px; border-radius: 30px; }
+  .playground-screen {
+    border-radius: 20px;
+    aspect-ratio: 16 / 10;
+    user-select: none;
+    touch-action: none;
+    cursor: default;
+  }
+  .stage-bg {
+    position: absolute;
+    inset: 0;
     width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 15px;
-    background: #000;
+    height: 100%;
+    object-fit: cover;
+    object-position: top;
+    opacity: 0.94;
+    pointer-events: none;
   }
-  .phone-frame img { border-radius: 20px; }
-  .frame figcaption {
-    padding: 10px 6px 4px;
-    font-size: 13px;
+  .stage-mask {
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 22%;
+    background: linear-gradient(180deg, transparent, rgba(15, 16, 20, 0.96) 80%);
+    pointer-events: none;
+  }
+  .pk-hint {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    background: rgba(20, 20, 22, 0.78);
+    border: 1px solid var(--rim);
+    backdrop-filter: blur(12px);
+    font-size: 12px;
+    color: var(--ink-2);
+    pointer-events: none;
+    transition: opacity 280ms ease;
+  }
+  .pk-hint.hidden { opacity: 0; }
+
+  .pk-ghost {
+    position: absolute;
+    transform: translate(-50%, -50%) scale(0.92);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1.5px solid rgba(255, 255, 255, 0.45);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease, transform 180ms ease;
+  }
+  .pk-ghost.visible { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  .pk-ghost[data-shape="horiz"] { width: 256px; height: 44px; }
+  .pk-ghost[data-shape="vert"] { width: 44px; height: 256px; }
+  .pk-ghost[data-shape="orb"] { width: 44px; height: 44px; }
+
+  .pk-pill {
+    position: absolute;
+    transform: translate(-50%, -50%);
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    background: rgba(28, 28, 30, 0.82);
+    backdrop-filter: blur(22px) saturate(180%);
+    -webkit-backdrop-filter: blur(22px) saturate(180%);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+    color: var(--ink);
+    cursor: grab;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    width: 256px;
+    height: 44px;
+  }
+  .pk-pill:active, .pk-pill.is-dragging {
+    cursor: grabbing;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+  .pk-pill[data-edge="leading"],
+  .pk-pill[data-edge="trailing"] {
+    width: 44px;
+    height: 256px;
+  }
+  .pk-pill[data-minimized="true"] {
+    width: 44px !important;
+    height: 44px !important;
+  }
+  .pk-orb-badge {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2799e0, #0a68c4);
+    display: grid;
+    place-items: center;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    opacity: 0;
+    transition: opacity 90ms ease;
+  }
+  .pk-pill[data-minimized="true"] .pk-orb-badge { opacity: 1; }
+  .pk-expanded {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 0 10px;
+    transition: opacity 80ms ease;
+  }
+  .pk-pill[data-edge="leading"] .pk-expanded,
+  .pk-pill[data-edge="trailing"] .pk-expanded {
+    flex-direction: column;
+    padding: 10px 0;
+  }
+  .pk-pill[data-minimized="true"] .pk-expanded { opacity: 0; }
+  .pk-grip {
+    width: 3px;
+    height: 14px;
+    border-radius: 99px;
+    background: rgba(255, 255, 255, 0.28);
+  }
+  .pk-pill[data-edge="leading"] .pk-grip,
+  .pk-pill[data-edge="trailing"] .pk-grip {
+    width: 14px;
+    height: 3px;
+  }
+  .pk-app {
+    width: 24px;
+    height: 24px;
+    border-radius: 6px;
+    display: grid;
+    place-items: center;
+    font-size: 10px;
+    font-weight: 700;
+    color: #fff;
+  }
+  .pk-app.fi { background: #2678e5; }
+  .pk-app.co { background: #1e88c8; }
+  .pk-app.co.active { box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.85); }
+  .pk-app.no { background: #b08824; }
+  .pk-div {
+    width: 1px;
+    height: 18px;
+    background: rgba(255, 255, 255, 0.18);
+  }
+  .pk-pill[data-edge="leading"] .pk-div,
+  .pk-pill[data-edge="trailing"] .pk-div {
+    width: 18px;
+    height: 1px;
+  }
+  .pk-dot {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  /* Galleries */
+  .grid-3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; }
+  @media (max-width: 840px) {
+    .grid-3 { grid-template-columns: 1fr; max-width: 380px; margin: 0 auto; }
+    .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+  }
+  .card { margin: 0; display: flex; flex-direction: column; gap: 14px; }
+  .card figcaption {
+    text-align: center;
+    font-size: 14px;
     font-weight: 500;
     color: var(--ink-2);
-    text-align: center;
   }
 
   footer {
-    margin-top: 24px;
+    margin-top: 40px;
     border-top: 1px solid var(--rim-soft);
-    padding: 24px 0 40px;
+    padding: 26px 0 44px;
     font-size: 13px;
     color: var(--ink-3);
   }
