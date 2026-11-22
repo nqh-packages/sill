@@ -1,0 +1,33 @@
+appId: com.uxheavy.sill
+---
+# Proves Unified Switcher (Desktop card, window cards, search) and Control Center sheet.
+- launchApp:
+    clearState: false
+    arguments:
+      SillLayout: "834x1194"
+- assertVisible: "Apps"
+
+# Open Unified Switcher
+- tapOn: "Apps"
+- assertVisible: "Mac mini"
+- assertVisible: "Desktop"
+- assertVisible: "Finder"
+- takeScreenshot: "01-switcher-open"
+
+# Select Desktop and confirm switcher dismisses back to stream chrome
+- tapOn: "Desktop"
+- assertVisible: "Controls"
+- assertVisible: "Text size"
+- takeScreenshot: "02-desktop-active"
+
+# Open Control Center sheet
+- tapOn: "Controls"
+- assertVisible: "Mac mini"
+- assertVisible: "Streaming"
+- assertVisible: "This iPad"
+- takeScreenshot: "03-control-center-root"
+- scrollUntilVisible:
+    element: "Disconnect from Mac mini"
+    direction: DOWN
+- assertVisible: "Disconnect from Mac mini"
+- takeScreenshot: "04-control-center-bottom"

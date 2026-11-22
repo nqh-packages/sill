@@ -177,6 +177,7 @@ struct PadFloatingTrackpadView: View {
     @Binding var latched: KeyModifiers
     let containerSize: CGSize
     let anchor: WorkspacePoint
+    var avoidanceInsets: EdgeInsets = EdgeInsets()
     let onMoveAnchor: (WorkspacePoint) -> Void
     let onClose: () -> Void
 
@@ -186,6 +187,7 @@ struct PadFloatingTrackpadView: View {
     static let padSize = CGSize(width: 320, height: 260)
 
     var body: some View {
+        let placed = clamped(anchor)
         VStack(spacing: 8) {
             gripStrip
             TactileKeycapRow(style: .deckSix, latched: $latched,
@@ -196,7 +198,7 @@ struct PadFloatingTrackpadView: View {
         .padding(10)
         .frame(width: Self.padSize.width, height: Self.padSize.height)
         .tactileSurface(.floatingChrome, shape: .rounded(20))
-        .position(x: anchor.x, y: anchor.y)
+        .position(x: placed.x, y: placed.y)
     }
 
     /// The anodized title strip and grip: its drag moves the pad (the would-be centre, clamped to
@@ -242,14 +244,18 @@ struct PadFloatingTrackpadView: View {
             }
     }
 
-    /// The pad's centre, clamped so its frame stays inside the container (a container smaller than
-    /// the pad parks it centred rather than pushing it out).
+    /// The pad's centre, clamped so its frame stays inside the container and clear of docked chrome
+    /// (a container smaller than the pad parks it centred rather than pushing it out).
     private func clamped(_ point: WorkspacePoint) -> WorkspacePoint {
         var p = point
         let halfW = Double(Self.padSize.width) / 2
         let halfH = Double(Self.padSize.height) / 2
-        p.x = min(max(p.x, halfW), max(halfW, Double(containerSize.width) - halfW))
-        p.y = min(max(p.y, halfH), max(halfH, Double(containerSize.height) - halfH))
+        let minX = Double(avoidanceInsets.leading) + halfW
+        let maxX = Double(containerSize.width) - Double(avoidanceInsets.trailing) - halfW
+        let minY = Double(avoidanceInsets.top) + halfH
+        let maxY = Double(containerSize.height) - Double(avoidanceInsets.bottom) - halfH
+        p.x = minX <= maxX ? min(max(p.x, minX), maxX) : Double(containerSize.width) / 2
+        p.y = minY <= maxY ? min(max(p.y, minY), maxY) : Double(containerSize.height) / 2
         return p
     }
 }

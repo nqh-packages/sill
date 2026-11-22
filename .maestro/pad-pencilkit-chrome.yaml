@@ -1,0 +1,57 @@
+appId: com.uxheavy.sill
+---
+# Proves the PencilKit-style iPad floating chrome:
+# 1. Launches docked at bottom (clearing top Mac toolbars).
+# 2. Opens and commits Aa text scale inward.
+# 3. Drags capsule to trailing edge (morphs vertical) and opens Aa inward to the left.
+# 4. Minimizes to the corner orb (hides expanded keys, shows Controls orb).
+# 5. Taps corner orb to expand back onto its adjacent edge.
+# 6. Toggles the floating trackpad open and closed.
+- launchApp:
+    clearState: false
+    arguments:
+      SillLayout: "834x1194"
+- assertVisible: "Apps"
+- assertVisible: "Text size"
+- assertVisible: "Minimize controls"
+- takeScreenshot: "01-pad-bottom-docked"
+
+# Open Aa inline detent pill and select 1× ("1 times")
+- tapOn: "Text size"
+- assertVisible: "Off"
+- assertVisible: "1 times"
+- tapOn: "1 times"
+- tapOn: "Text size"
+
+# Drag capsule from bottom center to mid-trailing edge
+- swipe:
+    start: "50%,96%"
+    end: "95%,50%"
+    duration: 500
+- assertVisible: "Apps"
+- assertVisible: "Text size"
+- tapOn: "Text size"
+- assertVisible: "Off"
+- takeScreenshot: "02-pad-trailing-aa-open"
+- tapOn: "Text size"
+
+# Minimize to corner orb
+- tapOn: "Minimize controls"
+- assertNotVisible: "Apps"
+- assertNotVisible: "Text size"
+- assertVisible: "Controls"
+- takeScreenshot: "03-pad-corner-orb"
+
+# Expand back from corner orb
+- tapOn: "Controls"
+- assertVisible: "Apps"
+- assertVisible: "Text size"
+- takeScreenshot: "04-pad-expanded-from-orb"
+
+# Toggle floating trackpad open and closed
+- tapOn: "Trackpad"
+- assertVisible: "Move the trackpad"
+- assertVisible: "Close the trackpad"
+- takeScreenshot: "05-pad-floating-trackpad"
+- tapOn: "Close the trackpad"
+- assertNotVisible: "Move the trackpad"

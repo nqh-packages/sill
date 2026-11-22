@@ -231,25 +231,24 @@ struct FullScreenHint: View {
     var body: some View {
         HStack(spacing: 10) {
             HStack(spacing: 2) {
-                Capsule().fill(Palette.accent).frame(width: 3, height: 22)
+                Capsule().fill(TactileTokens.ledCyan).frame(width: 3, height: 22)
                 Image(systemName: "chevron.right")
                     .font(.system(size: 15, weight: .semibold))
-                    .foregroundStyle(Palette.accent)
+                    .foregroundStyle(TactileTokens.ledCyan)
             }
             VStack(alignment: .leading, spacing: 2) {
                 Text(FullScreenPolicy.Copy.hintTitle)
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Palette.text)
+                    .foregroundStyle(TactileTokens.textPrimary)
                 Text(FullScreenPolicy.Copy.hintLine)
                     .font(.footnote)
-                    .foregroundStyle(Palette.muted)
+                    .foregroundStyle(TactileTokens.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 10)
-        .background(RoundedRectangle(cornerRadius: 14, style: .continuous).fill(Palette.bar.opacity(0.94)))
-        .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Color.white.opacity(0.1), lineWidth: 1))
+        .tactileSurface(.floatingChrome, shape: .rounded(TactileRadius.card))
         .frame(maxWidth: 340, alignment: .leading)
         .dynamicTypeSize(...DynamicTypeSize.accessibility2)
         .allowsHitTesting(false)

@@ -77,7 +77,7 @@ public enum TactileMotion {
     }
 
     public static func paletteDock(reduceMotion: Bool) -> Animation {
-        reduceMotion ? .easeOut(duration: 0.18) : .spring(response: 0.34, dampingFraction: 0.82)
+        reduceMotion ? .easeOut(duration: 0.18) : .spring(response: 0.34, dampingFraction: 1.0)
     }
 }
 
@@ -574,6 +574,16 @@ private struct TactileButtonModifier: ViewModifier {
         case .rounded(let radius):
             view.buttonBorderShape(.roundedRectangle(radius: radius))
         }
+    }
+}
+
+/// Subtle physical press feedback for hardware cards (Mac cards, Desktop card, Window cards).
+struct TactileCardButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.975 : 1.0)
+            .opacity(configuration.isPressed ? 0.92 : 1.0)
+            .animation(TactileMotion.buttonPress, value: configuration.isPressed)
     }
 }
 

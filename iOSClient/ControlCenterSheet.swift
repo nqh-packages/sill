@@ -60,20 +60,24 @@ struct ControlCenterSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 if route == .macMenus {
-                    ToolbarItem(placement: .navigationBarLeading) {
+                    ToolbarItem(placement: .topBarLeading) {
                         Button { route = .root } label: {
                             Label("Controls", systemImage: "chevron.left")
                         }
                     }
+                } else if #available(iOS 26, *) {
+                    ToolbarItem(placement: .principal) { principal }
+                        .sharedBackgroundVisibility(.hidden)
                 } else {
                     ToolbarItem(placement: .principal) { principal }
                 }
-                ToolbarItem(placement: .navigationBarTrailing) {
+                ToolbarItem(placement: .confirmationAction) {
                     Button("Done", action: dismiss)
                         .keyboardShortcut(.cancelAction)
                 }
             }
         }
+        .presentationCornerRadius(28)
         // A refused or timed-out pick goes back to the Mac's value, as the panel's does; the
         // warning lands with it (HostSettingsPanel).
         .sensoryFeedback(.warning, trigger: client.settingsRefusals)
@@ -137,6 +141,8 @@ struct ControlCenterSheet: View {
                 .accessibilityHint("Ends this stream and returns to your Macs")
             }
         }
+        .scrollContentBackground(.hidden)
+        .background(TactileTokens.canvasBlack)
     }
 
     /// The machined deck: Mute, Paste, Menus and Picture in Picture as anodized tiles, then the

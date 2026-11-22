@@ -79,7 +79,7 @@ struct TactileConnectView: View {
         NavigationStack {
             GeometryReader { geo in
                 grid(geo)
-                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                    .tactileBottomBar(isVisible: reconnectMac != nil) {
                         reconnectPill
                     }
             }
@@ -92,9 +92,8 @@ struct TactileConnectView: View {
                         openCard(nil)
                     } label: {
                         Image(systemName: "plus")
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold))
                     }
-                    .tactileButton(.secondary, shape: .circle)
                     .accessibilityLabel("Add a Mac")
                     .accessibilityHint("Pairs this \(device) with a Mac so you can reach it away from home.")
                 }
@@ -157,12 +156,8 @@ struct TactileConnectView: View {
         let two = (horizontalSizeClass == .regular || geo.size.width >= 680) && !typeSize.isAccessibilitySize
         let columns = Array(repeating: GridItem(.flexible(), spacing: 14), count: two ? 2 : 1)
         return ScrollView(.vertical) {
-            VStack(alignment: .leading, spacing: 16) {
-                // The discovery status under the title: what the search is doing, or what happened.
-                Text(client.status)
-                    .font(.footnote)
-                    .foregroundStyle(TactileTokens.textSecondary)
-                    .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: 18) {
+                statusBanner
 
                 if client.macs.isEmpty {
                     emptyState
@@ -172,16 +167,15 @@ struct TactileConnectView: View {
                         macID: { ConnectionList.tileMac(macID: $0.macID, savedByName: $0.savedByName) },
                         groups: client.macGroups)
                     ForEach(Array(sections.enumerated()), id: \.offset) { _, section in
-                        if let title = section.title {
-                            Text(title)
-                                .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(TactileTokens.textSecondary)
-                                .textCase(.uppercase)
-                                .accessibilityAddTraits(.isHeader)
-                        }
-                        LazyVGrid(columns: columns, spacing: 14) {
-                            ForEach(section.items) { mac in
-                                macCard(mac)
+                        VStack(alignment: .leading, spacing: 10) {
+                            if let title = section.title {
+                                TactileSectionHeader(title)
+                                    .accessibilityAddTraits(.isHeader)
+                            }
+                            LazyVGrid(columns: columns, spacing: 14) {
+                                ForEach(section.items) { mac in
+                                    macCard(mac)
+                                }
                             }
                         }
                     }
@@ -190,43 +184,103 @@ struct TactileConnectView: View {
                 footer
             }
             .padding(.horizontal, 16)
+            .padding(.top, 4)
             .padding(.bottom, 16)
         }
         .scrollBounceBehavior(.basedOnSize)
     }
 
+    private var statusBanner: some View {
+        let lower = client.status.lowercased()
+        let isSearching = client.macs.isEmpty && (lower.contains("looking") || lower.contains("search"))
+        let isWarning = lower.contains("denied") || lower.contains("update") || lower.contains("could not") || lower.contains("failed")
+        return HStack(spacing: 8) {
+            if isSearching {
+                ProgressView()
+                    .controlSize(.small)
+                    .tint(TactileTokens.ledCyan)
+            } else if isWarning {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.footnote)
+                    .foregroundStyle(TactileTokens.ledAmber)
+            }
+            Text(client.status)
+                .font(.footnote)
+                .foregroundStyle(isWarning ? TactileTokens.textPrimary : TactileTokens.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, isWarning ? 12 : 2)
+        .padding(.vertical, isWarning ? 10 : 0)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background {
+            if isWarning {
+                RoundedRectangle(cornerRadius: TactileRadius.card, style: .continuous)
+                    .fill(TactileTokens.chassisRaised)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: TactileRadius.card, style: .continuous)
+                            .strokeBorder(TactileTokens.ledAmber.opacity(0.35), lineWidth: 0.75)
+                    }
+            }
+        }
+    }
+
     /// No Mac found: a hardware card that says so, with Search Nearby while it can still help
     /// (`client.showsNearbyHint`) or its "Also looking nearby" line once asked.
     private var emptyState: some View {
-        VStack(spacing: 14) {
-            Image(systemName: "desktopcomputer")
-                .font(.system(size: 34, weight: .light))
-                .foregroundStyle(TactileTokens.textSecondary)
-                .frame(maxWidth: .infinity)
-            if client.showsNearbyHint {
-                if client.searchingNearby {
-                    Text("Also looking nearby")
-                        .font(.system(size: 15))
-                        .foregroundStyle(TactileTokens.textSecondary)
+        VStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(TactileTokens.controlRaised)
+                    .frame(width: 64, height: 64)
+                    .tactileSpecularBorder(.circle, lineWidth: 0.75)
+                Image(systemName: "macbook.and.iphone")
+                    .font(.system(size: 26, weight: .medium))
+                    .foregroundStyle(TactileTokens.ledCyan)
+            }
+            VStack(spacing: 6) {
+                Text("No Macs Ready")
+                    .font(.headline)
+                    .foregroundStyle(TactileTokens.textPrimary)
+                Text("Open Sill on your Mac on the same network, or pair a Mac for remote access.")
+                    .font(.footnote)
+                    .foregroundStyle(TactileTokens.textSecondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: 320)
+
+            HStack(spacing: 10) {
+                if client.showsNearbyHint {
+                    if client.searchingNearby {
+                        HStack(spacing: 8) {
+                            ProgressView()
+                                .controlSize(.small)
+                                .tint(TactileTokens.ledCyan)
+                            Text("Also looking nearby")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(TactileTokens.textSecondary)
+                        }
                         .frame(minHeight: 44)
-                } else {
-                    Button {
-                        TactileHaptics.play(.detent)
-                        client.searchNearby()
-                        AccessibilityNotification.Announcement("Also looking nearby").post()
-                    } label: {
-                        Text("Search Nearby")
-                            .font(.system(size: 15, weight: .semibold))
-                            .frame(minHeight: 44)
+                    } else {
+                        Button {
+                            TactileHaptics.play(.detent)
+                            client.searchNearby()
+                            AccessibilityNotification.Announcement("Also looking nearby").post()
+                        } label: {
+                            Label("Search Nearby", systemImage: "dot.radiowaves.left.and.right")
+                                .font(.subheadline.weight(.semibold))
+                                .frame(minHeight: 30)
+                        }
+                        .tactileRecessedButton(.prominent(TactileTokens.ledBlue), shape: .capsule)
+                        .accessibilityHint("Also looks for a Mac with Direct Wireless Connection turned on, without a Wi\u{2011}Fi network.")
                     }
-                    .tactileRecessedButton(.secondary, shape: .capsule)
-                    .accessibilityHint("Also looks for a Mac with Direct Wireless Connection turned on, without a Wi\u{2011}Fi network.")
                 }
             }
         }
-        .padding(24)
+        .padding(.vertical, 28)
+        .padding(.horizontal, 20)
         .frame(maxWidth: .infinity)
-        .tactileSurface(.recessedHardware, shape: .rounded(20))
+        .tactileSurface(.recessedHardware, shape: .rounded(TactileRadius.cardLarge))
     }
 
     // MARK: A Mac's card
@@ -269,32 +323,39 @@ struct TactileConnectView: View {
             VStack(alignment: .leading, spacing: 10) {
                 bezel(preview: preview)
                 HStack(spacing: 8) {
-                    TactileLED(isOn: led.lit, color: led.color)
                     Text(mac.name)
-                        .font(.system(size: 15, weight: .medium))
+                        .font(.subheadline.weight(.semibold))
                         .foregroundStyle(TactileTokens.textPrimary)
                         .lineLimit(1)
                         .truncationMode(.tail)
                     Spacer(minLength: 4)
                     if let word = mac.word {
-                        Text(word)
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(led.lit ? led.color : TactileTokens.textSecondary)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 3)
-                            .background(Capsule().fill(TactileTokens.chassisRaised))
+                        HStack(spacing: 5) {
+                            TactileLED(isOn: led.lit, color: led.color, diameter: 6)
+                            Text(word)
+                                .font(.caption2.weight(.semibold))
+                                .foregroundStyle(led.lit ? led.color : TactileTokens.textSecondary)
+                        }
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(
+                            Capsule(style: .continuous)
+                                .fill(led.lit ? led.color.opacity(0.14) : TactileTokens.controlRaised)
+                        )
+                    } else {
+                        TactileLED(isOn: led.lit, color: led.color, diameter: 6)
                     }
                 }
             }
             .padding(12)
         }
-        .buttonStyle(.plain)
-        .tactileSurface(.recessedHardware, shape: .rounded(20))
+        .buttonStyle(TactileCardButtonStyle())
+        .tactileSurface(.recessedHardware, shape: .rounded(TactileRadius.cardLarge))
         .overlay(
-            RoundedRectangle(cornerRadius: 20, style: .continuous)
-                .strokeBorder(asking(mac) ? TactileTokens.ledCyan.opacity(0.55) : .clear, lineWidth: 1)
+            RoundedRectangle(cornerRadius: TactileRadius.cardLarge, style: .continuous)
+                .strokeBorder(asking(mac) ? TactileTokens.ledCyan.opacity(0.65) : .clear, lineWidth: 1.25)
         )
-        .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: TactileRadius.cardLarge, style: .continuous))
         .accessibilityLabel(cardLabel(mac))
         .accessibilityHint(cardHint(mac))
         .contextMenu { macMenu(mac) }
@@ -430,15 +491,10 @@ struct TactileConnectView: View {
             .navigationTitle(home.map { DiscoveryPolicy.HomeCopy.cardTitle(mac: $0) } ?? "Add a Mac")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") {
                         closeSheet()
-                    } label: {
-                        Image(systemName: "xmark")
-                            .font(.system(size: 15, weight: .semibold))
                     }
-                    .tactileButton(.secondary, shape: .circle)
-                    .accessibilityLabel("Cancel")
                 }
             }
         }
@@ -550,19 +606,21 @@ struct TactileConnectView: View {
     /// chrome above the grid's bottom edge.
     @ViewBuilder private var reconnectPill: some View {
         if let mac = reconnectMac {
-            HStack(spacing: 12) {
-                TactileLED(isOn: true, color: TactileTokens.ledCyan)
-                Text("Reconnecting to \(mac.name)…")
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(TactileTokens.textPrimary)
-                    .lineLimit(1)
-                Button("Cancel", action: cancelReconnect)
-                    .tactileButton(.secondary, shape: .capsule)
+            TactileGlassGroup(spacing: 8) {
+                HStack(spacing: 12) {
+                    TactileLED(isOn: true, color: TactileTokens.ledCyan)
+                    Text("Reconnecting to \(mac.name)…")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(TactileTokens.textPrimary)
+                        .lineLimit(1)
+                    Button("Cancel", action: cancelReconnect)
+                        .tactileButton(.secondary, shape: .capsule)
+                }
+                .padding(.leading, 14)
+                .padding(.trailing, 6)
+                .padding(.vertical, 8)
+                .tactileSurface(.floatingChrome, shape: .capsule)
             }
-            .padding(.leading, 14)
-            .padding(.trailing, 6)
-            .padding(.vertical, 8)
-            .tactileSurface(.floatingChrome, shape: .capsule)
             .padding(.horizontal, 16)
             .padding(.bottom, 8)
             .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))

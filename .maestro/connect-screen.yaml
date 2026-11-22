@@ -1,0 +1,19 @@
+appId: com.uxheavy.sill
+---
+# Proves Connect screen discovery list, Reconnect toggle, and Add a Mac sheet.
+- launchApp:
+    clearState: false
+    arguments:
+      SillLayout: "834x1194"
+      SillConnectCase: "methods"
+- assertVisible: "Sill"
+- assertVisible: "Add a Mac"
+- assertVisible: "Reconnect automatically"
+- takeScreenshot: "01-connect-methods"
+
+# Open Add a Mac sheet and cancel back
+- tapOn: "Add a Mac"
+- assertVisible: "Cancel"
+- takeScreenshot: "02-add-a-mac-sheet"
+- tapOn: "Cancel"
+- assertVisible: "Reconnect automatically"

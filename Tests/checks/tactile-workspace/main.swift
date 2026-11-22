@@ -14,63 +14,20 @@ func check(_ name: String, _ ok: Bool, _ detail: @autoclosure () -> String = "")
     }
 }
 
-// MARK: - 1. Form capabilities and form switching
+// MARK: - 1. Default unified workspace state
 
 do {
-    check("form: phonePortrait uses phone dock only",
-          WorkspaceForm.phonePortrait.usesPhoneDock && !WorkspaceForm.phonePortrait.usesFloatingCapsule)
-    check("form: phoneLandscape uses floating capsule only",
-          !WorkspaceForm.phoneLandscape.usesPhoneDock && WorkspaceForm.phoneLandscape.usesFloatingCapsule)
-    check("form: padFullCanvas uses floating capsule only",
-          !WorkspaceForm.padFullCanvas.usesPhoneDock && WorkspaceForm.padFullCanvas.usesFloatingCapsule)
-    check("form: duoBook uses floating capsule only",
-          !WorkspaceForm.duoBook.usesPhoneDock && WorkspaceForm.duoBook.usesFloatingCapsule)
-    check("form: duoLaptop uses neither phone dock nor floating capsule",
-          !WorkspaceForm.duoLaptop.usesPhoneDock && !WorkspaceForm.duoLaptop.usesFloatingCapsule)
-
-    var s = StreamWorkspaceState(form: .phonePortrait)
-    check("initial portrait: dock visible, deck hidden, capsule hidden, trackpad inactive",
-          s.showsPhoneDock && !s.showsPhoneDeck && !s.showsFloatingCapsule && !s.pointerTrackpadActive)
-
-    let openFX = s.send(.setPhoneDeck(open: true))
-    check("open deck: pointerTrackpadActive becomes true and emits setPointerTrackpadVisible(true)",
-          s.pointerTrackpadActive && s.showsPhoneDeck && !s.showsPhoneDock
-            && openFX.contains(.setPointerTrackpadVisible(true)))
-
-    let rotateFX = s.send(.setForm(.phoneLandscape))
-    check("rotate portrait(deck) -> landscape: disables trackpad, resets phoneDock, shows capsule",
-          s.form == .phoneLandscape && s.phoneDock == .focus && s.deckDragProgress == 0
-            && !s.pointerTrackpadActive && s.showsFloatingCapsule
-            && rotateFX.contains(.setPointerTrackpadVisible(false)))
-
-    let padFX = s.send(.toggleFloatingPad)
-    check("landscape floating pad toggle activates pointer trackpad",
-          s.floatingPad.isVisible && s.pointerTrackpadActive
-            && padFX.contains(.setPointerTrackpadVisible(true)))
-
-    let toPortraitFX = s.send(.setForm(.phonePortrait))
-    check("rotate landscape(floatingPad) -> portrait(focus): hides pointer trackpad",
-          !s.pointerTrackpadActive && s.showsPhoneDock
-            && toPortraitFX.contains(.setPointerTrackpadVisible(false)))
-
-    let backToPadFX = s.send(.setForm(.padFullCanvas))
-    check("switch to padFullCanvas with floatingPad still visible restores pointer trackpad",
-          s.pointerTrackpadActive && s.showsFloatingCapsule
-            && backToPadFX.contains(.setPointerTrackpadVisible(true)))
-
-    let toLaptopFX = s.send(.setForm(.duoLaptop))
-    check("switch to duoLaptop hides capsule and deactivates workspace floating trackpad",
-          !s.showsFloatingCapsule && !s.showsPhoneDock && !s.pointerTrackpadActive
-            && toLaptopFX.contains(.setPointerTrackpadVisible(false)))
-
-    let noopFX = s.send(.setForm(.duoLaptop))
-    check("setForm to same form is no-op", noopFX.isEmpty)
+    let s = StreamWorkspaceState()
+    check("initial state: floating capsule visible at bottom, trackpad hidden, no modal, no takers",
+          s.showsFloatingCapsule && s.capsule == .expanded(edge: .bottom)
+            && !s.floatingPad.isVisible && !s.pointerTrackpadActive
+            && s.modal == .none && s.keyboardTakers.isEmpty)
 }
 
-// MARK: - 2. Phone deck drag & snap thresholds
+// MARK: - 2. Trackpad / docked Control Deck drag & snap thresholds
 
 do {
-    var s = StreamWorkspaceState(form: .phonePortrait)
+    var s = StreamWorkspaceState()
     let c1 = s.send(.deckDragChanged(progress: -0.4))
     check("deckDragChanged clamps negative progress to 0 without effects",
           s.deckDragProgress == 0 && c1.isEmpty)
@@ -79,69 +36,59 @@ do {
     check("deckDragChanged clamps >1 progress to 1", s.deckDragProgress == 1)
 
     _ = s.send(.deckDragChanged(progress: 0.35))
-    check("deckDragChanged keeps phoneDock in focus while dragging",
-          s.deckDragProgress == 0.35 && s.phoneDock == .focus)
+    check("deckDragChanged preserves closed trackpad while dragging",
+          s.deckDragProgress == 0.35 && !s.floatingPad.isVisible)
 
     _ = s.send(.deckDragChanged(progress: .nan))
     check("deckDragChanged ignores NaN progress", s.deckDragProgress == 0.35)
 
     // Slow release below midpoint snaps closed
     let snapClosedFX = s.send(.deckDragEnded(progress: 0.49, velocityY: 0))
-    check("deckDragEnded below 0.5 snaps closed to focus with progress 0",
-          s.phoneDock == .focus && s.deckDragProgress == 0 && !snapClosedFX.contains(.haptic(.detent)))
+    check("deckDragEnded below 0.5 snaps closed with progress 0",
+          !s.floatingPad.isVisible && s.deckDragProgress == 0 && !snapClosedFX.contains(.haptic(.detent)))
 
     // Slow release at midpoint snaps open
     let snapOpenFX = s.send(.deckDragEnded(progress: 0.5, velocityY: 0))
-    check("deckDragEnded at 0.5 snaps open to controlDeck with detent & trackpad",
-          s.phoneDock == .controlDeck && s.deckDragProgress == 1
+    check("deckDragEnded at 0.5 opens trackpad with detent & pointerTrackpadActive",
+          s.floatingPad.isVisible && s.deckDragProgress == 1 && s.pointerTrackpadActive
             && snapOpenFX.contains(.haptic(.detent))
             && snapOpenFX.contains(.setPointerTrackpadVisible(true)))
 
     // Fast downward flick closes even when progress is high
     let flickDownFX = s.send(.deckDragEnded(progress: 0.85, velocityY: 450))
-    check("deckDragEnded fast downward flick closes deck despite high progress",
-          s.phoneDock == .focus && s.deckDragProgress == 0
+    check("deckDragEnded fast downward flick closes trackpad despite high progress",
+          !s.floatingPad.isVisible && s.deckDragProgress == 0 && !s.pointerTrackpadActive
             && flickDownFX.contains(.haptic(.detent))
             && flickDownFX.contains(.setPointerTrackpadVisible(false)))
 
     // Fast upward flick opens even when progress is low
     let flickUpFX = s.send(.deckDragEnded(progress: 0.12, velocityY: -450))
-    check("deckDragEnded fast upward flick opens deck despite low progress",
-          s.phoneDock == .controlDeck && s.deckDragProgress == 1
+    check("deckDragEnded fast upward flick opens trackpad despite low progress",
+          s.floatingPad.isVisible && s.deckDragProgress == 1 && s.pointerTrackpadActive
             && flickUpFX.contains(.haptic(.detent))
             && flickUpFX.contains(.setPointerTrackpadVisible(true)))
 
-    // Idempotent setPhoneDeck
-    let dupOpenFX = s.send(.setPhoneDeck(open: true))
-    check("setPhoneDeck(open: true) when already open is no-op", dupOpenFX.isEmpty)
+    // Idempotent setTrackpad
+    let dupOpenFX = s.send(.setTrackpad(open: true))
+    check("setTrackpad(open: true) when already open is no-op", dupOpenFX.isEmpty)
 
-    // Opening deck while keyboard requested dismisses keyboard
-    _ = s.send(.tapKeyboardButton)
-    let deckOverKeyboardFX = s.send(.setPhoneDeck(open: true))
-    check("setPhoneDeck(open: true) over keyboard dismisses keyboard and opens deck",
-          s.phoneDock == .controlDeck && deckOverKeyboardFX.contains(.setKeyboard(shown: false))
+    // Opening trackpad while keyboard up dismisses keyboard
+    _ = s.send(.setTrackpad(open: false))
+    _ = s.send(.systemKeyboardChanged(personOwnUp: true))
+    let deckOverKeyboardFX = s.send(.setTrackpad(open: true))
+    check("setTrackpad(open: true) over keyboard dismisses keyboard and opens trackpad",
+          s.floatingPad.isVisible && deckOverKeyboardFX.contains(.setKeyboard(shown: false))
             && deckOverKeyboardFX.contains(.setPointerTrackpadVisible(true)))
-
-    // Non-phone-dock ignores deck actions
-    var pad = StreamWorkspaceState(form: .padFullCanvas)
-    let ignoredDrag = pad.send(.deckDragChanged(progress: 0.8))
-    let ignoredEnd = pad.send(.deckDragEnded(progress: 0.8, velocityY: -500))
-    let ignoredSet = pad.send(.setPhoneDeck(open: true))
-    check("padFullCanvas ignores deck drag/end/set actions",
-          ignoredDrag.isEmpty && ignoredEnd.isEmpty && ignoredSet.isEmpty
-            && pad.deckDragProgress == 0 && pad.phoneDock == .focus)
 }
 
-// MARK: - 3. Keyboard ReturnTarget restoration across Focus / Deck / Modal
+// MARK: - 3. Keyboard <-> Trackpad swap & modal keyboard restoration
 
 do {
-    var s = StreamWorkspaceState(form: .phonePortrait)
+    var s = StreamWorkspaceState()
 
-    // Focus -> Keyboard -> tap again -> Focus
     let kb1 = s.send(.tapKeyboardButton)
-    check("focus -> tapKeyboardButton enters .keyboard(returnTo: .focus) and shows keyboard",
-          s.phoneDock == .keyboard(returnTo: .focus) && s.phoneDock.isKeyboardRequested
-            && !s.phoneDock.isDeckVisible && kb1.contains(.setKeyboard(shown: true)))
+    check("tapKeyboardButton toggles keyboard with tick",
+          kb1.contains(.toggleKeyboard) && kb1.contains(.haptic(.tick)))
 
     _ = s.send(.systemKeyboardChanged(personOwnUp: true))
     check("systemKeyboardChanged(true) shows keyboard accessory on software keyboard",
@@ -154,21 +101,20 @@ do {
     check("hardware keyboard detached restores keyboard accessory", s.showsKeyboardAccessory)
 
     let kbOff = s.send(.tapKeyboardButton)
-    check("tapKeyboardButton while keyboard up returns to .focus",
-          s.phoneDock == .focus && kbOff.contains(.setKeyboard(shown: false)))
+    check("tapKeyboardButton while keyboard up hides keyboard",
+          kbOff.contains(.setKeyboard(shown: false)))
     _ = s.send(.systemKeyboardChanged(personOwnUp: false))
 
-    // ControlDeck -> Keyboard -> Modal -> Close(restore: true) -> Dismiss -> ControlDeck
-    _ = s.send(.setPhoneDeck(open: true))
-    check("in controlDeck before keyboard", s.phoneDock == .controlDeck && s.pointerTrackpadActive)
-
-    let fromDeckKB = s.send(.tapKeyboardButton)
-    check("controlDeck -> tapKeyboardButton remembers returnTo: .controlDeck and hides trackpad",
-          s.phoneDock == .keyboard(returnTo: .controlDeck) && !s.pointerTrackpadActive
-            && fromDeckKB.contains(.setKeyboard(shown: true))
-            && fromDeckKB.contains(.setPointerTrackpadVisible(false)))
+    // Trackpad open -> tapKeyboardButton closes trackpad and requests keyboard
+    _ = s.send(.setTrackpad(open: true))
+    let swapToKB = s.send(.tapKeyboardButton)
+    check("tapKeyboardButton while trackpad open closes trackpad and toggles keyboard",
+          !s.floatingPad.isVisible && !s.pointerTrackpadActive && s.deckDragProgress == 0
+            && swapToKB.contains(.toggleKeyboard)
+            && swapToKB.contains(.setPointerTrackpadVisible(false)))
     _ = s.send(.systemKeyboardChanged(personOwnUp: true))
 
+    // Modal while keyboard up saves restoreKeyboardAfterModal
     let openSwitcher = s.send(.openModal(.switcher(initialSearch: true)))
     check("openModal while keyboard up sets restoreKeyboardAfterModal, hides keyboard, updates takers",
           s.modal == .switcher(initialSearch: true) && s.restoreKeyboardAfterModal
@@ -177,105 +123,29 @@ do {
             && openSwitcher.contains(.releaseHeldKeys)
             && openSwitcher.contains(.updateTakers([.drawer])))
 
-    // System notifies keyboard went down while modal is open — must NOT wipe returnTo or restore flag
     _ = s.send(.systemKeyboardChanged(personOwnUp: false))
-    check("systemKeyboardChanged(false) during modal preserves returnTo and restoreKeyboardAfterModal",
-          !s.personKeyboardUp && s.restoreKeyboardAfterModal
-            && s.phoneDock == .keyboard(returnTo: .controlDeck))
+    check("systemKeyboardChanged(false) during modal preserves restoreKeyboardAfterModal",
+          !s.personKeyboardUp && s.restoreKeyboardAfterModal)
 
     let closeRestore = s.send(.closeModal(restoreKeyboard: true))
-    check("closeModal(restoreKeyboard: true) re-raises keyboard and keeps returnTo: .controlDeck",
+    check("closeModal(restoreKeyboard: true) re-raises keyboard",
           s.modal == .none && !s.restoreKeyboardAfterModal
-            && s.phoneDock == .keyboard(returnTo: .controlDeck)
             && closeRestore.contains(.setKeyboard(shown: true))
             && closeRestore.contains(.updateTakers([])))
 
     _ = s.send(.systemKeyboardChanged(personOwnUp: true))
-    let sysDown = s.send(.systemKeyboardChanged(personOwnUp: false))
-    check("systemKeyboardChanged(false) after modal restores controlDeck and trackpad",
-          s.phoneDock == .controlDeck && s.deckDragProgress == 1 && s.pointerTrackpadActive
-            && sysDown.contains(.setPointerTrackpadVisible(true)))
-
-    // ControlDeck -> Keyboard -> Modal -> Close(restore: false) -> immediately back to ControlDeck
-    _ = s.send(.tapKeyboardButton)
-    _ = s.send(.systemKeyboardChanged(personOwnUp: true))
-    _ = s.send(.openModal(.controlCenter(.root)))
-    _ = s.send(.systemKeyboardChanged(personOwnUp: false))
-    let closeNoRestore = s.send(.closeModal(restoreKeyboard: false))
-    check("closeModal(restoreKeyboard: false) does not raise keyboard and restores controlDeck",
-          s.modal == .none && !s.restoreKeyboardAfterModal
-            && s.phoneDock == .controlDeck && s.deckDragProgress == 1
-            && !closeNoRestore.contains(.setKeyboard(shown: true))
-            && closeNoRestore.contains(.setPointerTrackpadVisible(true)))
-
-    // Dismiss keyboard via accessory button restores controlDeck
-    _ = s.send(.tapKeyboardButton)
-    _ = s.send(.systemKeyboardChanged(personOwnUp: true))
     let dismissFX = s.send(.dismissKeyboardRequested)
-    check("dismissKeyboardRequested returns from keyboard to controlDeck",
-          s.phoneDock == .controlDeck && s.deckDragProgress == 1
-            && dismissFX.contains(.setKeyboard(shown: false))
-            && dismissFX.contains(.setPointerTrackpadVisible(true)))
-
-    // Pad form uses .toggleKeyboard on tapKeyboardButton
-    var pad = StreamWorkspaceState(form: .padFullCanvas)
-    let padToggle = pad.send(.tapKeyboardButton)
-    check("padFullCanvas tapKeyboardButton emits .toggleKeyboard",
-          padToggle.contains(.toggleKeyboard) && padToggle.contains(.haptic(.tick)))
+    check("dismissKeyboardRequested hides keyboard with tick",
+          dismissFX == [.setKeyboard(shown: false), .haptic(.tick)])
 }
 
-// MARK: - 4. Swipe-on-chip window cycling & wraparound
+// MARK: - 4. Viewport stability during deck drag & settled resize
 
 do {
-    var s = StreamWorkspaceState(form: .phonePortrait)
-    let ids: [UInt32] = [101, 202, 303]
+    var s = StreamWorkspaceState()
+    let focusSize = WorkspaceSize(width: 402, height: 874)
 
-    let next1 = s.send(.swipeWindowChip(direction: 1, orderedWindowIDs: ids, active: .window(101)))
-    check("swipe +1 from first selects second",
-          next1 == [.selectSource(.window(202)), .haptic(.tick)])
-
-    let wrapForward = s.send(.swipeWindowChip(direction: 1, orderedWindowIDs: ids, active: .window(303)))
-    check("swipe +1 from last wraps to first",
-          wrapForward == [.selectSource(.window(101)), .haptic(.tick)])
-
-    let wrapBackward = s.send(.swipeWindowChip(direction: -1, orderedWindowIDs: ids, active: .window(101)))
-    check("swipe -1 from first wraps to last",
-          wrapBackward == [.selectSource(.window(303)), .haptic(.tick)])
-
-    let fromDesktopFwd = s.send(.swipeWindowChip(direction: 1, orderedWindowIDs: ids, active: .desktop))
-    check("swipe +1 from desktop selects first window",
-          fromDesktopFwd == [.selectSource(.window(101)), .haptic(.tick)])
-
-    let fromDesktopBack = s.send(.swipeWindowChip(direction: -1, orderedWindowIDs: ids, active: .desktop))
-    check("swipe -1 from desktop selects last window",
-          fromDesktopBack == [.selectSource(.window(303)), .haptic(.tick)])
-
-    let fromMissing = s.send(.swipeWindowChip(direction: 1, orderedWindowIDs: ids, active: .window(999)))
-    check("swipe +1 from unknown window ID selects first window",
-          fromMissing == [.selectSource(.window(101)), .haptic(.tick)])
-
-    let singleSame = s.send(.swipeWindowChip(direction: 1, orderedWindowIDs: [101], active: .window(101)))
-    check("swipe on single already-active window warns without selecting",
-          singleSame == [.haptic(.warning)])
-
-    let singleFromNone = s.send(.swipeWindowChip(direction: 1, orderedWindowIDs: [101], active: .none))
-    check("swipe on single window from .none selects it",
-          singleFromNone == [.selectSource(.window(101)), .haptic(.tick)])
-
-    let emptyList = s.send(.swipeWindowChip(direction: 1, orderedWindowIDs: [], active: .none))
-    check("swipe on empty window list warns", emptyList == [.haptic(.warning)])
-
-    let zeroDir = s.send(.swipeWindowChip(direction: 0, orderedWindowIDs: ids, active: .window(101)))
-    check("swipe with direction 0 is no-op", zeroDir.isEmpty)
-}
-
-// MARK: - 5. Viewport stability when deck opens/closes
-
-do {
-    var s = StreamWorkspaceState(form: .phonePortrait)
-    let focusSize = WorkspaceSize(width: 402, height: 730)
-
-    let badSize = s.send(.focusCanvasMeasured(WorkspaceSize(width: 0, height: 730)))
+    let badSize = s.send(.focusCanvasMeasured(WorkspaceSize(width: 0, height: 874)))
     check("zero-width focusCanvasMeasured is ignored",
           badSize.isEmpty && s.committedCanvasSize == WorkspaceSize(width: 0, height: 0))
 
@@ -287,49 +157,31 @@ do {
     let sameFX = s.send(.focusCanvasMeasured(focusSize))
     check("identical focusCanvasMeasured is no-op", sameFX.isEmpty)
 
-    // Mid-drag deck never commits viewport, while settled deck open/close refits the visible canvas
+    // Mid-drag deck never commits viewport, while settled open/close refits visible canvas
     let dragFX = s.send(.deckDragChanged(progress: 0.5))
-    let shrunkDuringDrag = s.send(.focusCanvasMeasured(WorkspaceSize(width: 402, height: 420)))
+    let shrunkDuringDrag = s.send(.focusCanvasMeasured(WorkspaceSize(width: 402, height: 480)))
     check("viewport stays locked mid-drag so deck gesture never thrashes Mac",
           s.committedCanvasSize == focusSize && dragFX.isEmpty && shrunkDuringDrag.isEmpty)
 
-    _ = s.send(.setPhoneDeck(open: true))
-    let deckVisible = WorkspaceSize(width: 402, height: 410)
+    _ = s.send(.setTrackpad(open: true))
+    let deckVisible = WorkspaceSize(width: 402, height: 490)
     let deckFitFX = s.send(.focusCanvasMeasured(deckVisible))
-    check("settled open deck commits visible canvas size to eliminate pillarboxing",
+    check("settled open deck commits visible canvas size",
           s.committedCanvasSize == deckVisible
             && deckFitFX == [.commitViewport(deckVisible, reason: .formOrSizeChanged)])
 
-    _ = s.send(.setPhoneDeck(open: false))
+    _ = s.send(.setTrackpad(open: false))
     let focusRestoreFX = s.send(.focusCanvasMeasured(focusSize))
-    check("stowing deck restores Focus canvas viewport",
+    check("closing deck restores full-bleed canvas viewport",
           s.committedCanvasSize == focusSize
             && focusRestoreFX == [.commitViewport(focusSize, reason: .formOrSizeChanged)])
 
-    // Keyboard up also refits settled visible canvas so window fills width above keycap bar
-    _ = s.send(.tapKeyboardButton)
-    let kbVisible = WorkspaceSize(width: 402, height: 390)
-    let kbFitFX = s.send(.focusCanvasMeasured(kbVisible))
-    check("settled keyboard commits visible canvas size above keycap bar",
-          s.committedCanvasSize == kbVisible
-            && kbFitFX == [.commitViewport(kbVisible, reason: .formOrSizeChanged)])
-    _ = s.send(.tapKeyboardButton)
-    _ = s.send(.focusCanvasMeasured(focusSize))
-
-    // Real resize in Focus commits .formOrSizeChanged
-    let resized = WorkspaceSize(width: 440, height: 810)
-    let resizeFX = s.send(.focusCanvasMeasured(resized))
-    check("real resize in focus commits .formOrSizeChanged",
-          s.committedCanvasSize == resized
-            && resizeFX == [.commitViewport(resized, reason: .formOrSizeChanged)])
-
-    // Form switch + same-size measure still commits .formOrSizeChanged
-    _ = s.send(.setForm(.padFullCanvas))
+    // Real resize (e.g. rotation / iPad Split View) commits .formOrSizeChanged
     let padSize = WorkspaceSize(width: 1112, height: 834)
-    let padMeasureFX = s.send(.focusCanvasMeasured(padSize))
-    check("focusCanvasMeasured after setForm commits .formOrSizeChanged",
+    let resizeFX = s.send(.focusCanvasMeasured(padSize))
+    check("real resize commits .formOrSizeChanged",
           s.committedCanvasSize == padSize
-            && padMeasureFX == [.commitViewport(padSize, reason: .formOrSizeChanged)])
+            && resizeFX == [.commitViewport(padSize, reason: .formOrSizeChanged)])
 
     // Text scale commit
     let textFX = s.send(.textScaleCommitted)
@@ -338,140 +190,123 @@ do {
             && textFX.contains(.haptic(.detent)))
 }
 
-// MARK: - 6. PencilKit-style 4-edge docking, 4-corner minimization & velocity snap
+// MARK: - 5. Universal PencilKit 4-edge docking, 4-corner minimization & velocity snap
 
 do {
-    var pad = StreamWorkspaceState(form: .padFullCanvas)
+    var ws = StreamWorkspaceState()
     check("initial capsule is expanded at bottom (clears Mac toolbars like PencilKit)",
-          pad.capsule == .expanded(edge: .bottom) && !pad.capsule.isMinimized && !pad.capsule.isTucked
-            && pad.capsule.edge == .bottom && pad.capsule.corner == nil)
+          ws.capsule == .expanded(edge: .bottom) && !ws.capsule.isMinimized && !ws.capsule.isTucked
+            && ws.capsule.edge == .bottom && ws.capsule.corner == nil)
 
-    let tuckFX = pad.send(.toggleCapsuleTuck)
+    let tuckFX = ws.send(.toggleCapsuleTuck)
     check("toggleCapsuleTuck minimizes bottom capsule to bottomTrailing orb",
-          pad.capsule == .minimized(corner: .bottomTrailing, returnEdge: .bottom)
-            && pad.capsule.isMinimized && pad.capsule.isTucked
-            && pad.capsule.corner == .bottomTrailing && pad.capsule.edge == .bottom
+          ws.capsule == .minimized(corner: .bottomTrailing, returnEdge: .bottom)
+            && ws.capsule.isMinimized && ws.capsule.isTucked
+            && ws.capsule.corner == .bottomTrailing && ws.capsule.edge == .bottom
             && tuckFX == [.haptic(.detent)])
 
-    let edgeFX = pad.send(.setCapsuleEdge(.top))
+    let edgeFX = ws.send(.setCapsuleEdge(.top))
     check("setCapsuleEdge(.top) while minimized preserves corner and updates returnEdge",
-          pad.capsule == .minimized(corner: .bottomTrailing, returnEdge: .top)
-            && pad.capsule.isMinimized && pad.capsule.edge == .top
+          ws.capsule == .minimized(corner: .bottomTrailing, returnEdge: .top)
+            && ws.capsule.isMinimized && ws.capsule.edge == .top
             && edgeFX == [.haptic(.detent)])
 
-    let edgeNoop = pad.send(.setCapsuleEdge(.top))
+    let edgeNoop = ws.send(.setCapsuleEdge(.top))
     check("setCapsuleEdge to same edge is no-op", edgeNoop.isEmpty)
 
-    let untuckFX = pad.send(.toggleCapsuleTuck)
+    let untuckFX = ws.send(.toggleCapsuleTuck)
     check("toggleCapsuleTuck expands back to returnEdge (.top)",
-          pad.capsule == .expanded(edge: .top) && !pad.capsule.isMinimized && untuckFX == [.haptic(.detent)])
+          ws.capsule == .expanded(edge: .top) && !ws.capsule.isMinimized && untuckFX == [.haptic(.detent)])
 
-    // 4-edge velocity-projected snapping
-    let snapLeading = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.08, y: 0.50)))
+    let snapLeading = ws.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.08, y: 0.50)))
     check("snap to mid-left docks vertical capsule at .leading",
-          pad.capsule == .expanded(edge: .leading) && pad.capsule.edge.isVertical
+          ws.capsule == .expanded(edge: .leading) && ws.capsule.edge.isVertical
             && snapLeading == [.haptic(.detent)])
 
-    let snapTrailing = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.92, y: 0.50)))
+    let snapTrailing = ws.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.92, y: 0.50)))
     check("snap to mid-right docks vertical capsule at .trailing",
-          pad.capsule == .expanded(edge: .trailing) && pad.capsule.edge.isVertical
+          ws.capsule == .expanded(edge: .trailing) && ws.capsule.edge.isVertical
             && snapTrailing == [.haptic(.detent)])
 
-    // Dragging from .trailing into bottom-trailing corner remembers adjacent .trailing returnEdge
-    let snapBRFromTrailing = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.92, y: 0.90)))
+    let snapBRFromTrailing = ws.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.92, y: 0.90)))
     check("snap from .trailing into bottomTrailing corner remembers adjacent .trailing returnEdge",
-          pad.capsule == .minimized(corner: .bottomTrailing, returnEdge: .trailing)
+          ws.capsule == .minimized(corner: .bottomTrailing, returnEdge: .trailing)
             && snapBRFromTrailing == [.haptic(.detent)])
 
-    // Dragging minimized orb across to top-leading corner switches corner and picks adjacent horizontal .top returnEdge
-    let snapTL = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.05, y: 0.08)))
+    let snapTL = ws.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.05, y: 0.08)))
     check("snap orb to topLeading corner sets non-adjacent returnEdge to .top",
-          pad.capsule == .minimized(corner: .topLeading, returnEdge: .top)
+          ws.capsule == .minimized(corner: .topLeading, returnEdge: .top)
             && snapTL == [.haptic(.detent)])
 
-    // Tapping minimized orb expands along returnEdge (.top)
-    let expandOrb = pad.send(.expandCapsule())
+    let expandOrb = ws.send(.expandCapsule())
     check("expandCapsule() from topLeading orb expands onto .top",
-          pad.capsule == .expanded(edge: .top) && expandOrb == [.haptic(.detent)])
+          ws.capsule == .expanded(edge: .top) && expandOrb == [.haptic(.detent)])
 
-    // Dragging from .top into bottom-left corner minimizes to bottomLeading with .bottom returnEdge
-    let snapBL = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.10, y: 0.92)))
+    let snapBL = ws.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.10, y: 0.92)))
     check("snap to bottomLeading corner minimizes cleanly",
-          pad.capsule == .minimized(corner: .bottomLeading, returnEdge: .bottom)
+          ws.capsule == .minimized(corner: .bottomLeading, returnEdge: .bottom)
             && snapBL == [.haptic(.detent)])
 
-    // Dragging minimized orb straight onto bottom edge expands directly onto .bottom
-    let snapBottom = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.50, y: 0.92)))
+    let snapBottom = ws.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.50, y: 0.92)))
     check("snap minimized orb to bottom center expands onto .bottom",
-          pad.capsule == .expanded(edge: .bottom) && snapBottom == [.haptic(.detent)])
+          ws.capsule == .expanded(edge: .bottom) && snapBottom == [.haptic(.detent)])
 
-    // Dropping in exact center preserves current edge without haptic churn
-    let snapCenter = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.50, y: 0.50)))
+    let snapCenter = ws.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.50, y: 0.50)))
     check("snap at exact center (0.5, 0.5) keeps current edge as no-op",
-          pad.capsule == .expanded(edge: .bottom) && snapCenter.isEmpty)
+          ws.capsule == .expanded(edge: .bottom) && snapCenter.isEmpty)
 
-    // NaN snap ignored safely
-    let snapNaN = pad.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: .nan, y: 0.5)))
+    let snapNaN = ws.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: .nan, y: 0.5)))
     check("snapCapsule ignores NaN coordinates",
-          pad.capsule == .expanded(edge: .bottom) && snapNaN.isEmpty)
+          ws.capsule == .expanded(edge: .bottom) && snapNaN.isEmpty)
 
-    // Direct minimizeCapsule(corner:)
-    let minTR = pad.send(.minimizeCapsule(corner: .topTrailing))
+    let minTR = ws.send(.minimizeCapsule(corner: .topTrailing))
     check("minimizeCapsule(.topTrailing) collapses to topTrailing orb",
-          pad.capsule == .minimized(corner: .topTrailing, returnEdge: .top) && minTR == [.haptic(.detent)])
-
-    var phone = StreamWorkspaceState(form: .phonePortrait)
-    check("phonePortrait ignores capsule tuck, edge, snap, expand, and minimize actions",
-          phone.send(.toggleCapsuleTuck).isEmpty
-            && phone.send(.setCapsuleEdge(.bottom)).isEmpty
-            && phone.send(.snapCapsule(normalizedProjectedPoint: WorkspacePoint(x: 0.1, y: 0.1))).isEmpty
-            && phone.send(.expandCapsule(edge: .top)).isEmpty
-            && phone.send(.minimizeCapsule(corner: .bottomTrailing)).isEmpty)
+          ws.capsule == .minimized(corner: .topTrailing, returnEdge: .top) && minTR == [.haptic(.detent)])
 }
 
-// MARK: - 7. Floating pad visibility & anchor clamping
+// MARK: - 6. Floating trackpad visibility & anchor clamping
 
 do {
-    var pad = StreamWorkspaceState(form: .padFullCanvas)
+    var ws = StreamWorkspaceState()
     check("floatingPad defaults hidden at (0.78, 0.72)",
-          !pad.floatingPad.isVisible && pad.floatingPad.anchor == WorkspacePoint(x: 0.78, y: 0.72))
+          !ws.floatingPad.isVisible && ws.floatingPad.anchor == WorkspacePoint(x: 0.78, y: 0.72))
 
-    let showFX = pad.send(.toggleFloatingPad)
+    let showFX = ws.send(.toggleFloatingPad)
     check("toggleFloatingPad shows pad and emits pointer trackpad visible",
-          pad.floatingPad.isVisible && pad.pointerTrackpadActive
+          ws.floatingPad.isVisible && ws.pointerTrackpadActive
             && showFX.contains(.setPointerTrackpadVisible(true))
             && showFX.contains(.haptic(.detent)))
 
-    _ = pad.send(.moveFloatingPad(anchor: WorkspacePoint(x: -1.0, y: 2.5)))
+    _ = ws.send(.moveFloatingPad(anchor: WorkspacePoint(x: -1.0, y: 2.5)))
     check("moveFloatingPad clamps out-of-bounds coordinates inside safe normalized bounds",
-          pad.floatingPad.anchor.x == StreamWorkspaceState.floatingPadAnchorXBounds.lowerBound
-            && pad.floatingPad.anchor.y == StreamWorkspaceState.floatingPadAnchorYBounds.upperBound)
+          ws.floatingPad.anchor.x == StreamWorkspaceState.floatingPadAnchorXBounds.lowerBound
+            && ws.floatingPad.anchor.y == StreamWorkspaceState.floatingPadAnchorYBounds.upperBound)
 
-    _ = pad.send(.moveFloatingPad(anchor: WorkspacePoint(x: 0.35, y: 0.45)))
+    _ = ws.send(.moveFloatingPad(anchor: WorkspacePoint(x: 0.35, y: 0.45)))
     check("moveFloatingPad accepts valid in-bounds coordinates",
-          pad.floatingPad.anchor == WorkspacePoint(x: 0.35, y: 0.45))
+          ws.floatingPad.anchor == WorkspacePoint(x: 0.35, y: 0.45))
 
-    _ = pad.send(.moveFloatingPad(anchor: WorkspacePoint(x: .nan, y: 0.5)))
+    _ = ws.send(.moveFloatingPad(anchor: WorkspacePoint(x: .nan, y: 0.5)))
     check("moveFloatingPad ignores NaN coordinates",
-          pad.floatingPad.anchor == WorkspacePoint(x: 0.35, y: 0.45))
+          ws.floatingPad.anchor == WorkspacePoint(x: 0.35, y: 0.45))
 
-    let hideFX = pad.send(.toggleFloatingPad)
+    let hideFX = ws.send(.toggleFloatingPad)
     check("toggleFloatingPad hides pad and disables pointer trackpad",
-          !pad.floatingPad.isVisible && !pad.pointerTrackpadActive
+          !ws.floatingPad.isVisible && !ws.pointerTrackpadActive
             && hideFX.contains(.setPointerTrackpadVisible(false)))
 }
 
-// MARK: - 8. Full-screen hide/show
+// MARK: - 7. Full-screen hide/show
 
 do {
-    var s = StreamWorkspaceState(form: .phonePortrait)
-    let size = WorkspaceSize(width: 402, height: 730)
+    var s = StreamWorkspaceState()
+    let size = WorkspaceSize(width: 402, height: 874)
     _ = s.send(.focusCanvasMeasured(size))
     _ = s.send(.systemKeyboardChanged(personOwnUp: true))
 
     let hideFX = s.send(.setFullScreenHidden(true))
-    check("setFullScreenHidden(true) hides dock, deck, accessory and commits .chromeToggled",
-          s.fullScreenHidden && !s.showsPhoneDock && !s.showsPhoneDeck && !s.showsKeyboardAccessory
+    check("setFullScreenHidden(true) hides capsule and accessory and commits .chromeToggled",
+          s.fullScreenHidden && !s.showsFloatingCapsule && !s.showsKeyboardAccessory
             && hideFX.contains(.commitViewport(size, reason: .chromeToggled))
             && hideFX.contains(.haptic(.detent)))
 
@@ -479,21 +314,15 @@ do {
     check("setFullScreenHidden(true) again is no-op", dupHide.isEmpty)
 
     let showFX = s.send(.setFullScreenHidden(false))
-    check("setFullScreenHidden(false) restores visibility and commits .chromeToggled",
-          !s.fullScreenHidden && s.showsKeyboardAccessory
+    check("setFullScreenHidden(false) restores capsule and accessory and commits .chromeToggled",
+          !s.fullScreenHidden && s.showsFloatingCapsule && s.showsKeyboardAccessory
             && showFX.contains(.commitViewport(size, reason: .chromeToggled)))
-
-    var pad = StreamWorkspaceState(form: .padFullCanvas)
-    _ = pad.send(.setFullScreenHidden(true))
-    check("padFullCanvas hides floating capsule when fullScreenHidden", !pad.showsFloatingCapsule)
-    _ = pad.send(.setFullScreenHidden(false))
-    check("padFullCanvas restores floating capsule when unhidden", pad.showsFloatingCapsule)
 }
 
-// MARK: - 9. Keyboard takers derivation & Control Center routes
+// MARK: - 8. Keyboard takers derivation & Control Center routes
 
 do {
-    var s = StreamWorkspaceState(form: .padFullCanvas)
+    var s = StreamWorkspaceState()
     check("takers empty for .none", s.keyboardTakers == [])
 
     let fx1 = s.send(.openModal(.switcher()))
@@ -543,10 +372,10 @@ do {
           finalClose.contains(.setKeyboard(shown: true)) && !s.restoreKeyboardAfterModal)
 }
 
-// MARK: - 10. Scene deactivation
+// MARK: - 9. Scene deactivation
 
 do {
-    var s = StreamWorkspaceState(form: .phonePortrait)
+    var s = StreamWorkspaceState()
     _ = s.send(.deckDragChanged(progress: 0.42))
     let fx = s.send(.sceneDeactivated)
     check("sceneDeactivated releases held keys, clears latched modifiers, and settles drag progress",

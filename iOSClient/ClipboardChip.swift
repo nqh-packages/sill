@@ -64,27 +64,23 @@ struct ClipboardChip: View {
         .padding(.leading, 14)
         .padding(.trailing, 6)
         .padding(.vertical, 6)
-        .background(Capsule(style: .continuous).fill(Palette.bar))
-        .overlay(Capsule(style: .continuous).strokeBorder(Color.white.opacity(0.10), lineWidth: 1))
-        .shadow(color: .black.opacity(0.45), radius: 16, x: 0, y: 8)
+        .tactileSurface(.floatingChrome, shape: .capsule)
         .accessibilityElement(children: .contain)
     }
 
     private func noteView(_ note: ClipboardNote) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Image(systemName: note.warning ? "exclamationmark.triangle.fill" : "checkmark.circle.fill")
-                .foregroundStyle(note.warning ? Color.orange : Palette.accent)
+            Image(systemName: note.warning ? "exclamationmark.triangle.fill" : "checkmark")
+                .foregroundStyle(note.warning ? TactileTokens.ledAmber : TactileTokens.ledCyan)
                 .accessibilityHidden(true)
             Text(note.text)
-                .foregroundStyle(Palette.text)
+                .foregroundStyle(TactileTokens.textPrimary)
                 .fixedSize(horizontal: false, vertical: true)
         }
         .font(.footnote)
         .padding(.horizontal, 14)
         .padding(.vertical, 9)
-        .background(Capsule(style: .continuous).fill(Palette.bar))
-        .overlay(Capsule(style: .continuous).strokeBorder(Color.white.opacity(0.10), lineWidth: 1))
-        .shadow(color: .black.opacity(0.45), radius: 16, x: 0, y: 8)
+        .tactileSurface(.floatingChrome, shape: .capsule)
         .allowsHitTesting(false)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(note.spoken)

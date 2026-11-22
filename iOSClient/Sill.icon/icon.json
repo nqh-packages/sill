@@ -1,0 +1,265 @@
+{
+  "color-space-for-untagged-svg-colors": "display-p3",
+  "features": [
+    "refractivity",
+    "specular-location"
+  ],
+  "fill-specializations": [
+    {
+      "value": {
+        "linear-gradient": [
+          "display-p3:0.94000,0.95200,0.97200,1.00000",
+          "display-p3:0.80500,0.83500,0.88200,1.00000"
+        ],
+        "orientation": {
+          "start": {
+            "x": 0.25,
+            "y": 0.0
+          },
+          "stop": {
+            "x": 0.75,
+            "y": 1.0
+          }
+        }
+      }
+    },
+    {
+      "appearance": "dark",
+      "value": {
+        "linear-gradient": [
+          "display-p3:0.12000,0.12600,0.14200,1.00000",
+          "display-p3:0.03500,0.03800,0.04500,1.00000"
+        ],
+        "orientation": {
+          "start": {
+            "x": 0.25,
+            "y": 0.0
+          },
+          "stop": {
+            "x": 0.75,
+            "y": 1.0
+          }
+        }
+      }
+    },
+    {
+      "appearance": "tinted",
+      "value": "system-dark"
+    }
+  ],
+  "groups": [
+    {
+      "layers": [
+        {
+          "fill-specializations": [
+            {
+              "value": {
+                "solid": "display-p3:0.98500,0.99200,1.00000,0.96000"
+              }
+            },
+            {
+              "appearance": "dark",
+              "value": {
+                "solid": "display-p3:0.97000,0.98500,1.00000,0.96000"
+              }
+            },
+            {
+              "appearance": "tinted",
+              "value": {
+                "solid": "extended-gray:1.00000,0.95000"
+              }
+            }
+          ],
+          "glass": false,
+          "image-name": "window-glyph.svg",
+          "name": "Window Glyphs"
+        }
+      ],
+      "lighting": "individual",
+      "name": "Window Glyphs",
+      "shadow": {
+        "kind": "neutral",
+        "opacity": 0.18
+      },
+      "specular": false
+    },
+    {
+      "blur-material": 0.3,
+      "layers": [
+        {
+          "fill-specializations": [
+            {
+              "value": {
+                "linear-gradient": [
+                  "display-p3:0.18000,0.70000,1.00000,0.90000",
+                  "display-p3:0.03500,0.45500,0.97000,0.94000"
+                ],
+                "orientation": {
+                  "start": {
+                    "x": 0.0,
+                    "y": 0.0
+                  },
+                  "stop": {
+                    "x": 1.0,
+                    "y": 1.0
+                  }
+                }
+              }
+            },
+            {
+              "appearance": "dark",
+              "value": {
+                "linear-gradient": [
+                  "display-p3:0.22000,0.74000,1.00000,0.86000",
+                  "display-p3:0.05500,0.48000,0.98500,0.90000"
+                ],
+                "orientation": {
+                  "start": {
+                    "x": 0.0,
+                    "y": 0.0
+                  },
+                  "stop": {
+                    "x": 1.0,
+                    "y": 1.0
+                  }
+                }
+              }
+            },
+            {
+              "appearance": "tinted",
+              "value": {
+                "linear-gradient": [
+                  "extended-gray:0.92000,0.82000",
+                  "extended-gray:0.65000,0.88000"
+                ]
+              }
+            }
+          ],
+          "glass": true,
+          "image-name": "glass-pane.svg",
+          "name": "Glass Window Pane"
+        }
+      ],
+      "lighting": "individual",
+      "name": "Floating Liquid Glass Window",
+      "refractivity": {
+        "depth": 0.44,
+        "enabled": true,
+        "strength": 0.34
+      },
+      "shadow-specializations": [
+        {
+          "value": {
+            "kind": "layer-color",
+            "opacity": 0.38
+          }
+        },
+        {
+          "appearance": "dark",
+          "value": {
+            "kind": "neutral",
+            "opacity": 0.62
+          }
+        },
+        {
+          "appearance": "tinted",
+          "value": {
+            "kind": "neutral",
+            "opacity": 0.48
+          }
+        }
+      ],
+      "specular": true,
+      "specular-highlight-placement": "outside",
+      "translucency-specializations": [
+        {
+          "value": {
+            "enabled": true,
+            "value": 0.56
+          }
+        },
+        {
+          "appearance": "dark",
+          "value": {
+            "enabled": true,
+            "value": 0.6
+          }
+        },
+        {
+          "appearance": "tinted",
+          "value": {
+            "enabled": true,
+            "value": 0.62
+          }
+        }
+      ]
+    },
+    {
+      "blur-material": 0.25,
+      "layers": [
+        {
+          "fill-specializations": [
+            {
+              "value": {
+                "linear-gradient": [
+                  "display-p3:0.17500,0.18800,0.21500,1.00000",
+                  "display-p3:0.09500,0.10400,0.12500,1.00000"
+                ]
+              }
+            },
+            {
+              "appearance": "dark",
+              "value": {
+                "linear-gradient": [
+                  "display-p3:0.25500,0.26800,0.30000,1.00000",
+                  "display-p3:0.14800,0.15800,0.18000,1.00000"
+                ]
+              }
+            },
+            {
+              "appearance": "tinted",
+              "value": {
+                "solid": "extended-gray:0.28000,1.00000"
+              }
+            }
+          ],
+          "glass": false,
+          "image-name": "portal-frame.svg",
+          "name": "Machined Portal Frame"
+        }
+      ],
+      "lighting": "individual",
+      "name": "Back Machined Mac Frame",
+      "shadow-specializations": [
+        {
+          "value": {
+            "kind": "neutral",
+            "opacity": 0.34
+          }
+        },
+        {
+          "appearance": "dark",
+          "value": {
+            "kind": "neutral",
+            "opacity": 0.58
+          }
+        },
+        {
+          "appearance": "tinted",
+          "value": {
+            "kind": "neutral",
+            "opacity": 0.44
+          }
+        }
+      ],
+      "specular": true,
+      "translucency": {
+        "enabled": false,
+        "value": 0.0
+      }
+    }
+  ],
+  "supported-platforms": {
+    "squares": "shared"
+  }
+}

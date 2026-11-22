@@ -21,3 +21,7 @@ design/reel/
 
 # Python's bytecode caches (Tests/checks/module.py, which its checks' mutants.py import).
 __pycache__/
+
+# Verification evidence, state gallery renders, and bug-bash output (.agents/skills/verify-sill).
+.e2e/
+.maestro/results/

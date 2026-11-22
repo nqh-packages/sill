@@ -18,27 +18,6 @@ public struct WorkspaceSize: Equatable, Hashable, Sendable {
     }
 }
 
-public enum WorkspaceForm: Equatable, Hashable, Sendable {
-    case phonePortrait
-    case phoneLandscape
-    case padFullCanvas
-    case duoBook
-    case duoLaptop
-
-    public var usesPhoneDock: Bool {
-        self == .phonePortrait
-    }
-
-    public var usesFloatingCapsule: Bool {
-        switch self {
-        case .phoneLandscape, .padFullCanvas, .duoBook:
-            return true
-        case .phonePortrait, .duoLaptop:
-            return false
-        }
-    }
-}
-
 public enum WorkspaceSource: Equatable, Hashable, Sendable {
     case none
     case desktop
@@ -57,26 +36,6 @@ public enum WorkspaceModal: Equatable, Hashable, Sendable {
     case menusPullDown
     case pairingOverlay
     case tour
-}
-
-public enum PhoneDockMode: Equatable, Hashable, Sendable {
-    public enum ReturnTarget: Equatable, Hashable, Sendable {
-        case focus
-        case controlDeck
-    }
-
-    case focus
-    case controlDeck
-    case keyboard(returnTo: ReturnTarget)
-
-    public var isKeyboardRequested: Bool {
-        if case .keyboard = self { return true }
-        return false
-    }
-
-    public var isDeckVisible: Bool {
-        self == .controlDeck
-    }
 }
 
 public enum CapsuleEdge: Equatable, Hashable, Sendable {
@@ -196,10 +155,11 @@ public struct StreamWorkspaceState: Equatable, Sendable {
     public static let floatingPadAnchorYBounds: ClosedRange<Double> = 0.10...0.90
     public static let capsuleCornerZoneX: Double = 0.20
     public static let capsuleCornerZoneY: Double = 0.22
+    /// Width threshold below which the trackpad docks as a bottom-anchored Control Deck
+    /// matching the software keyboard footprint instead of floating as a 320×260 card.
+    public static let compactTrackpadMaxWidth: Double = 600.0
 
-    public private(set) var form: WorkspaceForm
     public private(set) var modal: WorkspaceModal = .none
-    public private(set) var phoneDock: PhoneDockMode = .focus
     public private(set) var capsule: CapsuleVisibility = .expanded(edge: .bottom)
     public private(set) var floatingPad: FloatingPadState = FloatingPadState()
     public private(set) var restoreKeyboardAfterModal: Bool = false
@@ -209,10 +169,7 @@ public struct StreamWorkspaceState: Equatable, Sendable {
     public private(set) var deckDragProgress: Double = 0
     public private(set) var fullScreenHidden: Bool = false
 
-    private var pendingFormViewportCommit: Bool = false
-
-    public init(form: WorkspaceForm, hardwareKeyboardAttached: Bool = false) {
-        self.form = form
+    public init(hardwareKeyboardAttached: Bool = false) {
         self.hardwareKeyboardAttached = hardwareKeyboardAttached
     }
 
@@ -239,20 +196,11 @@ public struct StreamWorkspaceState: Equatable, Sendable {
     }
 
     public var pointerTrackpadActive: Bool {
-        (form.usesPhoneDock && phoneDock == .controlDeck)
-            || (form.usesFloatingCapsule && floatingPad.isVisible)
-    }
-
-    public var showsPhoneDock: Bool {
-        form.usesPhoneDock && !fullScreenHidden && phoneDock == .focus
-    }
-
-    public var showsPhoneDeck: Bool {
-        form.usesPhoneDock && !fullScreenHidden && phoneDock == .controlDeck
+        floatingPad.isVisible
     }
 
     public var showsFloatingCapsule: Bool {
-        form.usesFloatingCapsule && !fullScreenHidden
+        !fullScreenHidden
     }
 
     public var showsKeyboardAccessory: Bool {
@@ -260,16 +208,16 @@ public struct StreamWorkspaceState: Equatable, Sendable {
     }
 
     public enum Action: Equatable, Sendable {
-        case setForm(WorkspaceForm)
         case setHardwareKeyboardAttached(Bool)
         case focusCanvasMeasured(WorkspaceSize)
         case deckDragChanged(progress: Double)
         case deckDragEnded(progress: Double, velocityY: Double)
-        case setPhoneDeck(open: Bool)
+        case setTrackpad(open: Bool)
+        case toggleFloatingPad
+        case moveFloatingPad(anchor: WorkspacePoint)
         case tapKeyboardButton
         case dismissKeyboardRequested
         case systemKeyboardChanged(personOwnUp: Bool)
-        case swipeWindowChip(direction: Int, orderedWindowIDs: [UInt32], active: WorkspaceSource)
         case openModal(WorkspaceModal)
         case closeModal(restoreKeyboard: Bool = true)
         case setControlCenterRoute(WorkspaceModal.ControlCenterRoute)
@@ -278,8 +226,6 @@ public struct StreamWorkspaceState: Equatable, Sendable {
         case snapCapsule(normalizedProjectedPoint: WorkspacePoint)
         case expandCapsule(edge: CapsuleEdge? = nil)
         case minimizeCapsule(corner: CapsuleCorner)
-        case toggleFloatingPad
-        case moveFloatingPad(anchor: WorkspacePoint)
         case setFullScreenHidden(Bool)
         case sceneDeactivated
         case textScaleCommitted
@@ -308,23 +254,6 @@ public struct StreamWorkspaceState: Equatable, Sendable {
         var effects: [Effect] = []
 
         switch action {
-        case .setForm(let newForm):
-            if newForm != form {
-                form = newForm
-                pendingFormViewportCommit = hasCommittedCanvas
-                if form.usesPhoneDock {
-                    if personKeyboardUp && modal == .none {
-                        phoneDock = .keyboard(returnTo: .focus)
-                        deckDragProgress = 0
-                    } else {
-                        deckDragProgress = phoneDock == .controlDeck ? 1 : 0
-                    }
-                } else {
-                    phoneDock = .focus
-                    deckDragProgress = 0
-                }
-            }
-
         case .setHardwareKeyboardAttached(let attached):
             hardwareKeyboardAttached = attached
 
@@ -334,27 +263,23 @@ public struct StreamWorkspaceState: Equatable, Sendable {
             }
             if !hasCommittedCanvas {
                 committedCanvasSize = size
-                pendingFormViewportCommit = false
                 effects.append(.commitViewport(size, reason: .initialCanvas))
-            } else if form.usesPhoneDock && deckDragProgress > 0 && deckDragProgress < 1 {
+            } else if deckDragProgress > 0 && deckDragProgress < 1 {
                 break
-            } else if pendingFormViewportCommit
-                || abs(size.width - committedCanvasSize.width) >= 0.5
+            } else if abs(size.width - committedCanvasSize.width) >= 0.5
                 || abs(size.height - committedCanvasSize.height) >= 0.5
             {
                 committedCanvasSize = size
-                pendingFormViewportCommit = false
                 effects.append(.commitViewport(size, reason: .formOrSizeChanged))
             }
 
         case .deckDragChanged(let progress):
-            guard form.usesPhoneDock, !fullScreenHidden, modal == .none, progress.isFinite else {
+            guard !fullScreenHidden, modal == .none, progress.isFinite else {
                 break
             }
             deckDragProgress = Self.clamp(progress, to: 0...1)
 
         case .deckDragEnded(let progress, let velocityY):
-            guard form.usesPhoneDock else { break }
             let clamped = progress.isFinite ? Self.clamp(progress, to: 0...1) : deckDragProgress
             let open: Bool
             if velocityY.isFinite && velocityY <= -Self.deckFlickVelocityThreshold {
@@ -364,93 +289,41 @@ public struct StreamWorkspaceState: Equatable, Sendable {
             } else {
                 open = clamped >= Self.deckOpenProgressThreshold
             }
-            applyPhoneDeck(open: open, effects: &effects)
+            applyTrackpad(open: open, effects: &effects)
 
-        case .setPhoneDeck(let open):
-            guard form.usesPhoneDock else { break }
-            applyPhoneDeck(open: open, effects: &effects)
+        case .setTrackpad(let open):
+            applyTrackpad(open: open, effects: &effects)
+
+        case .toggleFloatingPad:
+            applyTrackpad(open: !floatingPad.isVisible, effects: &effects)
+
+        case .moveFloatingPad(let anchor):
+            guard anchor.x.isFinite, anchor.y.isFinite else { break }
+            floatingPad.anchor = WorkspacePoint(
+                x: Self.clamp(anchor.x, to: Self.floatingPadAnchorXBounds),
+                y: Self.clamp(anchor.y, to: Self.floatingPadAnchorYBounds)
+            )
 
         case .tapKeyboardButton:
-            if form.usesPhoneDock {
-                switch phoneDock {
-                case .focus:
-                    if personKeyboardUp {
-                        effects.append(.setKeyboard(shown: false))
-                    } else {
-                        phoneDock = .keyboard(returnTo: .focus)
-                        deckDragProgress = 0
-                        effects.append(.setKeyboard(shown: true))
-                    }
-                    effects.append(.haptic(.tick))
-                case .controlDeck:
-                    phoneDock = .keyboard(returnTo: .controlDeck)
-                    deckDragProgress = 0
-                    effects.append(.setKeyboard(shown: true))
-                    effects.append(.haptic(.tick))
-                case .keyboard(let returnTo):
-                    restorePhoneDock(to: returnTo)
-                    effects.append(.setKeyboard(shown: false))
-                    effects.append(.haptic(.tick))
-                }
+            if personKeyboardUp {
+                effects.append(.setKeyboard(shown: false))
             } else {
+                if floatingPad.isVisible {
+                    floatingPad.isVisible = false
+                    deckDragProgress = 0
+                }
                 effects.append(.toggleKeyboard)
-                effects.append(.haptic(.tick))
             }
+            effects.append(.haptic(.tick))
 
         case .dismissKeyboardRequested:
-            if form.usesPhoneDock {
-                switch phoneDock {
-                case .keyboard(let returnTo):
-                    restorePhoneDock(to: returnTo)
-                    effects.append(.setKeyboard(shown: false))
-                    effects.append(.haptic(.tick))
-                case .focus, .controlDeck:
-                    if personKeyboardUp {
-                        effects.append(.setKeyboard(shown: false))
-                        effects.append(.haptic(.tick))
-                    }
-                }
-            } else if personKeyboardUp {
+            if personKeyboardUp {
                 effects.append(.setKeyboard(shown: false))
                 effects.append(.haptic(.tick))
             }
 
         case .systemKeyboardChanged(let personOwnUp):
-            let wasUp = personKeyboardUp
             personKeyboardUp = personOwnUp
-            if form.usesPhoneDock && modal == .none {
-                if personOwnUp {
-                    if !phoneDock.isKeyboardRequested {
-                        let target: PhoneDockMode.ReturnTarget = (phoneDock == .controlDeck) ? .controlDeck : .focus
-                        phoneDock = .keyboard(returnTo: target)
-                        deckDragProgress = 0
-                    }
-                } else if wasUp, case .keyboard(let returnTo) = phoneDock {
-                    restorePhoneDock(to: returnTo)
-                }
-            }
-
-        case .swipeWindowChip(let direction, let orderedWindowIDs, let active):
-            guard direction != 0 else { break }
-            guard !orderedWindowIDs.isEmpty else {
-                effects.append(.haptic(.warning))
-                break
-            }
-            let step = direction > 0 ? 1 : -1
-            if case .window(let activeID) = active, let index = orderedWindowIDs.firstIndex(of: activeID) {
-                guard orderedWindowIDs.count > 1 else {
-                    effects.append(.haptic(.warning))
-                    break
-                }
-                let count = orderedWindowIDs.count
-                let nextIndex = ((index + step) % count + count) % count
-                effects.append(.selectSource(.window(orderedWindowIDs[nextIndex])))
-                effects.append(.haptic(.tick))
-            } else {
-                let targetID = step > 0 ? orderedWindowIDs[0] : orderedWindowIDs[orderedWindowIDs.count - 1]
-                effects.append(.selectSource(.window(targetID)))
-                effects.append(.haptic(.tick))
-            }
 
         case .openModal(let newModal):
             if newModal == .none {
@@ -458,13 +331,12 @@ public struct StreamWorkspaceState: Equatable, Sendable {
                 break
             }
             guard newModal != modal else { break }
-            let keyboardActive = personKeyboardUp || (modal == .none && form.usesPhoneDock && phoneDock.isKeyboardRequested)
             if modal == .none {
-                restoreKeyboardAfterModal = keyboardActive
-            } else if keyboardActive {
+                restoreKeyboardAfterModal = personKeyboardUp
+            } else if personKeyboardUp {
                 restoreKeyboardAfterModal = true
             }
-            if keyboardActive {
+            if personKeyboardUp {
                 effects.append(.setKeyboard(shown: false))
             }
             modal = newModal
@@ -480,7 +352,6 @@ public struct StreamWorkspaceState: Equatable, Sendable {
             effects.append(.haptic(.tick))
 
         case .toggleCapsuleTuck:
-            guard form.usesFloatingCapsule else { break }
             switch capsule {
             case .expanded(let edge):
                 capsule = .minimized(corner: edge.defaultMinimizeCorner, returnEdge: edge)
@@ -490,7 +361,7 @@ public struct StreamWorkspaceState: Equatable, Sendable {
             effects.append(.haptic(.detent))
 
         case .setCapsuleEdge(let edge):
-            guard form.usesFloatingCapsule, capsule.edge != edge else { break }
+            guard capsule.edge != edge else { break }
             switch capsule {
             case .expanded:
                 capsule = .expanded(edge: edge)
@@ -500,15 +371,13 @@ public struct StreamWorkspaceState: Equatable, Sendable {
             effects.append(.haptic(.detent))
 
         case .snapCapsule(let point):
-            guard form.usesFloatingCapsule,
-                  let target = Self.capsuleSnapTarget(for: point, currentEdge: capsule.edge) else { break }
+            guard let target = Self.capsuleSnapTarget(for: point, currentEdge: capsule.edge) else { break }
             if target != capsule {
                 capsule = target
                 effects.append(.haptic(.detent))
             }
 
         case .expandCapsule(let edge):
-            guard form.usesFloatingCapsule else { break }
             let target = CapsuleVisibility.expanded(edge: edge ?? capsule.edge)
             if target != capsule {
                 capsule = target
@@ -516,7 +385,6 @@ public struct StreamWorkspaceState: Equatable, Sendable {
             }
 
         case .minimizeCapsule(let corner):
-            guard form.usesFloatingCapsule else { break }
             let target = CapsuleVisibility.minimized(
                 corner: corner,
                 returnEdge: corner.resolvedReturnEdge(from: capsule.edge)
@@ -525,19 +393,6 @@ public struct StreamWorkspaceState: Equatable, Sendable {
                 capsule = target
                 effects.append(.haptic(.detent))
             }
-
-        case .toggleFloatingPad:
-            guard form.usesFloatingCapsule else { break }
-            floatingPad.isVisible.toggle()
-            effects.append(.haptic(.detent))
-
-        case .moveFloatingPad(let anchor):
-            guard anchor.x.isFinite, anchor.y.isFinite else { break }
-            let clamped = WorkspacePoint(
-                x: Self.clamp(anchor.x, to: Self.floatingPadAnchorXBounds),
-                y: Self.clamp(anchor.y, to: Self.floatingPadAnchorYBounds)
-            )
-            floatingPad.anchor = clamped
 
         case .setFullScreenHidden(let hidden):
             guard hidden != fullScreenHidden else { break }
@@ -548,9 +403,7 @@ public struct StreamWorkspaceState: Equatable, Sendable {
             }
 
         case .sceneDeactivated:
-            if form.usesPhoneDock {
-                deckDragProgress = phoneDock == .controlDeck ? 1 : 0
-            }
+            deckDragProgress = floatingPad.isVisible ? 1 : 0
             effects.append(.releaseHeldKeys)
             effects.append(.clearLatchedModifiers)
 
@@ -570,31 +423,19 @@ public struct StreamWorkspaceState: Equatable, Sendable {
         return effects
     }
 
-    private mutating func applyPhoneDeck(open: Bool, effects: inout [Effect]) {
-        let targetMode: PhoneDockMode = open ? .controlDeck : .focus
+    private mutating func applyTrackpad(open: Bool, effects: inout [Effect]) {
         let targetProgress: Double = open ? 1 : 0
-        if phoneDock == targetMode && deckDragProgress == targetProgress {
+        if floatingPad.isVisible == open && deckDragProgress == targetProgress {
             return
         }
-        if open && (phoneDock.isKeyboardRequested || personKeyboardUp) {
+        if open && personKeyboardUp {
             effects.append(.setKeyboard(shown: false))
         }
-        let modeChanged = phoneDock != targetMode
-        phoneDock = targetMode
+        let changed = floatingPad.isVisible != open
+        floatingPad.isVisible = open
         deckDragProgress = targetProgress
-        if modeChanged {
+        if changed {
             effects.append(.haptic(.detent))
-        }
-    }
-
-    private mutating func restorePhoneDock(to target: PhoneDockMode.ReturnTarget) {
-        switch target {
-        case .focus:
-            phoneDock = .focus
-            deckDragProgress = 0
-        case .controlDeck:
-            phoneDock = .controlDeck
-            deckDragProgress = 1
         }
     }
 
@@ -605,8 +446,6 @@ public struct StreamWorkspaceState: Equatable, Sendable {
         restoreKeyboardAfterModal = false
         if shouldRestore {
             effects.append(.setKeyboard(shown: true))
-        } else if form.usesPhoneDock, case .keyboard(let returnTo) = phoneDock {
-            restorePhoneDock(to: returnTo)
         }
     }
 

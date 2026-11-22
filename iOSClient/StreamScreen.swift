@@ -201,7 +201,6 @@ final class DeviceIdleTimer {
 struct StreamScreen: View {
     @ObservedObject var client: StreamClient
     @State private var workspace = StreamWorkspaceState(
-        form: DuoLayout.phoneArrangement ? .phonePortrait : .padFullCanvas,
         hardwareKeyboardAttached: HardwareKeyboardMonitor.shared.attached
     )
     @State private var keyboardShown = false
@@ -273,7 +272,6 @@ struct StreamScreen: View {
         self.scannerOverride = scannerOverride
 
         var initial = StreamWorkspaceState(
-            form: DuoLayout.phoneArrangement ? .phonePortrait : .padFullCanvas,
             hardwareKeyboardAttached: HardwareKeyboardMonitor.shared.attached
         )
         let debug = FullScreenDebug.current
@@ -287,11 +285,10 @@ struct StreamScreen: View {
         } else if drawerOpen {
             _ = initial.send(.openModal(.switcher(initialSearch: false)))
         }
-        if UserDefaults.standard.bool(forKey: "SillDeckOpen") {
-            _ = initial.send(.setPhoneDeck(open: true))
-        }
-        if UserDefaults.standard.bool(forKey: "SillPadTrackpad") {
-            _ = initial.send(.toggleFloatingPad)
+        if UserDefaults.standard.bool(forKey: "SillDeckOpen")
+            || UserDefaults.standard.bool(forKey: "SillPadTrackpad")
+        {
+            _ = initial.send(.setTrackpad(open: true))
         }
         _workspace = State(initialValue: initial)
         _chrome = State(initialValue: debug.startHidden ? .hidden : .shown)
@@ -310,7 +307,6 @@ struct StreamScreen: View {
             let layout: TourLayout = duo == .innerLandscape || duo == .outerLandscape ? .landscape
                 : (DuoLayout.drawsPhone(geo.size) ? .phone : .portrait)
             let posture = DuoPosture.read(geo, duoEnvironment)
-            let form = Self.workspaceForm(for: geo.size, posture: posture)
             let hidden = chromeHidden
             let insets = deviceInsets(geo)
             let room = FullScreenPolicy.room(size: geo.size, insets: insets, choice: Self.roomChoice,
@@ -385,9 +381,6 @@ struct StreamScreen: View {
             .coordinateSpace(.named(TourSpace.name))
             .onPreferenceChange(TourTargetsKey.self) { tourTargets = $0 }
             .onPreferenceChange(KeyboardToggleFrameKey.self) { keyboardToggleFrame = $0 }
-            .onChange(of: form, initial: true) { _, newForm in
-                dispatch(.setForm(newForm))
-            }
             .onChange(of: layout, initial: true) { _, now in layoutChanged(to: now) }
             .onChange(of: clipboardChipOnScreen, initial: true) { _, onScreen in
                 client.clipboardChipShown(onScreen)
@@ -441,14 +434,10 @@ struct StreamScreen: View {
                 accessoryHost = TactileKeyboardAccessoryHost(
                     latched: $latched,
                     send: { client.sendFromKeyRow($0) },
-                    onSwitchToTrackpad: DuoLayout.phoneArrangement ? {
-                        animatedDispatch(.setPhoneDeck(open: true))
-                    } : nil,
+                    onSwitchToTrackpad: {
+                        animatedDispatch(.setTrackpad(open: true))
+                    },
                     onDismiss: {
-                        // Explicit hide returns to Focus canvas when a dedicated Trackpad switch sits beside it.
-                        if workspace.form.usesPhoneDock {
-                            animatedDispatch(.setPhoneDeck(open: false))
-                        }
                         dispatch(.dismissKeyboardRequested)
                     }
                 )
@@ -485,7 +474,6 @@ struct StreamScreen: View {
             dispatch(.systemKeyboardChanged(personOwnUp: up))
         }
         .onChange(of: workspace.modal) { _, _ in client.noteAction() }
-        .onChange(of: workspace.phoneDock) { _, _ in client.noteAction() }
         .onChange(of: workspace.capsule) { _, _ in client.noteAction() }
         .onChange(of: workspace.floatingPad.isVisible) { _, _ in client.noteAction() }
         .onChange(of: textScale) { _, _ in client.noteAction() }
@@ -520,14 +508,8 @@ struct StreamScreen: View {
 
     // MARK: Workspace state machine
 
-    private static func workspaceForm(for size: CGSize, posture: DuoPosture) -> WorkspaceForm {
-        if posture.onInnerDisplay {
-            return size.width >= size.height ? .duoBook : .duoLaptop
-        }
-        if DuoLayout.phoneArrangement {
-            return size.height >= size.width ? .phonePortrait : .phoneLandscape
-        }
-        return .padFullCanvas
+    private static func usesDockedTrackpad(for size: CGSize) -> Bool {
+        size.width > 0 && Double(size.width) < StreamWorkspaceState.compactTrackpadMaxWidth
     }
 
     private static func hardwareTakers(from takers: Set<WorkspaceKeyboardTaker>) -> Set<HardwareKeyboardPolicy.Taker> {
@@ -557,9 +539,11 @@ struct StreamScreen: View {
 
     private func animatedDispatch(_ action: StreamWorkspaceState.Action) {
         switch action {
-        case .deckDragChanged, .moveFloatingPad:
+        case .deckDragChanged, .moveFloatingPad, .snapCapsule:
+            // `.snapCapsule` is wrapped by `PadFloatingCapsule.onEnded` in the same transaction as
+            // resetting `dragOffset = .zero` so offset collapse and dock travel share one spring.
             dispatch(action)
-        case .snapCapsule, .toggleCapsuleTuck, .setCapsuleEdge, .expandCapsule, .minimizeCapsule:
+        case .toggleCapsuleTuck, .setCapsuleEdge, .expandCapsule, .minimizeCapsule:
             withAnimation(TactileMotion.paletteDock(reduceMotion: reduceMotion)) {
                 dispatch(action)
             }
@@ -648,14 +632,13 @@ struct StreamScreen: View {
                               bottom: max(0, size.height - room.maxY),
                               trailing: max(0, size.width - room.maxX))
         }
-        guard workspace.form.usesPhoneDock else { return EdgeInsets() }
-        let bottomClearance = max(10, insets.bottom)
-        let dockReserve = bottomClearance + 76
+        guard Self.usesDockedTrackpad(for: size) else { return EdgeInsets() }
         let sharedReserve = phoneInputFootprint(for: size) + 6
         let progress = CGFloat(max(0, min(1, workspace.deckDragProgress)))
-        let deckBottom = dockReserve + progress * (sharedReserve - dockReserve)
+        let deckBottom = progress * sharedReserve
         let keyboardBottom: CGFloat = keyboardShown ? sharedReserve : 0
-        return EdgeInsets(top: 6, leading: 0, bottom: max(deckBottom, keyboardBottom), trailing: 0)
+        let bottom = max(deckBottom, keyboardBottom)
+        return bottom > 0 ? EdgeInsets(top: 6, leading: 0, bottom: bottom, trailing: 0) : EdgeInsets()
     }
 
     private func streamCanvas(size: CGSize, hidden: Bool, room: CGRect, insets: FullScreenPolicy.Insets) -> some View {
@@ -685,7 +668,7 @@ struct StreamScreen: View {
         .onGeometryChange(for: CGSize.self, of: { $0.size }) { measured in
             // Commit settled visible canvas dimensions (Focus, Deck open, or Keyboard up) so the Mac window
             // always fits edge-to-edge without pillarboxing, while suppressing mid-drag deck frames.
-            let isDraggingDeck = workspace.form.usesPhoneDock
+            let isDraggingDeck = Self.usesDockedTrackpad(for: size)
                 && workspace.deckDragProgress > 0 && workspace.deckDragProgress < 1
             if !isDraggingDeck {
                 dispatch(.focusCanvasMeasured(WorkspaceSize(width: Double(measured.width),
@@ -699,87 +682,99 @@ struct StreamScreen: View {
 
     @ViewBuilder
     private func workspaceChrome(size: CGSize, insets: FullScreenPolicy.Insets, preview: Bool = false) -> some View {
-        let bottomClearance = max(10, insets.bottom)
+        let dockedTrackpad = Self.usesDockedTrackpad(for: size)
+        let progress = workspace.deckDragProgress
+        let deckActive = dockedTrackpad && (!preview && (progress > 0.001 || workspace.floatingPad.isVisible))
 
-        if workspace.form.usesPhoneDock {
-            let deckHeight = phoneInputFootprint(for: size)
-            let progress = workspace.deckDragProgress
-
-            ZStack(alignment: .bottom) {
-                if workspace.showsPhoneDock {
-                    PhoneFloatingDock(client: client, state: workspace, dispatch: animatedDispatch)
-                        .padding(.horizontal, 12)
-                        .padding(.bottom, bottomClearance)
-                        .opacity(max(0, 1 - progress * 1.4))
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-
-                if !preview, progress > 0.001 || workspace.showsPhoneDeck {
-                    PhoneControlDeckView(
-                        client: client,
-                        latched: $latched,
-                        bottomInset: insets.bottom,
-                        onDragChanged: { dispatch(.deckDragChanged(progress: $0)) },
-                        onDragEnded: { p, v in
-                            withAnimation(deckMotion) {
-                                dispatch(.deckDragEnded(progress: p, velocityY: v))
-                            }
-                        },
-                        onSwitchToKeyboard: {
-                            animatedDispatch(.tapKeyboardButton)
-                        },
-                        onClose: {
-                            withAnimation(deckMotion) {
-                                dispatch(.setPhoneDeck(open: false))
-                            }
+        ZStack {
+            if !preview, dockedTrackpad, deckActive {
+                let deckHeight = phoneInputFootprint(for: size)
+                PhoneControlDeckView(
+                    client: client,
+                    latched: $latched,
+                    bottomInset: insets.bottom,
+                    onDragChanged: { dispatch(.deckDragChanged(progress: $0)) },
+                    onDragEnded: { p, v in
+                        withAnimation(deckMotion) {
+                            dispatch(.deckDragEnded(progress: p, velocityY: v))
                         }
-                    )
-                    .frame(height: deckHeight)
-                    .offset(y: (1 - progress) * (deckHeight + 16))
-                }
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-        } else if workspace.showsFloatingCapsule || workspace.form == .duoLaptop {
-            ZStack {
-                if !preview, workspace.floatingPad.isVisible, size.width > 0, size.height > 0 {
-                    let padPoint = WorkspacePoint(
-                        x: workspace.floatingPad.anchor.x * Double(size.width),
-                        y: workspace.floatingPad.anchor.y * Double(size.height)
-                    )
-                    PadFloatingTrackpadView(
-                        client: client,
-                        latched: $latched,
-                        containerSize: size,
-                        anchor: padPoint,
-                        onMoveAnchor: { pt in
-                            dispatch(.moveFloatingPad(anchor: WorkspacePoint(
-                                x: pt.x / Double(size.width),
-                                y: pt.y / Double(size.height)
-                            )))
-                        },
-                        onClose: {
-                            withAnimation(deckMotion) {
-                                dispatch(.toggleFloatingPad)
-                            }
+                    },
+                    onSwitchToKeyboard: {
+                        animatedDispatch(.tapKeyboardButton)
+                    },
+                    onClose: {
+                        withAnimation(deckMotion) {
+                            dispatch(.setTrackpad(open: false))
                         }
-                    )
-                    .transition(.scale(scale: 0.94).combined(with: .opacity))
-                }
-
-                if workspace.showsFloatingCapsule {
-                    PadFloatingCapsule(
-                        client: client,
-                        state: workspace,
-                        containerSize: size,
-                        insets: insets,
-                        textScale: $textScale,
-                        onTextScaleCommit: { dispatch(.textScaleCommitted) },
-                        dispatch: animatedDispatch
-                    )
-                }
+                    }
+                )
+                .frame(height: deckHeight)
+                .offset(y: (1 - progress) * (deckHeight + 16))
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            } else if !preview, !dockedTrackpad, workspace.floatingPad.isVisible, size.width > 0, size.height > 0 {
+                let padPoint = WorkspacePoint(
+                    x: workspace.floatingPad.anchor.x * Double(size.width),
+                    y: workspace.floatingPad.anchor.y * Double(size.height)
+                )
+                let padAvoidance = Self.floatingPadAvoidance(
+                    capsule: workspace.capsule,
+                    insets: insets,
+                    containerWidth: size.width
+                )
+                PadFloatingTrackpadView(
+                    client: client,
+                    latched: $latched,
+                    containerSize: size,
+                    anchor: padPoint,
+                    avoidanceInsets: padAvoidance,
+                    onMoveAnchor: { pt in
+                        dispatch(.moveFloatingPad(anchor: WorkspacePoint(
+                            x: pt.x / Double(size.width),
+                            y: pt.y / Double(size.height)
+                        )))
+                    },
+                    onClose: {
+                        withAnimation(deckMotion) {
+                            dispatch(.setTrackpad(open: false))
+                        }
+                    }
+                )
+                .transition(.scale(scale: 0.94).combined(with: .opacity))
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            if workspace.showsFloatingCapsule && !deckActive {
+                PadFloatingCapsule(
+                    client: client,
+                    state: workspace,
+                    containerSize: size,
+                    insets: insets,
+                    textScale: $textScale,
+                    onTextScaleCommit: { dispatch(.textScaleCommitted) },
+                    dispatch: animatedDispatch
+                )
+            }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private static func floatingPadAvoidance(
+        capsule: CapsuleVisibility,
+        insets: FullScreenPolicy.Insets,
+        containerWidth: CGFloat
+    ) -> EdgeInsets {
+        let baseSide = max(12, max(insets.left, insets.right))
+        let baseBottom = max(containerWidth >= 600 ? 22 : 14, insets.bottom)
+        let baseTop = max(containerWidth >= 600 ? 36 : 12, insets.top + 10)
+        var e = EdgeInsets(top: baseTop, leading: baseSide, bottom: baseBottom, trailing: baseSide)
+        if case .expanded(let edge) = capsule {
+            switch edge {
+            case .top: e.top += 60
+            case .bottom: e.bottom += 60
+            case .leading: e.leading += 60
+            case .trailing: e.trailing += 60
+            }
+        }
+        return e
     }
 
     // MARK: The link's line
@@ -1131,7 +1126,7 @@ struct StreamScreen: View {
     private var fullScreenSituation: FullScreenPolicy.Situation {
         FullScreenPolicy.Situation(coversScreen: coversScreen,
                                    streaming: client.active != .none,
-                                   somethingOpen: workspace.modal != .none || workspace.showsPhoneDeck || workspace.floatingPad.isVisible,
+                                   somethingOpen: workspace.modal != .none || workspace.floatingPad.isVisible,
                                    tour: tour != nil,
                                    pairing: overlayShown,
                                    linkLine: linkReportLine != nil,
@@ -1230,11 +1225,8 @@ struct StreamScreen: View {
     private func hideFromSettings() {
         let keyboard = workspace.restoreKeyboardAfterModal
         dispatch(.closeModal(restoreKeyboard: false))
-        if workspace.showsPhoneDeck {
-            dispatch(.setPhoneDeck(open: false))
-        }
         if workspace.floatingPad.isVisible {
-            dispatch(.toggleFloatingPad)
+            dispatch(.setTrackpad(open: false))
         }
         let mark = client.connectedAt
         Task { @MainActor in

@@ -56,11 +56,12 @@ struct UnifiedSwitcherSheet: View {
         .navigationTitle(client.macName.isEmpty ? "Windows & Apps" : client.macName)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .confirmationAction) {
                 Button("Done", action: dismiss)
                     .keyboardShortcut(.cancelAction)
             }
         }
+        .presentationCornerRadius(28)
     }
 
     // MARK: What the query leaves
@@ -137,7 +138,7 @@ struct UnifiedSwitcherSheet: View {
             }
             .padding(10)
         }
-        .buttonStyle(.plain)
+        .buttonStyle(TactileCardButtonStyle())
         .tactileSurface(.recessedHardware, shape: .rounded(TactileRadius.card))
         .accessibilityLabel(client.desktopButton.accessibilityLabel)
         .accessibilityValue(client.desktopButton.accessibilityValue ?? "")
@@ -158,7 +159,8 @@ struct UnifiedSwitcherSheet: View {
     }
 
     private func windowCard(_ w: WindowInfo) -> some View {
-        Button {
+        let isActive = client.active == .window(w.id)
+        return Button {
             TactileHaptics.play(.tick)
             client.select(.window(w.id))
             dismiss()
@@ -170,7 +172,8 @@ struct UnifiedSwitcherSheet: View {
                     placeholderSize: 28,
                     height: 100,
                     innerRadius: TactileRadius.screen,
-                    cornerIcon: client.icons[w.bundleID]
+                    cornerIcon: client.icons[w.bundleID],
+                    led: isActive ? (isOn: true, color: TactileTokens.ledCyan) : nil
                 )
                 Text(w.title.isEmpty ? w.appName : w.title)
                     .font(.caption.weight(.semibold))
@@ -178,15 +181,15 @@ struct UnifiedSwitcherSheet: View {
                     .lineLimit(1)
                 Text(w.appName)
                     .font(.caption2)
-                    .foregroundStyle(TactileTokens.textSecondary)
+                    .foregroundStyle(isActive ? TactileTokens.ledCyan : TactileTokens.textSecondary)
                     .lineLimit(1)
             }
             .padding(8)
             .contentShape(RoundedRectangle(cornerRadius: TactileRadius.card, style: .continuous))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(TactileCardButtonStyle())
         .tactileSurface(.recessedHardware, shape: .rounded(TactileRadius.card))
-        .tactileSelectionRim(client.active == .window(w.id), shape: .rounded(TactileRadius.card))
+        .tactileSelectionRim(isActive, shape: .rounded(TactileRadius.card))
         .contextMenu {
             Button { client.command(.close, window: w.id) } label: {
                 Label("Close", systemImage: "xmark")
@@ -230,7 +233,7 @@ struct UnifiedSwitcherSheet: View {
                     .buttonStyle(.plain)
                     if index + 1 < apps.count {
                         Divider()
-                            .overlay(TactileTokens.chassisRaised)
+                            .overlay(TactileTokens.specularRimTop.opacity(0.55))
                             .padding(.leading, 56)
                     }
                 }
@@ -240,14 +243,7 @@ struct UnifiedSwitcherSheet: View {
     }
 
     private var nothingFound: some View {
-        HStack {
-            Spacer()
-            Text("No windows or apps match “\(query.trimmingCharacters(in: .whitespaces))”")
-                .font(.callout)
-                .foregroundStyle(TactileTokens.textSecondary)
-                .multilineTextAlignment(.center)
-            Spacer()
-        }
-        .padding(.top, 30)
+        ContentUnavailableView.search(text: query.trimmingCharacters(in: .whitespaces))
+            .padding(.top, 24)
     }
 }

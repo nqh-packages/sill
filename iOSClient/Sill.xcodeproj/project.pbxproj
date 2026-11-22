@@ -10,13 +10,13 @@
 		46EE1CEB4A597990E95FFF01 /* ControlCenterSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95E1B5B82BA03A0F14A38269 /* ControlCenterSheet.swift */; };
 		6A3342DF86806A230AAC4617 /* StreamWorkspaceState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D3CBABD644DC270590F32F /* StreamWorkspaceState.swift */; };
 		899C8A22AA18DDB8CE868C11 /* TactileTrackpadDeck.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1166097CA2E3537C427FF43F /* TactileTrackpadDeck.swift */; };
-		8C96D68A23EA807CA57EE3B4 /* PhoneWorkspaceChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = 62A94CC89FF1FE085A5662A9 /* PhoneWorkspaceChrome.swift */; };
 		9ACCE18EC8F377EAB0023610 /* PadWorkspaceChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = F79B275DA8A7FA9270C5517A /* PadWorkspaceChrome.swift */; };
 		A1000001000000000000A001 /* SillApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000F001 /* SillApp.swift */; };
 		A1000001000000000000A002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000F002 /* ContentView.swift */; };
 		A1000001000000000000A003 /* StreamClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000F003 /* StreamClient.swift */; };
 		A1000001000000000000A004 /* HEVCDisplayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000F004 /* HEVCDisplayView.swift */; };
 		A1000001000000000000A005 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000F005 /* Assets.xcassets */; };
+		A1000001000000000000A102 /* Sill.icon in Resources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000F102 /* Sill.icon */; };
 		A1000001000000000000A006 /* StreamProtocol in Frameworks */ = {isa = PBXBuildFile; productRef = A1000001000000000000D001 /* StreamProtocol */; };
 		A1000001000000000000A007 /* StreamScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000F008 /* StreamScreen.swift */; };
 		A1000001000000000000A008 /* InputOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1000001000000000000F009 /* InputOverlay.swift */; };
@@ -88,13 +88,13 @@
 		3DF6F7C81413DE0D7F495427 /* TactileConnectView.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = TactileConnectView.swift; sourceTree = "<group>"; };
 		433A33B7A4A4D1260410B790 /* TactileStyle.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = TactileStyle.swift; sourceTree = "<group>"; };
 		5FB5ED408DA13732229A4210 /* TactileKeycaps.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = TactileKeycaps.swift; sourceTree = "<group>"; };
-		62A94CC89FF1FE085A5662A9 /* PhoneWorkspaceChrome.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = PhoneWorkspaceChrome.swift; sourceTree = "<group>"; };
 		95E1B5B82BA03A0F14A38269 /* ControlCenterSheet.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = ControlCenterSheet.swift; sourceTree = "<group>"; };
 		A1000001000000000000F001 /* SillApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SillApp.swift; sourceTree = "<group>"; };
 		A1000001000000000000F002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		A1000001000000000000F003 /* StreamClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamClient.swift; sourceTree = "<group>"; };
 		A1000001000000000000F004 /* HEVCDisplayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HEVCDisplayView.swift; sourceTree = "<group>"; };
 		A1000001000000000000F005 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		A1000001000000000000F102 /* Sill.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Sill.icon; sourceTree = "<group>"; };
 		A1000001000000000000F006 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		A1000001000000000000F007 /* Sill.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Sill.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1000001000000000000F008 /* StreamScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamScreen.swift; sourceTree = "<group>"; };
@@ -237,6 +237,7 @@
 				A1000001000000000000F043 /* SillAppDelegate.swift */,
 				A1000001000000000000F044 /* MacMenuButton.swift */,
 				A1000001000000000000F005 /* Assets.xcassets */,
+				A1000001000000000000F102 /* Sill.icon */,
 				A1000001000000000000F101 /* PrivacyInfo.xcprivacy */,
 				A1000001000000000000F006 /* Info.plist */,
 				A1000001000000000000F00D /* Info-Debug.plist */,
@@ -252,7 +253,6 @@
 				433A33B7A4A4D1260410B790 /* TactileStyle.swift */,
 				5FB5ED408DA13732229A4210 /* TactileKeycaps.swift */,
 				1166097CA2E3537C427FF43F /* TactileTrackpadDeck.swift */,
-				62A94CC89FF1FE085A5662A9 /* PhoneWorkspaceChrome.swift */,
 				F79B275DA8A7FA9270C5517A /* PadWorkspaceChrome.swift */,
 				3A75CB1B2417CC647482AF7F /* UnifiedSwitcherSheet.swift */,
 				95E1B5B82BA03A0F14A38269 /* ControlCenterSheet.swift */,
@@ -334,6 +334,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A1000001000000000000A005 /* Assets.xcassets in Resources */,
+				A1000001000000000000A102 /* Sill.icon in Resources */,
 				A1000001000000000000A101 /* PrivacyInfo.xcprivacy in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -410,7 +411,6 @@
 				F0B5D2701B181E0FB1CCA790 /* TactileStyle.swift in Sources */,
 				C1107E8A57AAEE8E51522788 /* TactileKeycaps.swift in Sources */,
 				899C8A22AA18DDB8CE868C11 /* TactileTrackpadDeck.swift in Sources */,
-				8C96D68A23EA807CA57EE3B4 /* PhoneWorkspaceChrome.swift in Sources */,
 				9ACCE18EC8F377EAB0023610 /* PadWorkspaceChrome.swift in Sources */,
 				B6E70D285BA6C1C468242FDC /* UnifiedSwitcherSheet.swift in Sources */,
 				46EE1CEB4A597990E95FFF01 /* ControlCenterSheet.swift in Sources */,
@@ -456,7 +456,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 9B2KKVM937;
+				DEVELOPMENT_TEAM = 9V2FMKQ3WU;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -521,7 +521,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = 9B2KKVM937;
+				DEVELOPMENT_TEAM = 9V2FMKQ3WU;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
@@ -547,7 +547,7 @@
 		A10000010000000000009301 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Sill;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
@@ -567,7 +567,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.6.3;
-				PRODUCT_BUNDLE_IDENTIFIER = me.saffer.sill;
+				PRODUCT_BUNDLE_IDENTIFIER = com.uxheavy.sill;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = minimal;
@@ -579,7 +579,7 @@
 		A10000010000000000009302 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Sill;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 4;
@@ -599,7 +599,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.6.3;
-				PRODUCT_BUNDLE_IDENTIFIER = me.saffer.sill;
+				PRODUCT_BUNDLE_IDENTIFIER = com.uxheavy.sill;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_STRICT_CONCURRENCY = minimal;
