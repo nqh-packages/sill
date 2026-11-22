@@ -43,7 +43,9 @@ struct ClipboardChip: View {
 
     @ViewBuilder
     private var dismissButton: some View {
-        let button = Button(action: { client.dismissClipboardChip() }) {
+        let button = Button {
+            client.dismissClipboardChip()
+        } label: {
             Image(systemName: "xmark")
                 .font(.system(size: 13, weight: .semibold))
         }
