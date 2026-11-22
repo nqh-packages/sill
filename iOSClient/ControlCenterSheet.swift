@@ -190,22 +190,17 @@ struct ControlCenterSheet: View {
         .accessibilityLabel(client.soundMuted ? "Unmute sound from \(mac)" : "Mute sound from \(mac)")
     }
 
-    /// Paste on ‹Mac›: the system's own `PasteButton` (`ClipboardPasteButton`), which pastes this
-    /// device's clipboard without ever asking for it — the tile frames it, the button does the
-    /// permission.
     private var pasteTile: some View {
         VStack(spacing: 5) {
-            ClipboardPasteButton(client: client)
-                .controlSize(.small)
-            Text("Paste to \(mac)")
-                .font(.caption2)
-                .foregroundStyle(TactileTokens.textSecondary)
+            ClipboardPasteButton(client: client, iconOnly: true, tint: TactileTokens.controlRaised)
+                .controlSize(.mini)
+            Text("Paste")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(TactileTokens.textPrimary)
                 .lineLimit(1)
         }
         .frame(maxWidth: .infinity, minHeight: 66)
-        .padding(.horizontal, 12)
-        .padding(.vertical, 8)
-        .tactileSurface(.recessedHardware, shape: .rounded(14))
+        .tactileDeckTileSurface(shape: .rounded(14))
     }
 
     /// Menus: drills into the Mac's menus inside this sheet (`route = .macMenus`); dimmed while the

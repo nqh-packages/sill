@@ -116,17 +116,23 @@ private struct ClipboardGlassSurface: ViewModifier {
 /// clipboard has no text. Its label is the system's ("Paste").
 struct ClipboardPasteButton: View {
     @ObservedObject var client: StreamClient
+    var iconOnly: Bool = false
+    var tint: Color = Palette.accent
     @AppStorage(StreamClient.pasteRightAwayKey) private var pasteRightAway = true
 
     var body: some View {
-        PasteButton(payloadType: String.self) { strings in
-            // On the main thread whatever queue the system hands it on.
+        let base = PasteButton(payloadType: String.self) { strings in
             DispatchQueue.main.async { client.sendClipboard(strings) }
         }
         .buttonBorderShape(.capsule)
-        .labelStyle(.titleAndIcon)
-        .tint(Palette.accent)
+        .tint(tint)
         .accessibilityHint(ClipboardPolicy.Copy.pasteHint(mac: client.macName.isEmpty ? "the Mac" : client.macName,
                                                           device: StreamClient.deviceWord, rightAway: pasteRightAway))
+
+        if iconOnly {
+            base.labelStyle(.iconOnly)
+        } else {
+            base.labelStyle(.titleAndIcon)
+        }
     }
 }

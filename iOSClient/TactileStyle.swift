@@ -600,6 +600,21 @@ extension View {
         buttonStyle(MachinedTactileButtonStyle(role: role, shape: shape))
     }
 
+    func tactileDeckTileSurface(shape: TactileSurfaceShape = .rounded(14)) -> some View {
+        let radius: CGFloat = {
+            if case .rounded(let r) = shape { return r }
+            return 14
+        }()
+        return padding(.horizontal, 12)
+            .padding(.vertical, 8)
+            .background(
+                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                    .fill(TactileTokens.keycapTop)
+            )
+            .tactileSpecularBorder(shape, lineWidth: 0.75)
+            .shadow(color: TactileTokens.ambientShadow.opacity(0.8), radius: 4, x: 0, y: 2)
+    }
+
     func tactileSpecularBorder(_ shape: TactileSurfaceShape, lineWidth: CGFloat = 0.75, active: Bool = false) -> some View {
         overlay {
             TactileSpecularRim(shape: shape, lineWidth: lineWidth, active: active)
