@@ -8,135 +8,112 @@ const originalSiteUrl = "https://getsill.app";
 ---
 <Layout
   title="Sill Tactile — A different take on Sill for iOS & iPadOS"
-  description="A tactile, Liquid Glass reimagining of Noah Saffer's open-source Sill iOS & iPadOS app, with a PencilKit-style 4-edge floating dock and corner orb. Tested only on my own devices."
+  description="A tactile, Liquid Glass take on Noah Saffer's open-source Sill for iOS & iPadOS. Tested only on my iPhone 17 & iPad Pro."
   canonicalPath="/"
 >
   <header>
     <div class="wrap nav">
       <a class="brand" href="/">
-        <img src="/icon.png" alt="Sill Tactile icon" width="30" height="30" />
+        <img src="/icon.png" alt="Sill Tactile icon" width="28" height="28" />
         <span>Sill Tactile</span>
       </a>
       <nav class="nav-links" aria-label="Primary">
-        <a href="#whats-different">What’s Different</a>
-        <a href="#screenshots">Screenshots</a>
+        <a href={testflightUrl}>TestFlight</a>
         <a href={forkRepoUrl}>GitHub</a>
-        <a href={upstreamRepoUrl}>Original Sill</a>
+        <a href={upstreamRepoUrl}>Original by Noah Saffer</a>
       </nav>
     </div>
   </header>
 
   <main class="wrap">
+    <!-- Hero: Show the PencilKit drag-to-orb & 4-edge morph live above the fold -->
     <section class="hero">
-      <img class="hero-icon" src="/icon.png" alt="Sill Tactile Liquid Glass app icon" width="116" height="116" />
-      <div>
-        <span class="pill-tag"><span class="dot"></span> An alternate iOS &amp; iPadOS take on Sill</span>
-      </div>
-      <h1>Your Mac’s windows, with PencilKit-style floating chrome.</h1>
-      <p class="lede">
-        A tactile, Liquid Glass reimagining of <strong>Sill’s iOS &amp; iPadOS client</strong> — built directly on top of
-        <a href={upstreamRepoUrl}>Noah Saffer’s open-source Sill</a>, using the exact same free Mac companion and encrypted peer-to-peer protocol.
-      </p>
-      <div class="cta-row">
-        <a class="btn btn-primary" href={testflightUrl}>Join TestFlight Beta</a>
-        <a class="btn btn-secondary" href={forkRepoUrl}>View Fork on GitHub</a>
-        <a class="btn btn-secondary" href={`${originalSiteUrl}/download.html`}>Get Sill for Mac (Original)</a>
+      <div class="hero-copy">
+        <div class="icon-pair">
+          <img class="app-icon" src="/icon.png" alt="Sill Tactile dark Liquid Glass icon" width="76" height="76" />
+          <img class="app-icon" src="/icon-light.png" alt="Sill Tactile light Liquid Glass icon" width="76" height="76" />
+        </div>
+        <h1>Sill, reimagined for touch.</h1>
+        <p class="lede">
+          A different take on <a href={upstreamRepoUrl}>Noah Saffer’s Sill</a> for iOS &amp; iPadOS.
+          Same <a href={`${originalSiteUrl}/download.html`}>Sill for Mac</a> &amp; encrypted protocol.
+        </p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href={testflightUrl}>Join TestFlight</a>
+          <a class="btn btn-secondary" href={forkRepoUrl}>GitHub</a>
+        </div>
+        <p class="disclaimer">
+          All credit to <a href="https://github.com/Saffsanity">Noah Saffer</a> (<a href={upstreamRepoUrl}>Saffsanity/sill</a>).<br />
+          <strong>Tested only on my own iPhone 17 &amp; iPad Pro</strong> — for the official app, use <a href={originalSiteUrl}>getsill.app</a>.
+        </p>
       </div>
 
-      <div class="notices">
-        <div class="notice notice-credit">
-          <div class="notice-label">Credit &amp; Lineage</div>
-          <p>
-            <strong>All credit for Sill belongs to <a href="https://github.com/Saffsanity">Noah Saffer</a> (<a href={upstreamRepoUrl}>Saffsanity/sill</a>).</strong>
-            This project is my own personal take on the iOS &amp; iPadOS interface — exploring a unified floating PencilKit chrome, Liquid Glass icon, and tactile obsidian UI on top of his Mac host and protocol.
-          </p>
-        </div>
-        <div class="notice notice-warn">
-          <div class="notice-label">Device Testing Note</div>
-          <p>
-            <strong>This build has only been tested on my own devices</strong> (iPhone 17 &amp; iPad Pro 10.5&Prime;).
-            Other screen sizes, foldables, or edge cases may have rough spots. For the battle-tested official release, use <a href={originalSiteUrl}>Noah’s official Sill</a>.
-          </p>
-        </div>
+      <div class="hero-stage">
+        <figure class="device-bezel ipad-stage">
+          <video
+            src="/media/pencilkit-chrome.mp4"
+            poster="/media/pencilkit-poster.jpg"
+            autoplay
+            muted
+            loop
+            playsinline
+            aria-label="Sill Tactile PencilKit floating bar collapsing into a 48pt orb on drag and docking across all four edges and corners"
+          ></video>
+        </figure>
+        <div class="stage-caption">Drag to minimize · 4-edge dock · 4-corner orb</div>
       </div>
     </section>
 
-    <section class="block" id="whats-different">
-      <h2>What’s different in this take</h2>
-      <div class="features">
-        <article class="card">
-          <h3>PencilKit-Style Floating Chrome</h3>
-          <p>One unified tactile capsule that docks to all 4 edges (morphing horizontal &harr; vertical), collapses into a 48&times;48 corner orb the moment you drag, and starts at the bottom so Mac toolbars stay unobstructed.</p>
-        </article>
-        <article class="card">
-          <h3>Full-Bleed Everywhere</h3>
-          <p>Retired separate phone vs. iPad chrome modes. Narrow widths adapt into a compact floating pill with a bottom-anchored Control Deck; wide screens pair the full palette with a draggable floating trackpad.</p>
-        </article>
-        <article class="card">
-          <h3>iOS 26/27 Liquid Glass + SSOT</h3>
-          <p>Native Liquid Glass bars, toolbars, sheets, and a layered Icon Composer 2.0 app icon, backed by a single obsidian &amp; anodized-graphite token system in <code>TactileStyle.swift</code>.</p>
-        </article>
-        <article class="card">
-          <h3>100% Compatible with Sill for Mac</h3>
-          <p>No accounts, no servers, no subscriptions. Speaks the exact same encrypted <code>sill/1</code> wire protocol as Noah Saffer’s official Mac companion app.</p>
-        </article>
-      </div>
-    </section>
-
-    <section class="block" id="screenshots">
-      <h2>Screenshots</h2>
-      <div class="shots">
-        <figure class="shot">
-          <img src="/shots/connect.png" alt="Sill Tactile Connect screen on iPad" loading="lazy" />
-          <figcaption><strong>Connect Screen</strong>Machined display bezels with tinted semantic route LEDs (Wired, Wi-Fi, Direct).</figcaption>
+    <!-- iPad Screens -->
+    <section class="gallery">
+      <div class="section-label">iPad</div>
+      <div class="grid-3">
+        <figure class="frame">
+          <img src="/shots/pad-trackpad.png" alt="iPad vertical PencilKit rail with floating trackpad" loading="lazy" />
+          <figcaption>Side Rail &amp; Floating Trackpad</figcaption>
         </figure>
-        <figure class="shot">
-          <img src="/shots/switcher.png" alt="Sill Tactile Unified Switcher on iPad" loading="lazy" />
-          <figcaption><strong>Unified Switcher</strong>Searchable Desktop card, live Mac window grid, and installed Mac apps list.</figcaption>
+        <figure class="frame">
+          <img src="/shots/switcher.png" alt="iPad Unified Switcher for Desktop, windows, and Mac apps" loading="lazy" />
+          <figcaption>Unified Switcher</figcaption>
         </figure>
-        <figure class="shot">
-          <img src="/shots/phone-pill.png" alt="Sill Tactile compact PencilKit bottom capsule on iPhone" loading="lazy" />
-          <figcaption><strong>iPhone Compact Pill</strong>Full-bleed canvas with a compact draggable Liquid Glass pill and corner orb.</figcaption>
-        </figure>
-        <figure class="shot">
-          <img src="/shots/phone-controls.png" alt="Sill Tactile Control Center on iPhone with Liquid Glass" loading="lazy" />
-          <figcaption><strong>Control Center</strong>Quick deck tiles, Aa text scale track, Mac menus drill-in, and streaming controls.</figcaption>
+        <figure class="frame">
+          <img src="/shots/connect.png" alt="iPad Connect screen with semantic route LEDs" loading="lazy" />
+          <figcaption>Connect</figcaption>
         </figure>
       </div>
     </section>
 
-    <section class="block">
-      <h2>Try it in three steps</h2>
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <h3>Install Sill for Mac</h3>
-          <p>Download Noah Saffer’s free Mac companion app from <a href={`${originalSiteUrl}/download.html`}>getsill.app</a> and grant Screen Recording &amp; Accessibility.</p>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <h3>Join the TestFlight Beta</h3>
-          <p>Install <a href={testflightUrl}>Sill Tactile on TestFlight</a> (<code>com.uxheavy.sill</code> — installs cleanly alongside the official Sill app).</p>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <h3>Pair &amp; Stream</h3>
-          <p>Tap your Mac on the same network (or over USB / Tailscale), scan the one-time pairing code, and flick the floating bar to any edge or corner.</p>
-        </div>
+    <!-- iPhone Screens -->
+    <section class="gallery">
+      <div class="section-label">iPhone</div>
+      <div class="grid-4">
+        <figure class="frame phone-frame">
+          <img src="/shots/phone-pill.png" alt="iPhone compact Liquid Glass floating pill" loading="lazy" />
+          <figcaption>Compact Pill</figcaption>
+        </figure>
+        <figure class="frame phone-frame">
+          <img src="/shots/phone-orb.png" alt="iPhone minimized 48pt corner orb" loading="lazy" />
+          <figcaption>Corner Orb</figcaption>
+        </figure>
+        <figure class="frame phone-frame">
+          <img src="/shots/phone-deck.png" alt="iPhone bottom-anchored tactile Control Deck" loading="lazy" />
+          <figcaption>Control Deck</figcaption>
+        </figure>
+        <figure class="frame phone-frame">
+          <img src="/shots/phone-controls.png" alt="iPhone Control Center with Liquid Glass header" loading="lazy" />
+          <figcaption>Control Center</figcaption>
+        </figure>
       </div>
     </section>
   </main>
 
   <footer>
     <div class="wrap footer-inner">
-      <div>
-        An open-source UI/UX fork of <a href={upstreamRepoUrl}>Sill</a> by Noah Saffer &middot; Apache-2.0 License &middot; Tested only on Huy’s devices.
-      </div>
+      <span>Fork of <a href={upstreamRepoUrl}>Saffsanity/sill</a> by Noah Saffer &middot; Apache-2.0 &middot; Tested only on Huy’s devices</span>
       <div class="footer-links">
         <a href={testflightUrl}>TestFlight</a>
-        <a href={forkRepoUrl}>Fork Source</a>
-        <a href={upstreamRepoUrl}>Original Repo</a>
-        <a href={originalSiteUrl}>getsill.app</a>
+        <a href={forkRepoUrl}>Fork</a>
+        <a href={originalSiteUrl}>Original Sill</a>
         <a href="/privacy/">Privacy</a>
       </div>
     </div>
@@ -150,59 +127,156 @@ const originalSiteUrl = "https://getsill.app";
     z-index: 20;
     backdrop-filter: blur(20px) saturate(160%);
     -webkit-backdrop-filter: blur(20px) saturate(160%);
-    background: rgba(13, 13, 14, 0.72);
+    background: rgba(0, 0, 0, 0.72);
     border-bottom: 1px solid var(--rim-soft);
   }
-  .nav { display: flex; align-items: center; justify-content: space-between; height: 60px; }
-  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600; font-size: 16px; letter-spacing: -0.01em; }
-  .brand img { width: 30px; height: 30px; border-radius: 8px; }
-  .nav-links { display: flex; align-items: center; gap: 20px; font-size: 14px; }
+  .nav { display: flex; align-items: center; justify-content: space-between; height: 56px; }
+  .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600; font-size: 15px; letter-spacing: -0.01em; }
+  .brand img { border-radius: 7px; }
+  .nav-links { display: flex; align-items: center; gap: 20px; font-size: 13.5px; }
   .nav-links a { color: var(--ink-2); }
   .nav-links a:hover { color: var(--ink); text-decoration: none; }
 
-  .hero { padding: 72px 0 44px; text-align: center; }
-  .hero-icon { width: 116px; height: 116px; border-radius: 26px; box-shadow: 0 24px 60px rgba(10, 132, 255, 0.22), 0 0 0 1px var(--rim); margin-bottom: 24px; }
-  .pill-tag { display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px; border-radius: 999px; background: var(--raised); border: 1px solid var(--rim); font-size: 13px; font-weight: 500; color: var(--ink-2); margin-bottom: 18px; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--cyan); box-shadow: 0 0 8px var(--cyan); }
-  h1 { margin: 0 auto 14px; font-size: clamp(36px, 6vw, 56px); font-weight: 700; letter-spacing: -0.03em; line-height: 1.06; max-width: 740px; }
-  .lede { margin: 0 auto 28px; max-width: 640px; font-size: clamp(17px, 2.2vw, 20px); color: var(--ink-2); }
-  .cta-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; margin-bottom: 26px; }
-  .btn { display: inline-flex; align-items: center; gap: 8px; padding: 13px 22px; border-radius: 999px; font-size: 15px; font-weight: 600; transition: transform 0.16s ease, opacity 0.16s ease; }
+  /* Split visual hero */
+  .hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
+    gap: 48px;
+    align-items: center;
+    padding: 56px 0 64px;
+  }
+  @media (max-width: 820px) {
+    .hero { grid-template-columns: 1fr; gap: 36px; padding: 36px 0 48px; }
+    .hero-stage { max-width: 360px; margin: 0 auto; width: 100%; }
+  }
+  .icon-pair { display: flex; gap: 14px; margin-bottom: 24px; }
+  .app-icon {
+    border-radius: 18px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--rim);
+  }
+  h1 {
+    margin: 0 0 14px;
+    font-size: clamp(38px, 5.5vw, 54px);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.04;
+  }
+  .lede {
+    margin: 0 0 26px;
+    font-size: 18px;
+    color: var(--ink-2);
+    max-width: 480px;
+  }
+  .cta-row { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px; }
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
+    transition: transform 0.15s ease;
+  }
   .btn:hover { transform: translateY(-1px); text-decoration: none; }
-  .btn-primary { background: var(--blue); color: #fff; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 24px rgba(10, 132, 255, 0.35); }
-  .btn-secondary { background: var(--raised); color: var(--ink); border: 1px solid var(--rim); }
+  .btn-primary {
+    background: var(--blue);
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 8px 24px rgba(10, 132, 255, 0.35);
+  }
+  .btn-secondary {
+    background: var(--raised);
+    color: var(--ink);
+    border: 1px solid var(--rim);
+  }
+  .disclaimer {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ink-3);
+    line-height: 1.6;
+  }
+  .disclaimer strong { color: var(--amber); font-weight: 600; }
 
-  .notices { display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 14px; margin: 18px auto 52px; text-align: left; }
-  .notice { background: var(--surface); border: 1px solid var(--rim-soft); border-radius: 18px; padding: 18px 20px; }
-  .notice-warn { border-color: rgba(255, 159, 10, 0.35); background: linear-gradient(180deg, rgba(255, 159, 10, 0.08), var(--surface) 60%); }
-  .notice-credit { border-color: rgba(100, 210, 255, 0.30); background: linear-gradient(180deg, rgba(100, 210, 255, 0.08), var(--surface) 60%); }
-  .notice-label { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
-  .notice-credit .notice-label { color: var(--cyan); }
-  .notice-warn .notice-label { color: var(--amber); }
-  .notice p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
-  .notice strong { color: var(--ink); }
+  /* Hero looping iPad video */
+  .device-bezel {
+    margin: 0;
+    padding: 10px;
+    border-radius: 28px;
+    background: var(--surface);
+    border: 1px solid var(--rim);
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
+  }
+  .device-bezel video {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 20px;
+    background: #000;
+  }
+  .stage-caption {
+    margin-top: 12px;
+    text-align: center;
+    font-size: 12.5px;
+    color: var(--ink-3);
+    letter-spacing: 0.01em;
+  }
 
-  section.block { padding: 36px 0; }
-  h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 18px; }
-  .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
-  .card { background: var(--surface); border: 1px solid var(--rim-soft); border-radius: 18px; padding: 20px; }
-  .card h3 { margin: 0 0 8px; font-size: 16px; font-weight: 600; color: var(--ink); }
-  .card p { margin: 0; font-size: 14px; color: var(--ink-2); }
+  /* Galleries */
+  .gallery { padding: 20px 0 40px; }
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--ink-3);
+    margin-bottom: 14px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+  .grid-4 {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+  }
+  @media (max-width: 820px) {
+    .grid-3 { grid-template-columns: 1fr; }
+    .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  .frame {
+    margin: 0;
+    padding: 8px;
+    border-radius: 22px;
+    background: var(--surface);
+    border: 1px solid var(--rim-soft);
+    display: flex;
+    flex-direction: column;
+  }
+  .frame img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 15px;
+    background: #000;
+  }
+  .phone-frame img { border-radius: 20px; }
+  .frame figcaption {
+    padding: 10px 6px 4px;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink-2);
+    text-align: center;
+  }
 
-  .shots { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; align-items: start; }
-  figure.shot { margin: 0; background: var(--surface); border: 1px solid var(--rim-soft); border-radius: 18px; overflow: hidden; }
-  figure.shot img { width: 100%; height: auto; display: block; background: #000; }
-  figure.shot figcaption { padding: 12px 14px; font-size: 13px; color: var(--ink-2); border-top: 1px solid var(--rim-soft); }
-  figure.shot figcaption strong { display: block; color: var(--ink); margin-bottom: 2px; }
-
-  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; }
-  .step { background: var(--surface); border: 1px solid var(--rim-soft); border-radius: 18px; padding: 18px 20px; }
-  .step-num { display: inline-flex; align-items: center; justify-content: center; width: 26px; height: 26px; border-radius: 50%; background: var(--control); color: var(--cyan); font-size: 13px; font-weight: 700; margin-bottom: 10px; }
-  .step h3 { margin: 0 0 6px; font-size: 15px; }
-  .step p { margin: 0; font-size: 14px; color: var(--ink-2); }
-
-  footer { margin-top: 48px; border-top: 1px solid var(--rim-soft); padding: 28px 0 44px; font-size: 13.5px; color: var(--ink-3); }
-  .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 14px; }
-  .footer-links { display: flex; flex-wrap: wrap; gap: 18px; }
+  footer {
+    margin-top: 24px;
+    border-top: 1px solid var(--rim-soft);
+    padding: 24px 0 40px;
+    font-size: 13px;
+    color: var(--ink-3);
+  }
+  .footer-inner { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; }
+  .footer-links { display: flex; gap: 18px; }
   .footer-links a { color: var(--ink-2); }
 </style>
