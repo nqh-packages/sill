@@ -25,3 +25,9 @@ __pycache__/
 # Verification evidence, state gallery renders, and bug-bash output (.agents/skills/verify-sill).
 .e2e/
 .maestro/results/
+
+# Astro + Alchemy landing page build outputs & local state.
+landing/node_modules/
+landing/dist/
+landing/.astro/
+landing/.alchemy/

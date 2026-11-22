@@ -1,0 +1,24 @@
+{
+  "name": "sill-landing",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@12.18.0",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "astro": "^5.16.6"
+  },
+  "devDependencies": {
+    "@alchemy.run/cloudflare": "2.0.0-beta.85",
+    "@alchemy.run/frontend-frameworks": "2.0.0-beta.85",
+    "@effect/platform-bun": "4.1.4",
+    "@effect/platform-node": "4.1.4",
+    "@types/node": "^22.15.0",
+    "alchemy": "2.0.0-beta.85",
+    "effect": "4.1.4",
+    "typescript": "^5.9.3"
+  }
+}
