@@ -19,13 +19,43 @@ import StreamProtocol
 /// trackpadFingers for Q1's flip, `latched` for modified clicks (consumed by a click as before) and
 /// sendGesture for the Mac's three- and four-finger gestures.
 struct TactileTrackpadWell: View {
+    enum Placement {
+        case floating
+        case docked(bottomInset: CGFloat)
+        case natural(bottomInset: CGFloat)
+
+        var cornerRadius: CGFloat {
+            switch self {
+            case .floating: return 14
+            case .docked, .natural: return TactileRadius.trackpad
+            }
+        }
+
+        var showsHint: Bool {
+            switch self {
+            case .docked: return true
+            case .floating, .natural: return false
+            }
+        }
+
+        var outerPadding: EdgeInsets {
+            switch self {
+            case .floating:
+                return EdgeInsets()
+            case .docked(let bottom):
+                return EdgeInsets(top: 0, leading: 6, bottom: max(6, bottom), trailing: 6)
+            case .natural(let bottom):
+                return EdgeInsets(top: 10, leading: 8, bottom: max(10, bottom), trailing: 8)
+            }
+        }
+    }
+
     @ObservedObject var client: StreamClient
     @Binding var latched: KeyModifiers
-    /// What the pad's vertical motion is measured against (nil: its own height), as the laptop
-    /// layout passed it — a stroke then moves the pointer as far down as across on a 16:10 picture.
     var verticalSpan: CGFloat? = nil
-    var cornerRadius: CGFloat = 22
-    var showsHint: Bool = true
+    var placement: Placement = .floating
+
+    private var cornerRadius: CGFloat { placement.cornerRadius }
 
     private var shape: RoundedRectangle {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
@@ -43,7 +73,7 @@ struct TactileTrackpadWell: View {
                          onModifiersConsumed: { latched = [] },
                          verticalSpan: verticalSpan,
                          sendGesture: { client.sendGesture($0, fingers: $1) })
-            if showsHint {
+            if placement.showsHint {
                 VStack {
                     Spacer(minLength: 0)
                     Text("Drag to move the pointer. Tap to click, two fingers to scroll.")
@@ -57,15 +87,12 @@ struct TactileTrackpadWell: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .clipShape(shape)
-        // The recessed rim: a dark inner shadow at the top falling off to the bottom edge's
-        // specular line, so the well reads as sunk into the chassis rather than laid on it.
         .overlay(shape.strokeBorder(
-            LinearGradient(colors: [TactileTokens.recessShadowTop, TactileTokens.recessShadowMid,
-                                    TactileTokens.specularRimBottom],
+            LinearGradient(colors: [TactileTokens.specularRimTop.opacity(0.65),
+                                    TactileTokens.specularRimBottom.opacity(0.6),
+                                    TactileTokens.specularRimTop.opacity(0.35)],
                            startPoint: .top, endPoint: .bottom),
-            lineWidth: 1.5))
-        // The specular lip: a hair of light just inside the bottom edge, kept to the flat run so it
-        // never pokes past the corner's curve (the overlay draws outside the clip).
+            lineWidth: 1))
         .overlay(alignment: .bottom) {
             Rectangle()
                 .fill(TactileTokens.specularRimTop.opacity(0.35))
@@ -74,17 +101,16 @@ struct TactileTrackpadWell: View {
                 .padding(.bottom, 2)
                 .allowsHitTesting(false)
         }
+        .padding(placement.outerPadding)
     }
 }
 
-/// 1 pt dots on an 18 pt grid, etched into the anodized well: the board texture that says "this
-/// surface is the one you drag on", a touch dimmer than the old well's for the machined look.
 private struct EtchedDotGrid: View {
     var body: some View {
         Canvas { context, size in
             let step: CGFloat = 18
-            let radius: CGFloat = 1
-            let shading = GraphicsContext.Shading.color(.white.opacity(0.05))
+            let radius: CGFloat = 1.05
+            let shading = GraphicsContext.Shading.color(.white.opacity(0.085))
             var y = step / 2
             while y < size.height {
                 var x = step / 2
@@ -133,9 +159,8 @@ struct PhoneControlDeckView: View {
             )
             .simultaneousGesture(deckDrag)
 
-            TactileTrackpadWell(client: client, latched: $latched, cornerRadius: 26)
-                .padding(.horizontal, 6)
-                .padding(.bottom, max(6, bottomInset))
+            TactileTrackpadWell(client: client, latched: $latched,
+                                placement: .docked(bottomInset: bottomInset))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: {
@@ -189,8 +214,7 @@ struct PadFloatingTrackpadView: View {
         let placed = clamped(anchor)
         VStack(spacing: 8) {
             gripStrip
-            TactileTrackpadWell(client: client, latched: $latched,
-                                cornerRadius: 14, showsHint: false)
+            TactileTrackpadWell(client: client, latched: $latched, placement: .floating)
         }
         .padding(10)
         .frame(width: Self.padSize.width, height: Self.padSize.height)

@@ -29,32 +29,11 @@ struct ClipboardChip: View {
     }
 
     private var chip: some View {
-        TactileGlassGroup(spacing: 8) {
-            HStack(spacing: 8) {
-                HStack(spacing: 8) {
-                    VStack(alignment: .leading, spacing: 1) {
-                        Text(ClipboardPolicy.Copy.chipTitle(mac: mac))
-                            .font(.caption.weight(.semibold))
-                            .foregroundStyle(.primary)
-                            .lineLimit(1)
-                            .truncationMode(.middle)
-                        Text(ClipboardPolicy.Copy.chipSubtitle(rightAway: pasteRightAway))
-                            .font(.caption2)
-                            .foregroundStyle(.secondary)
-                            .lineLimit(1)
-                    }
-                    .layoutPriority(-1)
-                    .accessibilityElement(children: .ignore)
+        TactileGlassGroup(spacing: 6) {
+            HStack(spacing: 6) {
+                ClipboardPasteButton(client: client)
+                    .controlSize(.small)
                     .accessibilityLabel(ClipboardPolicy.Copy.chipSpoken(mac: mac, device: StreamClient.deviceWord, rightAway: pasteRightAway))
-                    .accessibilityAddTraits(.isStaticText)
-
-                    ClipboardPasteButton(client: client)
-                        .controlSize(.small)
-                }
-                .padding(.leading, 14)
-                .padding(.trailing, 8)
-                .padding(.vertical, 6)
-                .modifier(ClipboardGlassSurface())
 
                 dismissButton
             }

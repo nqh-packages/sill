@@ -691,7 +691,8 @@ struct StreamScreen: View {
             }
 
             if let naturalSplit {
-                TactileTrackpadWell(client: client, latched: $latched, cornerRadius: 0, showsHint: false)
+                TactileTrackpadWell(client: client, latched: $latched,
+                                    placement: .natural(bottomInset: insets.bottom))
                     .frame(height: naturalSplit.padHeight)
             }
         }
