@@ -328,7 +328,7 @@ struct TactileCommandBar: View {
     @State private var heldCap = HeldCap()
     @State private var arrowsExpanded = false
 
-    static let barHeight: CGFloat = 56
+    static let barHeight: CGFloat = 50
 
     var body: some View {
         HStack(spacing: 4) {
@@ -364,12 +364,11 @@ struct TactileCommandBar: View {
             }
         }
         .padding(.horizontal, 7)
-        .padding(.vertical, 6)
+        .padding(.vertical, 5)
         .frame(maxWidth: .infinity)
         .tactileSurface(.floatingChrome, shape: .rounded(20))
         .padding(.horizontal, 6)
-        .padding(.top, 2)
-        .padding(.bottom, 6)
+        .padding(.vertical, 2)
         .frame(height: Self.barHeight)
         .background(Color.clear)
         .onDisappear { heldCap.releaseAll().forEach(send) }

@@ -228,6 +228,7 @@ struct StreamScreen: View {
     @State private var tourWait: Task<Void, Never>? = nil
     @State private var touches = TouchWatch()
     @State private var tourStore = TourStore()
+    @ObservedObject private var keyboardFrame = KeyboardFrameMonitor.shared
     @Environment(\.accessibilityVoiceOverEnabled) private var voiceOverEnabled
     @Environment(\.duoEnvironment) private var duoEnvironment
 
@@ -339,16 +340,15 @@ struct StreamScreen: View {
                 }
 
                 if clipboardChipAllowed, client.clipboardChip || client.clipboardNote != nil, let panel = tourTargets[.stream] {
-                    let corner = ClipboardPolicy.chipCorner(landscape: layout == .landscape, linkLineShown: streamLine != nil)
-                    let widest = corner == .bottomTrailing ? DuoPosture.clipboardChipMaxWidth(panel: panel, toggle: keyboardToggleFrame)
-                                                           : max(0, panel.width - 16)
+                    let isPhone = Self.usesDockedTrackpad(for: geo.size)
+                    let chipAlignment: Alignment = isPhone ? .top : .topTrailing
+                    let topClearance: CGFloat = isPhone ? max(insets.top, 8) + 6 : max(insets.top, 8) + 8
                     ClipboardChip(client: client)
-                        .frame(maxWidth: widest, alignment: .trailing)
-                        .padding(8)
-                        .frame(width: panel.width, height: panel.height,
-                               alignment: corner == .topTrailing ? .topTrailing : .bottomTrailing)
-                        .position(x: panel.midX, y: panel.midY)
-                        .transition(.opacity)
+                        .frame(maxWidth: max(0, panel.width - 24))
+                        .padding(.top, topClearance)
+                        .padding(.horizontal, 12)
+                        .frame(width: geo.size.width, height: geo.size.height, alignment: chipAlignment)
+                        .transition(.move(edge: .top).combined(with: .opacity))
                 }
 
                 if let run = tour, !overlayShown {
@@ -636,38 +636,68 @@ struct StreamScreen: View {
         let sharedReserve = phoneInputFootprint(for: size) + 6
         let progress = CGFloat(max(0, min(1, workspace.deckDragProgress)))
         let deckBottom = progress * sharedReserve
-        let keyboardBottom: CGFloat = keyboardShown ? sharedReserve : 0
+        let keyboardBottom: CGFloat = {
+            guard keyboardShown else { return 0 }
+            if let f = keyboardFrame.frame, f.height > 0 {
+                return f.height + 4
+            }
+            return sharedReserve + 24
+        }()
         let bottom = max(deckBottom, keyboardBottom)
         return bottom > 0 ? EdgeInsets(top: 6, leading: 0, bottom: bottom, trailing: 0) : EdgeInsets()
     }
 
+    private func letterboxedPhoneSplit(size: CGSize, hidden: Bool, insets: FullScreenPolicy.Insets) -> (pictureHeight: CGFloat, padHeight: CGFloat)? {
+        guard !hidden,
+              Self.usesDockedTrackpad(for: size),
+              !keyboardShown,
+              workspace.deckDragProgress < 0.01,
+              !workspace.floatingPad.isVisible,
+              zoom.zoom.scale <= 1.01,
+              size.width > 0, size.height > 0,
+              client.videoSize.width > 0, client.videoSize.height > 0 else { return nil }
+        let availableHeight = max(0, size.height - insets.top)
+        let fittedHeight = size.width * (client.videoSize.height / client.videoSize.width)
+        let spareBottom = availableHeight - fittedHeight
+        guard spareBottom >= 96, fittedHeight > 0 else { return nil }
+        return (pictureHeight: fittedHeight, padHeight: spareBottom)
+    }
+
     private func streamCanvas(size: CGSize, hidden: Bool, room: CGRect, insets: FullScreenPolicy.Insets) -> some View {
         let canvasInsets = streamCanvasInsets(size: size, hidden: hidden, room: room, insets: insets)
-        return ZStack {
-            ZoomedStreamView(client: client, zoom: zoom)
-            InputOverlay(videoSize: client.videoSize,
-                         send: { client.sendInput($0) },
-                         setOwnPointer: { client.setOwnPointer($0, from: $1) },
-                         proxy: overlay,
-                         isKeyboardShown: $keyboardShown,
-                         latchedModifiers: latched,
-                         onModifiersConsumed: { latched = [] },
-                         sendGesture: { client.sendGesture($0, fingers: $1) },
-                         macRepeatsKeys: { KeyTyping.macRepeats(keyRepeat: client.hostKeyRepeat) },
-                         readZoom: { [zoom] in zoom.zoom },
-                         writeZoom: { [zoom] in zoom.set($0) },
-                         customInputAccessoryView: accessoryHost?.view)
+        let naturalSplit = letterboxedPhoneSplit(size: size, hidden: hidden, insets: insets)
+        return VStack(spacing: 0) {
+            ZStack {
+                ZoomedStreamView(client: client, zoom: zoom)
+                InputOverlay(videoSize: client.videoSize,
+                             send: { client.sendInput($0) },
+                             setOwnPointer: { client.setOwnPointer($0, from: $1) },
+                             proxy: overlay,
+                             isKeyboardShown: $keyboardShown,
+                             latchedModifiers: latched,
+                             onModifiersConsumed: { latched = [] },
+                             sendGesture: { client.sendGesture($0, fingers: $1) },
+                             macRepeatsKeys: { KeyTyping.macRepeats(keyRepeat: client.hostKeyRepeat) },
+                             readZoom: { [zoom] in zoom.zoom },
+                             writeZoom: { [zoom] in zoom.set($0) },
+                             customInputAccessoryView: accessoryHost?.view)
+            }
+            .frame(height: naturalSplit?.pictureHeight)
+            .overlay { LockedMacShade(client: client) }
+            .overlay(alignment: .top) { LinkLineView(text: streamLine, lines: streamLineLines) }
+            .overlay {
+                HiddenPictureElement(hidden: hidden, mac: client.macName.isEmpty ? "The Mac" : client.macName,
+                                     show: { showChrome(by: "an assistive technology") })
+            }
+
+            if let naturalSplit {
+                TactileTrackpadWell(client: client, latched: $latched, cornerRadius: 0, showsHint: false)
+                    .frame(height: naturalSplit.padHeight)
+            }
         }
+        .padding(.top, naturalSplit != nil ? insets.top : 0)
         .background(TactileTokens.canvasBlack)
-        .overlay { LockedMacShade(client: client) }
-        .overlay(alignment: .top) { LinkLineView(text: streamLine, lines: streamLineLines) }
-        .overlay {
-            HiddenPictureElement(hidden: hidden, mac: client.macName.isEmpty ? "The Mac" : client.macName,
-                                 show: { showChrome(by: "an assistive technology") })
-        }
         .onGeometryChange(for: CGSize.self, of: { $0.size }) { measured in
-            // Commit settled visible canvas dimensions (Focus, Deck open, or Keyboard up) so the Mac window
-            // always fits edge-to-edge without pillarboxing, while suppressing mid-drag deck frames.
             let isDraggingDeck = Self.usesDockedTrackpad(for: size)
                 && workspace.deckDragProgress > 0 && workspace.deckDragProgress < 1
             if !isDraggingDeck {
@@ -678,6 +708,7 @@ struct StreamScreen: View {
         .tourTarget(.stream)
         .padding(canvasInsets)
         .animation(.easeOut(duration: 0.22), value: keyboardShown)
+        .animation(.easeOut(duration: 0.22), value: keyboardFrame.frame?.height ?? 0)
     }
 
     @ViewBuilder

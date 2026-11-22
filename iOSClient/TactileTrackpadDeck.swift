@@ -183,15 +183,12 @@ struct PadFloatingTrackpadView: View {
 
     @State private var dragStart: WorkspacePoint? = nil
 
-    /// The pad's footprint: compact, so the stream stays the screen on a handheld iPad.
-    static let padSize = CGSize(width: 320, height: 260)
+    static let padSize = CGSize(width: 280, height: 212)
 
     var body: some View {
         let placed = clamped(anchor)
         VStack(spacing: 8) {
             gripStrip
-            TactileKeycapRow(style: .deckSix, latched: $latched,
-                             send: { client.sendFromKeyRow($0) })
             TactileTrackpadWell(client: client, latched: $latched,
                                 cornerRadius: 14, showsHint: false)
         }

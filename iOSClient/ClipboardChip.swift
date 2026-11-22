@@ -29,62 +29,84 @@ struct ClipboardChip: View {
     }
 
     private var chip: some View {
-        HStack(spacing: 10) {
-            Image(systemName: "doc.on.clipboard")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(Palette.muted)
-                .accessibilityHidden(true)
-            VStack(alignment: .leading, spacing: 1) {
-                Text(ClipboardPolicy.Copy.chipTitle(mac: mac))
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Palette.text)
-                    .lineLimit(1)
-                    .truncationMode(.middle)
-                Text(ClipboardPolicy.Copy.chipSubtitle(rightAway: pasteRightAway))
-                    .font(.caption)
-                    .foregroundStyle(Palette.muted)
-                    .lineLimit(1)
+        TactileGlassGroup(spacing: 8) {
+            HStack(spacing: 8) {
+                HStack(spacing: 8) {
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text(ClipboardPolicy.Copy.chipTitle(mac: mac))
+                            .font(.caption.weight(.semibold))
+                            .foregroundStyle(.primary)
+                            .lineLimit(1)
+                            .truncationMode(.middle)
+                        Text(ClipboardPolicy.Copy.chipSubtitle(rightAway: pasteRightAway))
+                            .font(.caption2)
+                            .foregroundStyle(.secondary)
+                            .lineLimit(1)
+                    }
+                    .layoutPriority(-1)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel(ClipboardPolicy.Copy.chipSpoken(mac: mac, device: StreamClient.deviceWord, rightAway: pasteRightAway))
+                    .accessibilityAddTraits(.isStaticText)
+
+                    ClipboardPasteButton(client: client)
+                        .controlSize(.small)
+                }
+                .padding(.leading, 14)
+                .padding(.trailing, 8)
+                .padding(.vertical, 6)
+                .modifier(ClipboardGlassSurface())
+
+                dismissButton
             }
-            .layoutPriority(-1)
-            // One element for the words; the Paste button and Dismiss are their own.
-            .accessibilityElement(children: .ignore)
-            .accessibilityLabel(ClipboardPolicy.Copy.chipSpoken(mac: mac, device: StreamClient.deviceWord, rightAway: pasteRightAway))
-            .accessibilityAddTraits(.isStaticText)
-            ClipboardPasteButton(client: client)
-            Button(action: { client.dismissClipboardChip() }) {
-                Image(systemName: "xmark")
-                    .font(.footnote.weight(.semibold))
-                    .foregroundStyle(Palette.muted)
-                    .frame(width: 32, height: 32)
-                    .contentShape(Rectangle())
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(ClipboardPolicy.Copy.dismiss)
         }
-        .padding(.leading, 14)
-        .padding(.trailing, 6)
-        .padding(.vertical, 6)
-        .tactileSurface(.floatingChrome, shape: .capsule)
         .accessibilityElement(children: .contain)
+    }
+
+    @ViewBuilder
+    private var dismissButton: some View {
+        let button = Button(action: { client.dismissClipboardChip() }) {
+            Image(systemName: "xmark")
+                .font(.system(size: 13, weight: .semibold))
+        }
+        .accessibilityLabel(ClipboardPolicy.Copy.dismiss)
+
+        if #available(iOS 26, *) {
+            button
+                .buttonStyle(.glass)
+                .buttonBorderShape(.circle)
+        } else {
+            button
+                .tactileButton(.secondary, shape: .circle)
+        }
     }
 
     private func noteView(_ note: ClipboardNote) -> some View {
         HStack(alignment: .firstTextBaseline, spacing: 8) {
-            Image(systemName: note.warning ? "exclamationmark.triangle.fill" : "checkmark")
+            Image(systemName: note.warning ? "exclamationmark.triangle" : "checkmark")
                 .foregroundStyle(note.warning ? TactileTokens.ledAmber : TactileTokens.ledCyan)
                 .accessibilityHidden(true)
             Text(note.text)
-                .foregroundStyle(TactileTokens.textPrimary)
+                .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
         }
-        .font(.footnote)
+        .font(.caption.weight(.medium))
         .padding(.horizontal, 14)
-        .padding(.vertical, 9)
-        .tactileSurface(.floatingChrome, shape: .capsule)
+        .padding(.vertical, 8)
+        .modifier(ClipboardGlassSurface())
         .allowsHitTesting(false)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(note.spoken)
         .accessibilityAddTraits(.isStaticText)
+    }
+}
+
+private struct ClipboardGlassSurface: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content.glassEffect(.regular, in: .capsule)
+        } else {
+            content.tactileSurface(.floatingChrome, shape: .capsule)
+        }
     }
 }
 
