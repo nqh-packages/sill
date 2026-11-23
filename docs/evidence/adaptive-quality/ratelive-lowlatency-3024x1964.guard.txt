@@ -1,5 +1,0 @@
-now:         18:44:03
-last free:   2026-11-23 18:43:47.620 [30s] idle · 0 clients · 6 windows
-last conn:   2026-11-23 16:55:13.530 Remote client connected: iPhone (iPhone18,3) through Tailscale (100.74.39.40:49896)
-last stats:  2026-11-23 18:43:47.620 [30s] idle · 0 clients · 6 windows
-OK: no device connected
