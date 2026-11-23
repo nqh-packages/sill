@@ -5,6 +5,10 @@ docs/remote-bundle-plan.md open question 2 ("Automatic step-down: off") on Huy's
 
 ## Decisions
 
+Huy, 2026-11-23: these are the direction, not directives. Where two of them pull against each other
+(a home start at Extreme against a conservative pace), the design resolves it on the evidence and
+says how; it does not need to come back for a ruling.
+
 1. **Auto is a new Quality choice and the default.** Low … Extreme stay fixed and never adapt.
    Every Mac moves to Auto once on update; picking a preset again fixes the rate.
 2. **How it adapts.** Down: the encoder's bitrate is lowered on the running session, one preset
