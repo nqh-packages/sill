@@ -144,3 +144,34 @@ Grafted from candidate 2:
 - Not built: product analytics. The app has no analytics source (zero operating costs); Auto's
   outcomes are the "Auto:" log lines and the `auto.live`, `auto.restart`, `enc.lowered` counters.
 - No tip: Auto is the default and asks nothing of the person; picking a preset is the existing control.
+
+## Results: S2 (the host, Sill.app and the pacing harness)
+
+Built as designed: `HostConfig.bitrate`/`awayBitrate` are `BitrateChoice` (`effective(away:)` is gone;
+`running(away:auto:)` and `choice(away:)` replace it), `DeviceSettings` maps `autoQuality` (true picks Auto;
+`false` only beside a bitrate, which fixes it; true beside a bitrate is refused whole), `HEVCEncoder.lowerBitrate(to:)`
+(AverageBitRate and DataRateLimits `[bps/8, 1]` on the encode queue, never a raise; a slow-state replacement made before it
+is retired and made again at the current rate), `StreamServer.onSecond` (one hop a second with each client's second and
+verdict, so "Link to …" lines precede "Auto:"), `StreamCoordinator+Auto.swift` (`syncAuto`, `serverSecond`, `autoSecond`,
+`lowerLive`, `commitRunning`), takers and `autoCaptureScale`/`homeAuto`/`awayAuto` to takers only, `link` withheld only
+where Auto runs the connection's pair, Sill.app's keys, one-time migration, Settings › Streaming and menu ("Balanced now"),
+`--auto-quality`, `sillclient.py --auto` and `--set=autoQuality=`, the pacing cases and `Tests/checks/auto-seam`.
+The `AutoQuality` fix: a climb hold on a rung is cleared once Auto has stayed at it 60 s (case and two mutants added).
+
+Deviations, as findings:
+1. **The harness's start does not cap.** On the loopback path the judge has no three measured seconds when the first
+   behind comes (the 2.2 MB keyframe and the buffers swallow them), so `downTarget` has no carried rate and the start
+   walks down live one rung every 3 to 5 s (Extreme → Ultra → Pro → High in 8 s) instead of one restart. The cap is
+   proven by the auto-quality check and by a headless host through `sillrelay.py --rate-mbps 5` ("the link carried about
+   6.9 Mbps", one restart to Low · Standard), not by `autodown`. `autodown` and `autodrift` gate on what the harness
+   measures: first step within 5 s of the first keyframe and High within 20 s; after the start every step down live.
+   A real link that measures late has the same 15 s walk the plan's open question 1 predicted; worth a device look.
+2. **`StreamSettings.init`'s `autoQuality = nil` default stays**: removing it breaks `iOSClient/MockCatalog.swift:450` and
+   `Tests/checks/ledger`, which the iOS slice owns. Drop it when those pass `autoQuality:`.
+3. `AutoQuality.start(place:retina:)` is new: `HostConfig.running` needs a start rung, and auto-seam allows only the
+   coordinator, the auto-quality check and the pacing harness to construct `AutoQuality(`.
+4. Harness frame sizes: deltas 0.7 × the rung's rate, keyframes ten times a delta (a calibration; real keyframes vary).
+5. `AwayPolicy`'s lines under Auto read "streaming at Auto (starting at Low · Standard, climbing while the link keeps
+   up)" and "The home quality stays Auto."; fixed pairs read as before.
+6. `lowerBitrate` is covered by the host run and the encoder's one rule; the hardware encoder's live behaviour was not run
+   here (ratelive is the operator's), and the headless software encoder never needed a live step in the runs.

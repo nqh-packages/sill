@@ -67,6 +67,18 @@
 #            fine after it, reset included, since a restart that keeps the quality keeps the
 #            judgement (the review of 2026-09-27: clearing it there made the device's line go and
 #            come back, spoken again, a few seconds later)
+#   Auto (docs/adaptive-quality-plan.md; main.swift's --auto runs AutoQuality on the real StreamServer's
+#   onSecond, its frames sized by the running rung; the new build alone, the base has no Auto; summarize.py
+#   gates on the "Auto:" lines):
+#   autodown   --auto home on 24 Mbit/s for 120 s: the first step within 5 s of the first keyframe, a restart (the
+#            start's cap), at or below Balanced; then never above Pro, at least 80 % of the last 60 s at
+#            High, the climbs into Pro spaced by the failed climb's hold (10, 20, 40, 60 s: the auto-quality
+#            check's simulated link)
+#   autodrift  --auto home on 60 Mbit/s falling to 24 at 30 s: after the start's cap every step down is lowered
+#            live, one rung, at least 3 s apart, never a restart down
+#   autoclimb  --auto away on 8 Mbit/s rising to 200 at 20 s: every step up is a restart, at least 5 s apart,
+#            Extreme within 60 s of the rise, never a live raise
+#   autostill  --auto away on 2 Mbit/s with the window still for 30 s from 3 s (--full): no step up while still
 #   and the link's gates on real24 (never behind), over8 (behind within 5 s, carried within 20 % of
 #   8 Mbit/s, Low suggested for Pro), dip (behind within 3 s of the end of the host's first second
 #   withholding frames, which waits for the dip's 1 MB queue to fill; fine within 10 s of its end),
@@ -87,7 +99,7 @@ while [ $# -gt 0 ]; do
         --cases) only="$2"; shift 2 ;;
         --list) list=1; shift ;;
         --sound) sound=1; shift ;;
-        -h|--help) sed -n '2,76p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+        -h|--help) sed -n '2,90p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
         *) echo "usage: Scripts/pacing/run.sh [--full] [--cases a,b] [--repeat N] [--base REF] [--sound] [--list]" >&2; exit 2 ;;
     esac
 done
@@ -109,6 +121,9 @@ cases=(
   "linkdead|35|1|Remote|bottleneck|--kf 150000 --delta 8000 -- --rate-mbps 8 --delay-ms 70 --queue-bytes 262144 --blackhole-at 20 -- --reconnect --liveness-bytes"
   "linkdown|35|1|Remote|bottleneck|--kf 150000 --delta 8000 -- --rate-mbps 8 --delay-ms 70 --queue-bytes 262144 --rate-at 20:0 -- --reconnect --liveness-bytes"
   "linkrestart|45|1|Remote|bottleneck|--kf 1500000 --delta 60000 --bitrate 40000000 --restart-at 20:0.1,30:0.1 -- --rate-mbps 8 --delay-ms 70 --queue-bytes 262144 -- --reconnect"
+  "autodown|120|1|Remote|bottleneck|--auto home -- --rate-mbps 24 --delay-ms 70 --queue-bytes 262144 -- --reconnect"
+  "autodrift|90|1|Remote|bottleneck|--auto home -- --rate-mbps 60 --delay-ms 70 --queue-bytes 262144 --rate-at 30:24 -- --reconnect"
+  "autoclimb|120|1|Remote|bottleneck|--auto away -- --rate-mbps 8 --delay-ms 70 --queue-bytes 262144 --rate-at 20:200 -- --reconnect"
 )
 full_cases=(
   "ext60|25|1|Remote|bottleneck|--kf 2000000 --delta 312500 --fps 60 -- --rate-mbps 400 --delay-ms 6 --queue-bytes 262144 -- --reconnect"
@@ -118,6 +133,7 @@ full_cases=(
   "over8|45|1|Remote|bottleneck|--kf 1500000 --delta 60000 --bitrate 40000000 -- --rate-mbps 8 --delay-ms 70 --queue-bytes 262144 -- --reconnect"
   "slowkf|50|1|Remote|bottleneck|--kf 1600000 --delta 1000 --gop 30 --icons 20 -- --rate-mbps 2 --delay-ms 70 --queue-bytes 262144 -- --reconnect"
   "home|30|1|Home|bottleneck|--kf 150000 --delta 8000 --home -- --rate-mbps 20 --delay-ms 10 --queue-bytes 262144 -- --plain"
+  "autostill|50|1|Remote|bottleneck|--auto away --still-at 3:30 -- --rate-mbps 2 --delay-ms 70 --queue-bytes 262144 -- --reconnect"
 )
 all=("${cases[@]}" "${full_cases[@]}")
 if [ "$list" = 1 ]; then
@@ -169,7 +185,9 @@ for c in "${selected[@]}"; do
     n="$repeat"; if [ "$full" = 1 ] && [ -z "$only" ]; then n="$reps"; fi
     read -r -a argv <<< "$rest"
     for i in $(seq 1 "$n"); do
-        for side in base new; do
+        # An auto case runs the new build alone: the base has no Auto.
+        sides=(base new); case "$name" in auto*) sides=(new) ;; esac
+        for side in "${sides[@]}"; do
             run="$name-$i-$side"
             build="$side" args=("${argv[@]}")
             # --sound: new's build both times; the sound on the host (its args come first) and the device (last).

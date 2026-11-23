@@ -10,7 +10,9 @@ usage: sillclient.py PORT [seconds] [desktop|none|window:ID] [flags...]
   --fps-after=N@T    send a second viewport asking for N fps after T seconds
   --set=K=V[,K=V]@T  send a settings change (kind 17) T seconds in, with integer tokens 1, 2, 3...
                      in send order. Keys: maxFPS, bitrate, captureScale, prioritizeSpeed,
-                     virtualDisplay, directWireless, sendAudio; booleans accept 1/0/true/false/on/off
+                     virtualDisplay, directWireless, sendAudio, autoQuality (true picks Auto; false
+                     only beside a bitrate: a preset pick from a device that takes Auto);
+                     booleans accept 1/0/true/false/on/off
   --raw17=JSON@T     send this literal kind 17 payload T seconds in (split on the last @)
   --raw9=JSON@T      send this literal kind 9 payload (a viewport) T seconds in (split on the last @);
                      a host refuses one outside 1 to 16384 points a side or 0.25 to 4 for its scale,
@@ -59,6 +61,11 @@ usage: sillclient.py PORT [seconds] [desktop|none|window:ID] [flags...]
                      for while the Mac changes something (its gate gives up after 2 s)
   --off-console-view the hello (sent even without --hello) says offConsoleView 1: this client shows a Mac's
                      off-console view (docs/off-console-plan.md); lists print offConsoleView=1 when they say it.
+  --auto             the hello (sent even without --hello) says autoQuality 1: this client takes Auto
+                     (docs/adaptive-quality-plan.md), so the host sends it StreamSettings.autoQuality,
+                     the state's autoCaptureScale and the away header's homeAuto/awayAuto; states print
+                     them as auto=1|0 (and autoScale=N while Auto runs its connection). Without it the
+                     client is an older device: it sees the running rate as a preset.
   --audio            the hello (sent even without --hello) lists "aac-eld": this client plays the Mac's
                      sound, so a host with Send Audio on sends it kind 43. Each format (type 1) is printed
                      on one line; the packets (type 2) are counted each second (aud=) with their seq
@@ -174,15 +181,15 @@ import json, re, socket, struct, sys, time
 KIND = {0:"ps",1:"frame",2:"list",3:"thumb",4:"icon",5:"apps",11:"pong",13:"tick",14:"cursor",16:"settings",18:"macinfo",20:"pairresult",22:"goodbye",24:"menu",26:"pointer",32:"clipboard",43:"audio"}
 BOOL = {"1": True, "0": False, "true": True, "false": False, "on": True, "off": False, "yes": True, "no": False}
 BOOL_KEYS = {"prioritizeSpeed", "virtualDisplay", "directWireless", "sendAudio", "persistent", "virtualDisplayAvailable",
-             "thisConnectionAway", "awayRunning", "sessionPaired"}
-# What --set may send: HostSettingsChange's seven fields. The host drops any other key without a
+             "thisConnectionAway", "awayRunning", "sessionPaired", "autoQuality", "homeAuto", "awayAuto"}
+# What --set may send: HostSettingsChange's eight fields. The host drops any other key without a
 # word, so a misspelt one would only show up as an unchanged answer.
-SET_KEYS = {"maxFPS", "bitrate", "captureScale", "prioritizeSpeed", "virtualDisplay", "directWireless", "sendAudio"}
+SET_KEYS = {"maxFPS", "bitrate", "captureScale", "prioritizeSpeed", "virtualDisplay", "directWireless", "sendAudio", "autoQuality"}
 # Away from home (docs/remote-bundle-plan.md): read from the state's `away`, and its `link`'s state.
-AWAY_KEYS = {"homeBitrate", "homeCaptureScale", "awayBitrate", "awayCaptureScale", "thisConnectionAway", "awayRunning"}
+AWAY_KEYS = {"homeBitrate", "homeCaptureScale", "awayBitrate", "awayCaptureScale", "thisConnectionAway", "awayRunning", "homeAuto", "awayAuto"}
 # The Desktop's stops (DesktopDisplays), from the last window list: a number, or none for a list without it.
 LIST_KEYS = {"desktopDisplay", "desktopDisplays"}
-EXPECT_KEYS = SET_KEYS | {"persistent", "virtualDisplayAvailable", "sessionPaired", "linkState", "clipboard"} | AWAY_KEYS | LIST_KEYS
+EXPECT_KEYS = SET_KEYS | {"persistent", "virtualDisplayAvailable", "sessionPaired", "linkState", "clipboard", "autoCaptureScale"} | AWAY_KEYS | LIST_KEYS
 TIMED = ("set", "raw17", "raw9", "pick", "fps-after", "stop-ping", "stop-read", "pairing-wanted", "keyframe", "fetch", "press", "raw25",
          "raw27", "move", "tap", "key", "input", "gesture", "raw28", "copy", "copy-bytes", "raw32", "raw7", "raw15", "next-display")
 INPUT = ("move", "tap", "key", "input")
@@ -544,7 +551,7 @@ try:
             if not body: raise ValueError(f"--{name} needs a value")
             if name in ("big-payload", "flood") and number(body, f"--{name}") < 1: raise ValueError(f"--{name} must be at least 1")
         elif a not in ("--junk", "--stats", "--tls", "--expect-tls-fail", "--menus", "--pointer", "--audio", "--no-select", "--pair-ask",
-                       "--off-console-view",
+                       "--off-console-view", "--auto",
                        "--clipboard", "--pair-ask=cable", "--pair-cancel") and not a.startswith(("--fps=", "--expect=")):
             raise ValueError(f"unknown flag {a!r}")
     events.sort(key=lambda e: (e[0], e[1]))
@@ -644,6 +651,9 @@ if plays_audio:
 # 0.6.1 on: docs/off-console-plan.md), so a host with the switch on sends it the view's list (windows, offConsoleView).
 if "--off-console-view" in flags:
     hello = dict(hello if hello is not None else {"device": device}, offConsoleView=1)
+# --auto: this client takes Auto (the hello says autoQuality 1, as a device from the Auto release on does).
+if "--auto" in flags:
+    hello = dict(hello if hello is not None else {"device": device}, autoQuality=1)
 
 if flood:
     # Connections that are reset before a byte is sent: the door must not keep them (no descriptor
@@ -755,6 +765,10 @@ def describe(d):
     if isinstance(away, dict):
         extra += (f" away=h:{away.get('homeBitrate')}/{away.get('homeCaptureScale')},a:{away.get('awayBitrate')}/{away.get('awayCaptureScale')},"
                   f"this={b(away.get('thisConnectionAway'))},run={b(away.get('awayRunning'))}")
+        if away.get("homeAuto") is not None or away.get("awayAuto") is not None:
+            extra += f",auto=h:{dash(None if away.get('homeAuto') is None else b(away.get('homeAuto')))}/a:{dash(None if away.get('awayAuto') is None else b(away.get('awayAuto')))}"
+    if st.get("autoQuality") is not None:
+        extra += f" auto={b(st.get('autoQuality'))}" + (f" autoScale={d.get('autoCaptureScale')}" if d.get("autoCaptureScale") is not None else "")
     if isinstance(link, dict):
         suggested = "-" if link.get("suggestedBitrate") is None else f"{link.get('suggestedBitrate')}/{dash(link.get('suggestedCaptureScale'))}"
         extra += (f" link={link.get('state')},withheld={link.get('withheldPerSecond')},bitrate={link.get('bitrate')},"
@@ -1064,7 +1078,7 @@ if expect is not None:
         problems.append("no settings received")
     else:
         for k, want in expect.items():
-            if k in ("persistent", "virtualDisplayAvailable", "sessionPaired"): got = last_state.get(k)
+            if k in ("persistent", "virtualDisplayAvailable", "sessionPaired", "autoCaptureScale"): got = last_state.get(k)
             elif k in AWAY_KEYS: got = (last_state.get("away") or {}).get(k)
             elif k == "linkState": got = (last_state.get("link") or {}).get("state", "fine")
             else: got = last_state.get("settings", {}).get(k)

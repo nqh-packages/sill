@@ -22,7 +22,7 @@ import StreamProtocol
 // usage: Harness [--port P] [--kf BYTES] [--delta BYTES] [--fps N] [--gop S] [--icons N]
 //                [--icon-bytes B] [--thumbs N] [--thumb-bytes B] [--seconds S] [--log PATH]
 //                [--plain | --home] [--sizes-at T:KF:DELTA,…] [--still-at T:D,…]
-//                [--restart-at T:D,…] [--bitrate B] [--audio]
+//                [--restart-at T:D,…] [--bitrate B] [--audio] [--auto home|away]
 // --plain: the remote door without TLS; --home: plain TCP served as a home client (run.py's
 // DOOR=Home).
 // --bitrate: the running quality the link's reports speak of (default Pro, 40000000): each change of
@@ -41,6 +41,13 @@ import StreamProtocol
 //   the same sizes (a window picked, a rotation: the quality kept, so the links keep their
 //   judgement), so its first keyframe goes out while that keyframe may still be crossing the link.
 //   It prints "Restart: …".
+// --auto home|away: Auto (docs/adaptive-quality-plan.md) on this server: the real AutoQuality, fed each second
+//   from StreamServer.onSecond as the coordinator feeds it, starting at the place's start rung. The fake
+//   frames follow the running rung (deltas of 0.7 × its rate, keyframes ten times that: `autoSizes`); a live
+//   step changes the sizes from the next frame, a restart goes the --restart-at way (a keyframe, the stream
+//   starting again) 0.1 s after its line. Each step prints AutoQuality.stepLine, which summarize.py gates on.
+//   Only in a build whose StreamServer has onSecond and whose host files have AutoQuality (build.sh defines
+//   AUTO_QUALITY); another build refuses the flag, and run.sh runs an auto case on the new build alone.
 // --log: the host's lines with Sill.log's timestamps (HostLog), which summarize.py reads.
 // --audio: Send Audio on (docs/audio-plan.md H6): while a device plays the sound (device.py --audio), the
 //   test tone goes through the real AudioPipeline and StreamServer's send path, as SillHost --synthetic
@@ -83,6 +90,7 @@ let stills = pairs("--still-at")
 let restarts = pairs("--restart-at")
 let linkBitrate = Int(value("--bitrate", "40000000"))!
 let withAudio = args.contains("--audio")
+let autoPlace = value("--auto", "")
 
 if !logPath.isEmpty { HostLog.shared.configure(keepLines: 0, fileURL: URL(fileURLWithPath: logPath)) }
 
@@ -118,14 +126,17 @@ let psPayload = ParameterSets(nalUnitHeaderLength: 4, sets: [Data(count: 24), Da
 
 server.onKeyframeNeeded = { encoder.requestKeyframe() }
 #if LINK_JUDGE
-server.onClientLinkChanged = { _, v in
-    let suggestion = LinkJudge.suggestion(carriedKbps: v.carriedKbps, bitrate: linkBitrate, fps: fps, captureScale: 1)
+/// The bitrate the link's lines suggest against: --bitrate, or the running rung under --auto.
+var reportedBitrate = linkBitrate
+func printLink(_ v: LinkJudge.Verdict) {
+    let suggestion = LinkJudge.suggestion(carriedKbps: v.carriedKbps, bitrate: reportedBitrate, fps: fps, captureScale: 1)
     var parts = ["withheld \(v.withheld) of \(v.offered)"]
     if let carried = v.carriedKbps { parts.append("carried \(LinkJudge.mbps(kbps: carried)) Mbps") }
     if v.state == .stalled { parts.append("\(LinkJudge.bytes(v.waiting)) waiting") }
     if v.state != .fine { parts.append(suggestion.map { "suggesting \(LinkJudge.title($0))" } ?? "nothing lower") }
     print("Link: \(v.state)\(v.reset ? " (reset)" : "") (\(parts.joined(separator: "; ")))")
 }
+server.onClientLinkChanged = { _, v in printLink(v) }
 #endif
 server.onClientCountChanged = { n in Stats.shared.activeClients = n }
 #if SILL_AUDIO
@@ -142,6 +153,66 @@ server.onAudioListenersChanged = { n in
 }
 #else
 if withAudio { print("--audio needs a build with the sound (Scripts/pacing/build.sh defines SILL_AUDIO)."); exit(2) }
+#endif
+#if AUTO_QUALITY
+/// Auto's frames: deltas of 0.7 × the rung's rate (a stream at its rung's bitrate), keyframes ten times that.
+func autoSizes(_ rung: AutoQuality.Rung) -> (kf: Int, delta: Int) {
+    let delta = Int(Double(rung.bitrate) * 0.7 / 8 / 60)
+    return (delta * 10, delta)
+}
+let autoLock = NSLock()
+var autoPolicy: AutoQuality?
+var autoRunning: AutoQuality.Rung?
+func autoRunningRung() -> AutoQuality.Rung? { autoLock.lock(); defer { autoLock.unlock() }; return autoRunning }
+func autoSetRunning(_ rung: AutoQuality.Rung) { autoLock.lock(); autoRunning = rung; autoLock.unlock() }
+func autoCommit(_ rung: AutoQuality.Rung) {
+    let sizes = autoSizes(rung)
+    encoder.kf = sizes.kf; encoder.delta = sizes.delta
+    autoSetRunning(rung)
+    #if LINK_JUDGE
+    reportedBitrate = rung.bitrate * fps / 60
+    #endif
+    server.resetLinks()
+}
+if autoPlace == "home" || autoPlace == "away" {
+    let place: AutoQuality.Place = autoPlace == "away" ? .away : .home
+    let policy = AutoQuality(place: place, retina: true)
+    autoPolicy = policy
+    autoRunning = policy.rung
+    let sizes = autoSizes(policy.rung)
+    encoder.kf = sizes.kf; encoder.delta = sizes.delta
+    #if LINK_JUDGE
+    reportedBitrate = policy.rung.bitrate * fps / 60
+    #endif
+    print(AutoQuality.startLine(place: place, rung: policy.rung))
+    server.onSecond = { closed in
+        // The coordinator's order: each device's verdict first, then the second goes to Auto.
+        #if LINK_JUDGE
+        for (_, entry) in closed { if let v = entry.verdict { printLink(v) } }
+        #endif
+        guard var a = autoPolicy, let running = autoRunningRung() else { return }
+        let away = Dictionary(uniqueKeysWithValues: closed.keys.map { ($0, place == .away) })
+        let step = a.close(closed.mapValues(\.second), governing: AutoQuality.governing(away), running: running, fps: fps)
+        autoPolicy = a
+        guard let step else { return }
+        print(AutoQuality.stepLine(step) { _ in "harness" })
+        switch step.how {
+        case .live:
+            autoCommit(step.to)
+        case .restart:
+            captureQueue.asyncAfter(deadline: .now() + 0.1) {
+                autoCommit(step.to)
+                print("Restart: the stream starts again (keyframe \(encoder.kf) B)")
+                encoder.requestKeyframe()
+                server.resetForNewStream()
+            }
+        }
+    }
+} else if !autoPlace.isEmpty {
+    print("--auto takes home or away."); exit(2)
+}
+#else
+if !autoPlace.isEmpty { print("--auto needs a build with Auto (Scripts/pacing/build.sh defines AUTO_QUALITY)."); exit(2) }
 #endif
 server.onClientConnected = { connection, route, _ in
     // The coordinator hops to the main actor first; so does this.

@@ -21,7 +21,8 @@ git rev-parse --verify --quiet "$base^{commit}" > /dev/null || { echo "build.sh:
 # AskLimits; the harness never builds one (its own door serves every session). Since away from home
 # (PR #39) it judges each device's link (LinkJudge). Since a revoked session's receive loop hands on
 # only what lets go of a key or a button (security scan finding 10), it reads RevokedInput (KeyStrokes).
-host_files=(StreamServer CableLink ClientLink DeviceGate Door DoorPolicy HostIdentity HostLog InterfaceSnapshot KeyStrokes
+# Since Auto (docs/adaptive-quality-plan.md) main.swift's --auto runs AutoQuality, which builds on LinkJudge.
+host_files=(AutoQuality StreamServer CableLink ClientLink DeviceGate Door DoorPolicy HostIdentity HostLog InterfaceSnapshot KeyStrokes
             LinkJudge LockPolicy OriginPolicy PairingWindow PointerControl PointerWatch RefusalSummary Stats)
 # The Mac's sound (docs/audio-plan.md H6): where a side has these, they are compiled in with SILL_AUDIO
 # defined, and main.swift's --audio runs the test tone through the real pipeline and send path.
@@ -79,6 +80,11 @@ side() {
         defines="${defines:+$defines, }.define(\"LINK_JUDGE\")"
     fi
     if [ "$sound" = 1 ]; then defines="${defines:+$defines, }.define(\"SILL_AUDIO\")"; fi
+    # One whose StreamServer has onSecond and whose host files have AutoQuality (docs/adaptive-quality-plan.md)
+    # compiles main.swift's --auto under AUTO_QUALITY; a base from before Auto has neither.
+    if grep -q 'var onSecond' "$pkg/Sources/Harness/StreamServer.swift" && [ -f "$pkg/Sources/Harness/AutoQuality.swift" ]; then
+        defines="${defines:+$defines, }.define(\"AUTO_QUALITY\")"
+    fi
     if [ -n "$defines" ]; then settings=", swiftSettings: [$defines]"; fi
     put "$pkg/Package.swift" <<SWIFT
 // swift-tools-version:5.9

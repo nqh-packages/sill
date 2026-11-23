@@ -118,6 +118,14 @@ Below, "this file" means CLAUDE.md, and "Build and run below" means docs/BUILD-A
   link judged once a second from the sweep: fine, behind, stalled, the carried
   rate, the suggestion, the host's lines, and which restarts judge afresh
   (`judgedAfresh`); pure, `Tests/checks/link-judge`),
+  `AutoQuality` (Auto, docs/adaptive-quality-plan.md: the ladder of rungs, the start, the cap by the
+  carried rate, one rung down live, a climb by restart, the hold after a failed climb, which devices
+  govern, the "Auto:" lines; pure, `Tests/checks/auto-quality`) and its shell
+  `StreamCoordinator+Auto.swift` (`syncAuto`, the per-second `serverSecond`/`autoSecond`, `lowerLive`
+  through `HEVCEncoder.lowerBitrate(to:)`, and `commitRunning`, the one place what runs moves;
+  `HostConfig.running(away:auto:)` is the one reader of the running rate); the seam is guarded by
+  `Tests/checks/auto-seam` (`seam.py`'s `RULES`: who calls `lowerBitrate(`, who assigns `autoRunning`,
+  who constructs `AutoQuality(`),
   `HostStatus` (the snapshot the app shows, pushed on events; `onChange`
   publishes the devices' settings state; `firewall`, the macOS firewall's
   verdict), `FirewallRule` (what the macOS firewall's read-only answers mean
@@ -661,7 +669,9 @@ Below, "this file" means CLAUDE.md, and "Build and run below" means docs/BUILD-A
   files too since pairing at home, and `PACING_SERVE_BEFORE_HOME_PAIRING` for a
   BASE from before it, whose `serve` takes no hello) and fed fake
   frames by `main.swift` (no encoder: a binary that links a media framework is
-  refused; on cue, new sizes, a still window or a restart); `run.sh [--full]
+  refused; on cue, new sizes, a still window or a restart; `--auto home|away` runs the real
+  `AutoQuality` on `StreamServer.onSecond` with frames sized by the running rung, the `auto*` cases on the
+  new build alone, gated by `summarize.py` on their "Auto:" lines); `run.sh [--full]
   [--cases a,b] [--repeat N] [--base REF] [--list]`
   runs each case on both, host → `bottleneck.py` (a downlink rate on a virtual
   clock, a delay, a finite queue, rate changes) or `Scripts/sillrelay.py` →

@@ -53,6 +53,7 @@ python3 Scripts/migrate-notes.py        # once, in a branch opened before 2026-1
 Scripts/agent-simulators.sh create      # once: the agents' simulators "Sill agents Duo" (iOS 27.1) and "Sill agents iPad" (iOS 27.0), shut down
 Scripts/harness-photos.sh Scripts/harness-photos/example.cases --baseline origin/main   # harness photos of HEAD (committed) on the agents' Duo, pixel for pixel against main's, in the heavy lock
 Scripts/pacing/run.sh                   # remote pacing and the link's judge, this tree against origin/main, no encoder, all on loopback (~25 min; --full ~45; --list)
+Scripts/pacing/run.sh --cases autodown,autodrift,autoclimb   # Auto's live-down / restart-up gates (docs/adaptive-quality-plan.md), the new build alone (~6 min; autostill is in --full)
 SILL_TEST_LOOPBACK=1 SILL_TEST_SOFTWARE_ENCODER=1 SILL_TEST_NO_ROUTER=1 SILL_TEST_ORIGIN=vpn SILL_TEST_PATTERN=noise .build/release/SillHost --synthetic --remote   # an away session whose stream follows its quality
 Scripts/make-app.sh                     # .build/Sill.app, signed with the Apple Development identity (~2 s unchanged)
 Scripts/make-app.sh --install --open    # Noah: replace /Applications/Sill.app (a running one quits first), launch it
@@ -154,6 +155,18 @@ link through `sillrelay.py --rate-mbps 5`; `sillclient.py` prints `away=` and
 `link=` on each kind 16, and `--expect` knows `awayBitrate`,
 `awayCaptureScale`, `homeBitrate`, `homeCaptureScale`, `thisConnectionAway`,
 `awayRunning` and `linkState`.
+Auto (docs/adaptive-quality-plan.md): `SillHost --auto-quality` (the CLI keeps fixed rates without it, and its
+stdout is as it was) starts both qualities at Auto: the log has one "Auto: starting at …" line, then one
+"Auto: A → B (reason); lowered live." or "…; restarting." line per step, after the "Link to …" lines that
+explain it, and the stats line counts `auto.live`, `auto.restart` and `enc.lowered`. Headless, on a
+`--synthetic` host with `SILL_TEST_PATTERN=noise` through `sillrelay.py --rate-mbps 5`: `sillclient.py --auto`
+(the hello says `autoQuality` 1: the client takes Auto) prints `auto=1` and `autoScale=` on each kind 16,
+`--set=autoQuality=true@T` picks Auto (`--set=bitrate=N,autoQuality=false@T` is a preset pick from such a
+client: it fixes the rate), and `--expect` knows `autoQuality`, `autoCaptureScale`, `homeAuto` and `awayAuto`.
+Without `--auto` the client is an older device: it sees the running rate as its preset. Never run the hardware
+encoder for it; `Scripts/encoder-check/verify-hardware.sh ratelive` (operator-run, never while streaming) is
+what measured the one-preset live lower `lowerBitrate(to:)` makes. Sill.app: `-SillSetAfter 'bitrate=auto'` and
+`awayBitrate=auto` pick Auto as the menu's first Quality item does.
 The Mac's pointer, headless: every synthetic host is a dry run (its input is
 counted as `in.dry`, never posted, and activates or raises nothing) and never
 reads the real pointer. TEST ONLY, honoured only by a synthetic host (anywhere else one

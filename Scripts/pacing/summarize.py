@@ -38,6 +38,8 @@ def read(name, suffix):
 
 DEV = re.compile(r"(\d\d:\d\d:\d\d\.\d+) \S+:\s+(\d+) fps\s+age\s+(\S+)\s+rtt\s+(\S+)\s+in\s+(\d+) kB\s+keys (\d+)(?:\s+newest ([\d.]+))?")
 STILL = re.compile(r"\S+ (\d\d:\d\d:\d\d\.\d+) Still: for (\S+) s after the frame of ([\d.]+)")
+AUTO = re.compile(r"\S+ (\d\d:\d\d:\d\d\.\d+) Auto: (.+?) → (.+?) \((.*)\); (lowered live|restarting)\.")
+PRESETS = ["Low", "Efficient", "Balanced", "High", "Pro", "Ultra", "Extreme"]
 LINK = re.compile(r"\S+ (\d\d:\d\d:\d\d\.\d+) Link: (fine|behind|stalled)( \(reset\))? \((.*)\)")
 
 def one(name):
@@ -98,12 +100,19 @@ def one(name):
     drop_at = next((t - t0 for (t, r), (_, prev) in zip(rates[1:], rates[:-1]) if r < prev), None)
     rise_at = (ups[-1] - t0) if ups else None
     dark_at = next((secs(m.group(1)) - t0 for m in (re.match(r"(\d\d:\d\d:\d\d\.\d+) relay: blackhole", l) for l in relay) if m), None)
+    # Auto's steps (docs/adaptive-quality-plan.md; --auto): (seconds from the device's first connection, from, to
+    # as preset indexes (a resolution is named only when it changes: "Efficient · Retina"), how).
+    def preset(text): return PRESETS.index(text.split(" · ")[0])
+    autos = [(secs(m.group(1)) - t0, preset(m.group(2)), preset(m.group(3)), "live" if m.group(5) == "lowered live" else "restart")
+             for m in map(AUTO.match, host) if m]
+    still_spells = [(secs(m.group(1)) - t0, float(m.group(2))) for m in map(STILL.match, host) if m]
     mins = max(n, 1) / 60
     # The host sees a slower path only once the buffers in front of it are full (the bottleneck's
     # queue, then the kernel's socket buffers): the end of its first second that withheld a frame after
     # the rate fell.
     withheld_at = next((u for u in withheld_ends if drop_at is not None and u > drop_at), None)
-    return {"links": links, "firstKey": None if first_key is None else first_key - t0, "dropAt": drop_at, "riseAt": rise_at, "darkAt": dark_at,
+    auto_end = (max(t for t, *_ in seconds) - t0) if seconds else 0
+    return {"autoEnd": auto_end, "autos": autos, "stillSpells": still_spells, "links": links, "firstKey": None if first_key is None else first_key - t0, "dropAt": drop_at, "riseAt": rise_at, "darkAt": dark_at,
             "withheldAt": withheld_at,
             "fps": statistics.mean(fps) if fps else 0.0, "p10": pct(fps, 10), "fpsK": statistics.mean(after_key) if after_key else 0.0,
             "sent": sent / max(n, 1), "drop": drop / mins, "wait": wait / mins, "waitK": wait_after_key, "keys": keys / mins,
@@ -187,6 +196,10 @@ GATES = {
     "switch": ("no worse than its base run (2 fps, 1 drop a minute)", lambda r, b: b is None or no_worse(r, b)),
     "home": ("no worse than its base run (2 fps, 1 drop a minute)", lambda r, b: b is None or no_worse(r, b)),
     "slowkf": ("recorded: the old device's liveness (whole messages)", None),
+    "autodown": ("Auto's gates below (the Auto lines)", None),
+    "autodrift": ("Auto's gates below (the Auto lines)", None),
+    "autoclimb": ("Auto's gates below (the Auto lines)", None),
+    "autostill": ("Auto's gates below (the Auto lines)", None),
 }
 print(f"\n{'case':10} {'runs':>4}  {'base fps':>9} {'new fps':>9}  {'base drop/m':>11} {'new drop/m':>10}  {'base rec':>8} {'new rec':>8}  gate (new)")
 failed = []
@@ -259,6 +272,73 @@ LINK_GATES = {
                     lambda r: (b := first(r, "behind", r["firstKey"])) is not None and b <= 5
                               and not any(st == "fine" for u, st, _, _ in r["links"] if u > r["firstKey"] + b)),
 }
+
+# Auto (docs/adaptive-quality-plan.md): the new build's "Auto:" lines, which main.swift's --auto prints for each
+# step; seconds from the device's first connection. The numbers are the auto-quality check's simulated link
+# (Tests/checks/auto-quality, case 12), MODULES.md's gates.
+def downs(r): return [a for a in r["autos"] if a[2] < a[1]]
+def ups(r): return [a for a in r["autos"] if a[2] > a[1]]
+def spaced(times, least): return all(b - a >= least - 0.5 for a, b in zip(times, times[1:]))   # the sweep's phase: half a second
+# 24 Mbit/s: the first step within 5 s of the first keyframe; High reached within 20 s of it (the start's cap
+# is one restart, and a start that measured nothing walks down live, a rung every 3 to 5 s: the harness's
+# loopback fills its buffers before the judge has the three measured seconds the cap needs, so it walks);
+# then never above Pro; at least 80 % of the last 60 s at High; each climb into Pro waits the failed climb's
+# hold after the live step back (10, 20, 40, 60, 60 s, less 2 s for the sweep's phase: the auto-quality
+# check's simulated link). A calibration measured here, not a decoded rule.
+def autodown_gate(r):
+    steps = r["autos"]
+    if not steps or r["firstKey"] is None: return False
+    if steps[0][0] - r["firstKey"] > 5: return False
+    at_high = next((a[0] for a in steps if a[2] <= PRESETS.index("High")), None)
+    if at_high is None or at_high - r["firstKey"] > 20: return False
+    if any(a[2] > PRESETS.index("Pro") for a in steps if a[0] > at_high): return False
+    horizon = r["autoEnd"]
+    rungs = []
+    for t in range(int(horizon - 60), int(horizon)):
+        rung = PRESETS.index("Extreme")
+        for a in steps:
+            if a[0] <= t: rung = a[2]
+        rungs.append(rung)
+    if sum(x == PRESETS.index("High") for x in rungs) < 0.8 * len(rungs): return False
+    holds = [60 if i >= 3 else 10 * 2 ** i for i in range(8)]
+    down_from_pro = [a[0] for a in steps if a[1] == PRESETS.index("Pro") and a[2] < a[1]]
+    up_to_pro = [a[0] for a in steps if a[2] == PRESETS.index("Pro") and a[2] > a[1]]
+    return all(u - d >= holds[i] - 2 for i, (d, u) in enumerate(zip(down_from_pro[1:], up_to_pro[1:])))
+# 60 → 24 Mbit/s at 30 s: every step down but the first (the start's) is lowered live, one rung, at least 3 s
+# apart; a step down comes after the fall; never a restart down after the start.
+def autodrift_gate(r):
+    later = downs(r)[1:]
+    after_fall = [a for a in later if r["dropAt"] is not None and a[0] > r["dropAt"]]
+    return bool(r["autos"]) and bool(after_fall) and all(a[3] == "live" for a in later) and spaced([a[0] for a in later], 3)
+# 8 → 200 Mbit/s at 20 s: every step up is a restart, at least 5 s apart, Extreme within 60 s of the rise.
+def autoclimb_gate(r):
+    up = ups(r)
+    top = next((a[0] for a in up if a[2] == PRESETS.index("Extreme")), None)
+    return bool(up) and all(a[3] == "restart" for a in up) and spaced([a[0] for a in up], 5) \
+        and r["riseAt"] is not None and top is not None and top <= r["riseAt"] + 60
+# 2 Mbit/s with the window still for 30 s: no step up while it is still.
+def autostill_gate(r):
+    return bool(r["stillSpells"]) and not any(start <= a[0] <= start + length for start, length in r["stillSpells"] for a in ups(r))
+AUTO_GATES = {
+    "autodown": ("the first step within 5 s of the first keyframe, High within 20 s of it; never above Pro after; ≥ 80 % of the last 60 s at High; climbs into Pro spaced by the hold",
+                 autodown_gate),
+    "autodrift": ("after the start every step down lowered live, ≥ 3 s apart, one at least after the fall, none by restart", autodrift_gate),
+    "autoclimb": ("every step up a restart ≥ 5 s apart, Extreme within 60 s of the rise", autoclimb_gate),
+    "autostill": ("no step up while the window is still", autostill_gate),
+}
+auto_failed = []
+auto_runs = [(name, r) for name, r in runs.items() if name.endswith("-new") and re.match(r"(.+)-\d+-new$", name).group(1) in AUTO_GATES]
+if auto_runs:
+    print("\nAuto (the new build's Auto lines; seconds from the device's first connection; P preset indexes in the table's order):")
+    for name, r in auto_runs:
+        case = re.match(r"(.+)-\d+-new$", name).group(1)
+        steps = " ".join(f"{a[0]:.0f}s {PRESETS[a[1]]}>{PRESETS[a[2]]}{'*' if a[3] == 'live' else ''}" for a in r["autos"]) or "no step"
+        what, rule = AUTO_GATES[case]
+        ok = rule(r)
+        if not ok: auto_failed.append(name)
+        print(f"  {name:22} {steps}\n      {'pass' if ok else 'FAIL'}: {what}")
+    print("  * lowered live; the rest restart")
+failed += auto_failed
 link_failed = []
 news = [(name, r) for name, r in runs.items() if name.endswith("-new")]
 if any(r["links"] for _, r in news) or any(re.match(r"(.+)-\d+-new$", n).group(1) in LINK_GATES for n, _ in news):
