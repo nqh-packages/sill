@@ -1,0 +1,37 @@
+session 3024x1964 mode=default hardware=true encoder=com.apple.videotoolbox.videoencoder.ave.hevc set=(0, 0)
+t= 1.0 target  40 Mbps  out  27.21 Mbps  in 60 out 59 dropped  0  latency mean  15.8 ms max  76.5 ms
+t= 2.0 target  40 Mbps  out  27.99 Mbps  in 60 out 60 dropped  0  latency mean  11.5 ms max  12.0 ms
+t= 3.0 target  40 Mbps  out  27.95 Mbps  in 60 out 60 dropped  0  latency mean  11.4 ms max  14.0 ms
+t=3.0 set 25 Mbps live: status (0, 0)
+t= 4.0 target  25 Mbps  out  17.01 Mbps  in 60 out 59 dropped  0  latency mean  18.7 ms max  20.4 ms
+t= 5.0 target  25 Mbps  out  17.51 Mbps  in 60 out 60 dropped  0  latency mean  19.0 ms max  20.5 ms
+t= 6.0 target  25 Mbps  out  17.49 Mbps  in 60 out 60 dropped  0  latency mean  19.1 ms max  20.8 ms
+t=6.0 set 15 Mbps live: status (0, 0)
+t= 7.0 target  15 Mbps  out  10.34 Mbps  in 60 out 60 dropped  0  latency mean  19.0 ms max  20.1 ms
+t= 8.0 target  15 Mbps  out  10.55 Mbps  in 60 out 60 dropped  0  latency mean  19.1 ms max  20.9 ms
+t= 9.0 target  15 Mbps  out  10.49 Mbps  in 60 out 60 dropped  0  latency mean  19.2 ms max  21.1 ms
+t=9.0 set 8 Mbps live: status (0, 0)
+t=10.0 target   8 Mbps  out   6.80 Mbps  in 60 out 45 dropped 15  latency mean  19.6 ms max  26.9 ms
+t=11.0 target   8 Mbps  out   7.98 Mbps  in 60 out 53 dropped  7  latency mean  19.2 ms max  20.8 ms
+t=12.0 target   8 Mbps  out   7.97 Mbps  in 60 out 53 dropped  7  latency mean  19.2 ms max  20.8 ms
+t=12.0 set 4 Mbps live: status (0, 0)
+t=13.0 target   4 Mbps  out   8.89 Mbps  in 60 out 59 dropped  1  latency mean  19.2 ms max  20.5 ms
+t=14.0 target   4 Mbps  out   3.95 Mbps  in 60 out 26 dropped 34  latency mean  19.2 ms max  20.6 ms
+t=15.0 target   4 Mbps  out   3.85 Mbps  in 60 out 26 dropped 34  latency mean  19.1 ms max  20.8 ms
+t=15.0 set 8 Mbps live: status (0, 0)
+t=16.0 target   8 Mbps  out   8.96 Mbps  in 60 out 60 dropped  0  latency mean  19.5 ms max  27.1 ms
+t=17.0 target   8 Mbps  out   7.99 Mbps  in 60 out 53 dropped  7  latency mean  19.2 ms max  20.9 ms
+t=18.0 target   8 Mbps  out   7.94 Mbps  in 60 out 53 dropped  7  latency mean  19.2 ms max  21.1 ms
+t=18.0 set 15 Mbps live: status (0, 0)
+t=19.0 target  15 Mbps  out  10.31 Mbps  in 60 out 60 dropped  0  latency mean  19.2 ms max  21.0 ms
+t=20.0 target  15 Mbps  out  10.46 Mbps  in 60 out 60 dropped  0  latency mean  19.1 ms max  20.5 ms
+t=21.0 target  15 Mbps  out  10.52 Mbps  in 60 out 60 dropped  0  latency mean  19.2 ms max  20.6 ms
+t=21.0 set 25 Mbps live: status (0, 0)
+t=22.0 target  25 Mbps  out  17.12 Mbps  in 60 out 60 dropped  0  latency mean  19.1 ms max  20.5 ms
+t=23.0 target  25 Mbps  out  17.45 Mbps  in 60 out 60 dropped  0  latency mean  19.0 ms max  20.4 ms
+t=24.0 target  25 Mbps  out  17.55 Mbps  in 60 out 60 dropped  0  latency mean  19.1 ms max  21.0 ms
+t=24.0 set 40 Mbps live: status (0, 0)
+t=25.0 target  40 Mbps  out  18.01 Mbps  in 60 out 60 dropped  0  latency mean  19.1 ms max  21.4 ms
+t=26.0 target  40 Mbps  out  17.45 Mbps  in 60 out 60 dropped  0  latency mean  19.1 ms max  20.6 ms
+t=27.0 target  40 Mbps  out  17.53 Mbps  in 60 out 60 dropped  0  latency mean  19.1 ms max  20.6 ms
+total in 1620 out 1506 dropped 112

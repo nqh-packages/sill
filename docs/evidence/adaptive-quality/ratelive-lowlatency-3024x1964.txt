@@ -1,0 +1,23 @@
+session 3024x1964 mode=lowlatency hardware=unreported encoder=com.apple.videotoolbox.videoencoder.hevc.rtvc set=(0, 0)
+t= 1.0 target   8 Mbps  out   7.56 Mbps  in 60 out 35 dropped 23  latency mean  30.2 ms max 118.8 ms
+t= 2.0 target   8 Mbps  out   7.69 Mbps  in 60 out 36 dropped 24  latency mean  18.1 ms max  20.0 ms
+t= 3.0 target   8 Mbps  out   7.58 Mbps  in 60 out 38 dropped 22  latency mean  18.2 ms max  20.3 ms
+t= 4.0 target   8 Mbps  out   7.74 Mbps  in 60 out 38 dropped 22  latency mean  18.3 ms max  20.4 ms
+t=4.0 set 40 Mbps live: status (0, 0)
+t= 5.0 target  40 Mbps  out  24.72 Mbps  in 60 out 59 dropped  1  latency mean  18.8 ms max  24.4 ms
+t= 6.0 target  40 Mbps  out  26.21 Mbps  in 60 out 60 dropped  0  latency mean  19.1 ms max  21.8 ms
+t= 7.0 target  40 Mbps  out  26.21 Mbps  in 60 out 60 dropped  0  latency mean  19.9 ms max  31.5 ms
+t= 8.0 target  40 Mbps  out  25.48 Mbps  in 60 out 58 dropped  0  latency mean  70.8 ms max  90.6 ms
+t= 9.0 target  40 Mbps  out  27.13 Mbps  in 60 out 62 dropped  0  latency mean  39.6 ms max  74.2 ms
+t=9.0 set 8 Mbps live: status (0, 0)
+t=10.0 target   8 Mbps  out   8.19 Mbps  in 60 out 41 dropped 19  latency mean  19.1 ms max  21.7 ms
+t=11.0 target   8 Mbps  out   7.56 Mbps  in 60 out 36 dropped 24  latency mean  19.1 ms max  21.0 ms
+t=12.0 target   8 Mbps  out   7.72 Mbps  in 60 out 38 dropped 23  latency mean  19.0 ms max  21.1 ms
+t=13.0 target   8 Mbps  out   7.66 Mbps  in 60 out 37 dropped 23  latency mean  18.9 ms max  21.3 ms
+t=14.0 target   8 Mbps  out   7.62 Mbps  in 60 out 38 dropped 21  latency mean  18.9 ms max  20.1 ms
+t=14.0 set 15 Mbps live: status (0, 0)
+t=15.0 target  15 Mbps  out  13.97 Mbps  in 60 out 58 dropped  2  latency mean  18.5 ms max  20.6 ms
+t=16.0 target  15 Mbps  out  14.75 Mbps  in 60 out 61 dropped  0  latency mean  18.6 ms max  21.3 ms
+t=17.0 target  15 Mbps  out  14.41 Mbps  in 60 out 59 dropped  0  latency mean  19.0 ms max  21.1 ms
+t=18.0 target  15 Mbps  out  14.65 Mbps  in 60 out 60 dropped  0  latency mean  19.2 ms max  22.2 ms
+total in 1080 out 874 dropped 204

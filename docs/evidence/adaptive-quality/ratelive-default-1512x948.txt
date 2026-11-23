@@ -1,0 +1,23 @@
+session 1512x948 mode=default hardware=true encoder=com.apple.videotoolbox.videoencoder.ave.hevc set=(0, 0)
+t= 1.0 target   8 Mbps  out   5.43 Mbps  in 60 out 59 dropped  0  latency mean   8.2 ms max  62.2 ms
+t= 2.0 target   8 Mbps  out   5.53 Mbps  in 60 out 60 dropped  0  latency mean   6.1 ms max   8.4 ms
+t= 3.0 target   8 Mbps  out   5.59 Mbps  in 60 out 60 dropped  0  latency mean   5.9 ms max   6.4 ms
+t= 4.0 target   8 Mbps  out   5.62 Mbps  in 60 out 60 dropped  0  latency mean  14.1 ms max  18.1 ms
+t=4.0 set 40 Mbps live: status (0, 0)
+t= 5.0 target  40 Mbps  out   6.29 Mbps  in 60 out 60 dropped  0  latency mean  14.4 ms max  15.9 ms
+t= 6.0 target  40 Mbps  out   6.08 Mbps  in 60 out 59 dropped  0  latency mean  14.6 ms max  19.2 ms
+t= 7.0 target  40 Mbps  out   6.18 Mbps  in 60 out 61 dropped  0  latency mean  14.4 ms max  16.2 ms
+t= 8.0 target  40 Mbps  out   6.13 Mbps  in 60 out 60 dropped  0  latency mean  14.3 ms max  14.9 ms
+t= 9.0 target  40 Mbps  out   6.30 Mbps  in 60 out 60 dropped  0  latency mean  14.3 ms max  14.8 ms
+t=9.0 set 8 Mbps live: status (0, 0)
+t=10.0 target   8 Mbps  out   5.40 Mbps  in 60 out 59 dropped  0  latency mean  14.3 ms max  14.7 ms
+t=11.0 target   8 Mbps  out   5.66 Mbps  in 60 out 61 dropped  0  latency mean  14.3 ms max  14.9 ms
+t=12.0 target   8 Mbps  out   5.62 Mbps  in 60 out 60 dropped  0  latency mean  14.3 ms max  14.9 ms
+t=13.0 target   8 Mbps  out   5.66 Mbps  in 60 out 60 dropped  0  latency mean  14.2 ms max  14.7 ms
+t=14.0 target   8 Mbps  out   5.58 Mbps  in 60 out 60 dropped  0  latency mean  14.4 ms max  15.6 ms
+t=14.0 set 15 Mbps live: status (0, 0)
+t=15.0 target  15 Mbps  out   6.41 Mbps  in 60 out 60 dropped  0  latency mean  14.4 ms max  17.5 ms
+t=16.0 target  15 Mbps  out   6.40 Mbps  in 60 out 60 dropped  0  latency mean  14.6 ms max  21.8 ms
+t=17.0 target  15 Mbps  out   6.49 Mbps  in 60 out 60 dropped  0  latency mean  14.3 ms max  14.6 ms
+t=18.0 target  15 Mbps  out   6.40 Mbps  in 60 out 60 dropped  0  latency mean  14.3 ms max  15.0 ms
+total in 1080 out 1079 dropped 0

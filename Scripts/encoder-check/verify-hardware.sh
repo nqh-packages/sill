@@ -18,6 +18,10 @@
 #            frame every 0.3 s (to bring on the slow state), 20 s at 60 fps; per second enc.out,
 #            mailboxDrop, capture-to-output latency; HeartBeat per-frame times
 #   probe    EncoderProbe.throughput, base then new, 3 times at 3024×1904 and at 1512×948
+#   ratelive (not in the default five) one VideoToolbox session per mode, default and
+#            EnableLowLatencyRateControl, at 1512×948 and 3024×1964, 60 fps, its bitrate changed live
+#            8 → 40 → 8 → 15 Mbps: per second the output rate, drops and latency (ratelive/main.swift);
+#            RATELIVE_SIZES="W H,W H", RATELIVE_MODES="default lowlatency", RATELIVE_SCHEDULE=MBPS:S,...
 #   keyframe base then new, 6 sessions at 3024×1964: 12 frames at 60 fps, a keyframe asked for 5,
 #            20 or 40 ms after the last (a device joining just after a repaint), then still for
 #            0.5 s: base answers none (the next repaint would carry it), new every one, 60 ms
@@ -181,6 +185,25 @@ keyframe)
     echo "keyframe $name (a keyframe asked for just after a burst's last frame, then still; 3024×1964, 40 Mbps):"
     sed 's/^/    /' $HW/keyframe-$name.txt
     sleep 2
+  done
+  ;;
+ratelive)
+  swiftc -O -o $OUT/ratelive $HERE/ratelive/main.swift > $HW/ratelive.build.txt 2>&1 || { echo "ratelive build failed: see $HW/ratelive.build.txt"; continue }
+  for size in ${(s:,:)${RATELIVE_SIZES:-"1512 948,3024 1964"}}; do
+    for mode in ${=RATELIVE_MODES:-"default lowlatency"}; do
+      tag=ratelive-$mode-${size// /x}
+      guard $tag || continue
+      t0=$(stamp)
+      $OUT/ratelive ${=size} $mode ${RATELIVE_SCHEDULE:-8:4,40:5,8:5,15:4} > $HW/$tag.txt 2>&1 &
+      p=$!
+      watch_pids $p || { echo "    $tag aborted"; continue }
+      t1=$(stamp)
+      ave $tag "$t0" "$t1"
+      echo "ratelive $mode ${size// /x} (60 fps; bitrate changed on the live session, Mbps:seconds ${RATELIVE_SCHEDULE:-8:4,40:5,8:5,15:4}):"
+      sed 's/^/    /' $HW/$tag.txt
+      grep -E "opened" $HW/$tag.hb.txt | grep -v " 256x" | sed 's/^/    AVE /'
+      sleep 3
+    done
   done
   ;;
 *) echo "unknown step $step" ;;
