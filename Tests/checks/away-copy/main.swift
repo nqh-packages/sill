@@ -179,5 +179,53 @@ do {
     check(!covered.visible && covered.text == nil, "…and something opened over it ends the linger: closed again, no line")
 }
 
+// MARK: Auto: the header, the notice, the Quality menu
+
+do {
+    var a = away(home: (40_000_000, 2), away: (4_000_000, 1), this: true, run: true)
+    a.awayAuto = true; a.homeAuto = true
+    eq(AwayCopy.headerLine(a)?.text, "Away: Auto\(nb)·\(nb)Standard", "an Auto away pair: the header reads Auto · Standard")
+    eq(AwayCopy.headerLine(a)?.spoken, ", away quality, Auto, Standard", "…and VoiceOver says it")
+    var m = away(this: true, run: false); m.homeAuto = true
+    eq(AwayCopy.headerLine(m)?.text, "Home quality: Auto\(nb)·\(nb)Retina (a device at home is connected)", "an Auto home pair, a device at home connected")
+    eq(AwayCopy.footnote(a, mac: "Mac mini", remoteAccessOn: true), "Away from home, Mac mini streams at what you choose here and keeps it for next time. At home it goes back to Auto\(nb)·\(nb)Retina.", "the footnote names Auto")
+    var fixed = away(); fixed.awayAuto = false
+    eq(AwayCopy.headerLine(fixed)?.text, "Away: Low\(nb)·\(nb)Standard", "awayAuto false: the preset")
+    eq(AwayCopy.headerLine(away())?.text, "Away: Low\(nb)·\(nb)Standard", "a Mac that does not say Auto: the preset")
+}
+eq(AutoCopy.resolutionNotice(was: 2, now: 1), "Lowered to Standard resolution to keep up.", "Retina to Standard: the notice")
+check(AutoCopy.resolutionNotice(was: 1, now: 2) == nil, "the climb back is silent")
+check(AutoCopy.resolutionNotice(was: 2, now: 2) == nil && AutoCopy.resolutionNotice(was: 1, now: 1) == nil, "a repeat of the same scale: none, once per drop")
+check(AutoCopy.resolutionNotice(was: nil, now: 1) == nil, "Auto starting at Standard: none")
+check(AutoCopy.resolutionNotice(was: 2, now: nil) == nil, "Auto ending (a preset picked): none")
+check(AutoCopy.resolutionNotice(was: nil, now: nil) == nil, "no Auto: none")
+
+func menu(auto: Bool?, bitrate: Int = 150_000_000) -> StreamSettings {
+    StreamSettings(maxFPS: 60, bitrate: bitrate, captureScale: 2, prioritizeSpeed: false, virtualDisplay: false, directWireless: false,
+                   sendAudio: false, autoQuality: auto)
+}
+do {
+    let on = QualityMenu.items(menu(auto: true))
+    eq(on.first?.pick, .auto, "a host with Auto: Auto is the first item")
+    eq(on.first?.title, "Auto", "…titled Auto")
+    eq(on.dropFirst().map(\.pick), QualityPreset.allCases.map { QualityMenu.Pick.rate($0.rawValue) }, "…then every preset, in the order of the Mac's menu")
+    check(on.allSatisfy(\.offered), "…each offered")
+    eq(QualityMenu.items(menu(auto: false)).first?.pick, .auto, "Auto false: still offered (the host says it)")
+    check(!QualityMenu.items(menu(auto: nil)).contains { $0.pick == .auto }, "a host that does not say Auto: not offered")
+    eq(QualityMenu.items(menu(auto: nil)).count, QualityPreset.allCases.count, "…the presets alone")
+    let custom = QualityMenu.items(menu(auto: false, bitrate: 12_000_000))
+    eq(custom.last, QualityMenu.Item(pick: .rate(12_000_000), title: "Custom — 12 Mbps", offered: false), "a hand-set rate: shown, never offered")
+    check(!QualityMenu.items(menu(auto: true, bitrate: 12_000_000)).contains { !$0.offered }, "…and not shown under Auto, which runs presets")
+    eq(QualityMenu.selection(menu(auto: true)), .auto, "Auto true selects Auto")
+    eq(QualityMenu.selection(menu(auto: false)), .rate(150_000_000), "Auto false selects the rate")
+    eq(QualityMenu.selection(menu(auto: nil, bitrate: 25_000_000)), .rate(25_000_000), "no Auto field selects the rate")
+    eq(QualityMenu.label(menu(auto: true)), "Auto", "the row says Auto, not the rung")
+    eq(QualityMenu.label(menu(auto: false)), "Extreme", "…or the preset's name")
+    eq(QualityMenu.label(menu(auto: nil, bitrate: 12_000_000)), "12 Mbps", "…or a hand-set rate")
+    eq(QualityMenu.change(.auto, in: menu(auto: false)), HostSettingsChange(autoQuality: true), "Auto sends autoQuality true")
+    eq(QualityMenu.change(.rate(25_000_000), in: menu(auto: true)), HostSettingsChange(bitrate: 25_000_000, autoQuality: false), "a preset from a taker sends Auto off with it")
+    eq(QualityMenu.change(.rate(25_000_000), in: menu(auto: nil)), HostSettingsChange(bitrate: 25_000_000), "a preset to a host without Auto: the bitrate alone")
+}
+
 print(failures == 0 ? "away-copy: all passed" : "away-copy: \(failures) FAILED")
 exit(failures == 0 ? 0 : 1)

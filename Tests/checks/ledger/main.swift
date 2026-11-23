@@ -342,6 +342,49 @@ do {
     check(refused == [.bitrate] && o.displayed?.bitrate == 15_000_000, "an older host refuses Low: the panel goes back and says so")
 }
 
+// Auto quality (docs/adaptive-quality-plan.md): Auto and a preset are one control, so one field.
+do {
+    var auto = base; auto.autoQuality = true; auto.bitrate = 150_000_000
+    var fixed = base; fixed.autoQuality = false
+    check(HostSettingsChange(autoQuality: true).fields == [.bitrate], "an Auto pick names the bitrate's field")
+    check(HostSettingsChange(bitrate: 4_000_000, autoQuality: false).fields == [.bitrate], "a preset with Auto's false names it once")
+    check(HostSettingsChange(token: 1, bitrate: 4_000_000).adding(HostSettingsChange(autoQuality: false)).autoQuality == false, "adding carries Auto")
+
+    var l = SettingsLedger(); _ = l.receive(st(fixed))
+    check(l.pick(HostSettingsChange(autoQuality: true), token: 1, now: 0) == HostSettingsChange(token: 1, autoQuality: true), "Auto is sent to a host that says it")
+    check(l.displayed?.autoQuality == true && l.pendingSince(.bitrate) == 0, "…shown at once, under the bitrate's field")
+    let preset = HostSettingsChange(bitrate: 25_000_000, autoQuality: false)
+    check(l.pick(preset, token: 2, now: 1) == HostSettingsChange(token: 2, bitrate: 25_000_000, autoQuality: false), "a preset pick sends its rate with Auto off")
+    check(l.pending.count == 1 && l.pending[.bitrate]?.token == 2 && l.displayed?.autoQuality == false && l.displayed?.bitrate == 25_000_000,
+          "…and replaces the pending Auto pick: one field")
+    check(l.pick(HostSettingsChange(autoQuality: true), token: 3, now: 2) != nil && l.pending[.bitrate]?.token == 3 && l.displayed?.autoQuality == true,
+          "…and Auto replaces the preset in turn")
+
+    var a = SettingsLedger(); _ = a.receive(st(fixed))
+    _ = a.pick(HostSettingsChange(autoQuality: true), token: 1, now: 0)
+    var answer = fixed; answer.autoQuality = true
+    check(a.receive(st(answer, answering: 1)).isEmpty && a.pending.isEmpty && a.displayed?.autoQuality == true,
+          "a pending Auto pick is answered by autoQuality true: cleared, not refused")
+    var r = SettingsLedger(); _ = r.receive(st(fixed))
+    _ = r.pick(HostSettingsChange(autoQuality: true), token: 1, now: 0)
+    check(r.receive(st(fixed, answering: 1)) == [.bitrate] && r.displayed?.autoQuality == false, "an answer that keeps it fixed is a refusal")
+
+    var n = SettingsLedger(); _ = n.receive(st(auto))
+    check(n.pick(HostSettingsChange(autoQuality: true), token: 1, now: 0) == nil, "Auto while Auto runs: nothing sent")
+    check(n.pick(HostSettingsChange(bitrate: 150_000_000, autoQuality: false), token: 2, now: 0)
+              == HostSettingsChange(token: 2, bitrate: 150_000_000, autoQuality: false),
+          "the preset Auto happens to run at, picked: sent, so it fixes the rate")
+    check(n.displayed?.autoQuality == false, "…and shows fixed")
+
+    var old = SettingsLedger(); _ = old.receive(st(base))
+    check(base.autoQuality == nil, "the base host does not say autoQuality")
+    check(old.pick(HostSettingsChange(autoQuality: true), token: 1, now: 0) == nil && old.pending.isEmpty && old.displayed?.autoQuality == nil,
+          "rule 9: Auto to a host that did not say it sends nothing and shows nothing")
+    check(old.pick(HostSettingsChange(bitrate: 25_000_000, autoQuality: false), token: 2, now: 0) == HostSettingsChange(token: 2, bitrate: 25_000_000),
+          "rule 9: a preset pick to it sends the bitrate alone")
+    check(old.displayed?.autoQuality == nil, "…and never shows an Auto value")
+}
+
 // MARK: - The random model
 
 struct RNG: RandomNumberGenerator {

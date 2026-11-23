@@ -312,12 +312,12 @@ struct ControlCenterSheet: View {
     /// their rates, a hand-set bitrate shown but never offered, and from iOS 18 the row showing the
     /// name alone.
     @ViewBuilder private func qualityPicker(_ shown: StreamSettings) -> some View {
-        let selection = binding(shown.bitrate) { HostSettingsChange(bitrate: $0) }
+        let selection = binding(QualityMenu.selection(shown)) { QualityMenu.change($0, in: shown) }
         if #available(iOS 18.0, *) {
             Picker("Quality", selection: selection) {
                 qualityChoices(shown)
             } currentValueLabel: {
-                Text(QualityPreset.name(forBitrate: shown.bitrate))
+                Text(QualityMenu.label(shown))
             }
             .pickerStyle(.menu)
         } else {
@@ -327,10 +327,7 @@ struct ControlCenterSheet: View {
     }
 
     @ViewBuilder private func qualityChoices(_ shown: StreamSettings) -> some View {
-        ForEach(QualityPreset.allCases) { Text($0.title).tag($0.rawValue) }
-        if QualityPreset(rawValue: shown.bitrate) == nil {
-            Text(QualityPreset.title(forBitrate: shown.bitrate)).tag(shown.bitrate)
-        }
+        ForEach(QualityMenu.items(shown), id: \.pick) { Text($0.title).tag($0.pick) }
     }
 
     /// Under Streaming: the panel's words for quality, then the virtual display's note or what it

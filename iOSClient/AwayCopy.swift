@@ -16,6 +16,16 @@ enum AwayCopy {
         QualityPreset.shortTitle(bitrate: bitrate, captureScale: captureScale)
     }
 
+    /// "Auto · Standard" for an Auto pair (the Mac's `homeAuto`/`awayAuto`: its bitrate is then only the
+    /// rung Auto starts at), else `title`.
+    static func title(_ bitrate: Int, _ captureScale: Double, auto: Bool?) -> String {
+        auto == true ? "Auto · \(captureScale >= 1.5 ? "Retina" : "Standard")" : title(bitrate, captureScale)
+    }
+
+    static func spoken(_ bitrate: Int, _ captureScale: Double, auto: Bool?) -> String {
+        auto == true ? "Auto, \(captureScale >= 1.5 ? "Retina" : "Standard")" : spoken(bitrate, captureScale)
+    }
+
     /// The same for VoiceOver: "Low, Standard", "12 megabits per second, Retina".
     static func spoken(_ bitrate: Int, _ captureScale: Double) -> String {
         let name = QualityPreset(rawValue: bitrate)?.name ?? "\(QualityPreset.mbps(bitrate)) megabits per second"
@@ -36,11 +46,11 @@ enum AwayCopy {
     static func headerLine(_ away: AwayQuality?) -> (text: String, spoken: String)? {
         guard let a = away, a.thisConnectionAway else { return nil }
         if a.awayRunning {
-            return ("Away: \(whole(title(a.awayBitrate, a.awayCaptureScale)))",
-                    ", away quality, \(spoken(a.awayBitrate, a.awayCaptureScale))")
+            return ("Away: \(whole(title(a.awayBitrate, a.awayCaptureScale, auto: a.awayAuto)))",
+                    ", away quality, \(spoken(a.awayBitrate, a.awayCaptureScale, auto: a.awayAuto))")
         }
-        return ("Home quality: \(whole(title(a.homeBitrate, a.homeCaptureScale))) (a device at home is connected)",
-                ", home quality, \(spoken(a.homeBitrate, a.homeCaptureScale)), because a device at home is connected")
+        return ("Home quality: \(whole(title(a.homeBitrate, a.homeCaptureScale, auto: a.homeAuto))) (a device at home is connected)",
+                ", home quality, \(spoken(a.homeBitrate, a.homeCaptureScale, auto: a.homeAuto)), because a device at home is connected")
     }
 
     // MARK: The panel's footnote
@@ -50,7 +60,7 @@ enum AwayCopy {
     /// qualities kept whole, as in the header, so a wrap never starts a line with "· Standard".
     static func footnote(_ away: AwayQuality?, mac: String, remoteAccessOn: Bool) -> String? {
         guard let a = away else { return nil }
-        let home = whole(title(a.homeBitrate, a.homeCaptureScale))
+        let home = whole(title(a.homeBitrate, a.homeCaptureScale, auto: a.homeAuto))
         if a.thisConnectionAway, a.awayRunning {
             return "Away from home, \(mac) streams at what you choose here and keeps it for next time. At home it goes back to \(home)."
         }
@@ -58,7 +68,7 @@ enum AwayCopy {
             return "A device at home is connected, so \(mac) streams at its home quality, \(home). What you choose here applies once every device is away."
         }
         guard remoteAccessOn else { return nil }
-        return "Away from home, \(mac) streams at \(whole(title(a.awayBitrate, a.awayCaptureScale)))."
+        return "Away from home, \(mac) streams at \(whole(title(a.awayBitrate, a.awayCaptureScale, auto: a.awayAuto)))."
     }
 
     // MARK: The link
@@ -163,4 +173,17 @@ struct LinkLine: Equatable {
 
     /// When to look again: the linger's end, while the line lingers.
     var recheckAt: Double? { clearedAt.map { $0 + Self.linger } }
+}
+
+/// The resolution notice (docs/adaptive-quality-plan.md, decision 7): Auto's bitrate changes are
+/// silent, a drop from Retina to Standard is not.
+enum AutoCopy {
+    /// "Lowered to Standard resolution to keep up." when `HostSettingsState.autoCaptureScale` goes from
+    /// 2 to 1 under Auto; nil for anything else (the climb back is silent, and so is Auto starting or
+    /// ending, where a side is nil). A caller compares the last value with the new one, so a state
+    /// that repeats the same scale never posts it again.
+    static func resolutionNotice(was: Double?, now: Double?) -> String? {
+        guard let was, let now, was >= 1.5, now < 1.5 else { return nil }
+        return "Lowered to Standard resolution to keep up."
+    }
 }

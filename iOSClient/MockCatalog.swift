@@ -363,6 +363,8 @@ enum MockCatalog {
         case sound           // the Mac sends its sound: the Send Audio row on, and Mute under it
         case soundoff        // a Mac with sound, Send Audio off: the row off (as `default`), and Mute
         case soundnote       // on, and the Mac could not capture it: the note under the row
+        case auto            // Auto at Extreme · Retina: the Quality row reads "Auto", the menu lists Auto first
+        case autolowered     // Auto, which drops Retina to Standard 2.5 s in: the notice on the stream screen
         case nosound         // a Mac without sound (Sill for Mac 0.5.1): the row off and disabled, "Update Sill…", no Mute
     }
 
@@ -517,6 +519,18 @@ enum MockCatalog {
             state.audioNote = "Couldn’t capture the sound of Safari: the stream did not start within 2 s."
         case .nosound:
             state.settings.sendAudio = nil
+        case .auto, .autolowered:
+            state.settings.bitrate = QualityPreset.extreme.rawValue
+            state.settings.autoQuality = true
+            state.autoCaptureScale = 2
+            state.stream = RunningStream(width: 2880, height: 1800, fps: 60, mbps: 150, onVirtualDisplay: false)
+            if c == .autolowered {
+                var lowered = state
+                lowered.autoCaptureScale = 1
+                lowered.stream = RunningStream(width: 1440, height: 900, fps: 60, mbps: 25, onVirtualDisplay: false)
+                lowered.settings.bitrate = QualityPreset.high.rawValue
+                client.mockBroadcast(lowered, after: 2.5)
+            }
         case .noremote:
             state.sessionPaired = nil   // an older Mac
         case .default, .legacy, .pending, .timeout, .wired, .noroute:

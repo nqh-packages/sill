@@ -2191,7 +2191,8 @@ final class StreamClient: ObservableObject {
         let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String
         // The codecs of the Mac's sound it plays: a Mac sends kind 43 only to a device that lists one.
         return Wire.encode(Hello(appVersion: version, build: build, protocol: SillProtocol.current, device: ClientStatsReporter.deviceName,
-                                 audio: AudioCodec.devicePlays, offConsoleView: LockedMac.viewGeneration))
+                                 audio: AudioCodec.devicePlays, offConsoleView: LockedMac.viewGeneration,
+                                 autoQuality: AutoQualityWire.generation))
     }()
 
     /// The hello, the first thing on every session connection, written straight to `c` before
@@ -4872,7 +4873,17 @@ extension StreamClient {
                 }
                 state.stream = stream
             }
+            if out.autoQuality == true { state.autoCaptureScale = state.settings.captureScale }
+            if out.bitrate != nil, out.autoQuality != true { state.autoCaptureScale = nil }
             state.answering = out.token
+            self.receiveSettings(state)
+        }
+    }
+
+    /// The mock Mac's own broadcast `delay` seconds from now (Auto lowering the resolution by itself).
+    func mockBroadcast(_ state: HostSettingsState, after delay: Double) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + delay) { [weak self] in
+            guard let self, self.connection == nil else { return }
             self.receiveSettings(state)
         }
     }

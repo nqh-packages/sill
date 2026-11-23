@@ -16,7 +16,7 @@ MUTANTS = {
     "L3 a change's fields without Send Audio": (LEDGER, "        if sendAudio != nil { f.append(.sendAudio) }\n", ""),
     "L4 Send Audio's single field as Direct Wireless": (LEDGER,
         "case .sendAudio: HostSettingsChange(sendAudio: sendAudio)", "case .sendAudio: HostSettingsChange(directWireless: sendAudio)"),
-    "L5 adding drops another pick's Send Audio": (LEDGER, "sendAudio: other.sendAudio ?? sendAudio)", "sendAudio: sendAudio)"),
+    "L5 adding drops another pick's Send Audio": (LEDGER, "sendAudio: other.sendAudio ?? sendAudio, autoQuality", "sendAudio: sendAudio, autoQuality"),
     "L6 rule 2: what is shown sent again": (LEDGER, "            guard single.applied(to: shown) != shown else { continue }\n", ""),
     "L7 rule 4: an answer clears every pick": (LEDGER, "for (field, entry) in pending where entry.token == token {",
                                                "for (field, entry) in pending {"),
@@ -35,6 +35,11 @@ MUTANTS = {
         "            if field == .directWireless, host?.takesDirectWireless == false { continue }\n",
         "            if host?.takesDirectWireless == false { continue }\n"),
     "L16 sessionPaired never kept": (WIRE, "        self.sessionPaired = sessionPaired\n", "        self.sessionPaired = nil\n"),
+    "L17 Auto is its own field": (LEDGER, "if bitrate != nil || autoQuality != nil { f.append(.bitrate) }", "if bitrate != nil { f.append(.bitrate) }"),
+    "L18 rule 9: Auto sent to a host that did not say it": (LEDGER, "            if field == .bitrate, shown.autoQuality == nil {\n                single.autoQuality = nil\n                if single.isEmpty { continue }\n            }\n", ""),
+    "L19 the bitrate's single field loses Auto": (LEDGER, "case .bitrate: HostSettingsChange(bitrate: bitrate, autoQuality: autoQuality)", "case .bitrate: HostSettingsChange(bitrate: bitrate)"),
+    "L20 adding drops Auto": (LEDGER, "autoQuality: other.autoQuality ?? autoQuality)", "autoQuality: autoQuality)"),
+    "L21 applied(to:) without Auto": (WIRE, "        if let v = autoQuality { r.autoQuality = v }\n", ""),
 }
 caught = 0
 for name, (rel, old, new) in MUTANTS.items():
