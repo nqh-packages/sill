@@ -281,6 +281,26 @@ do {
     eq(n + 1, 5, "…the climb back to Pro needs 5 clean seconds: Pro's judgement was no failed climb")
 }
 
+do {
+    // A hold on a rung is cleared once Auto has stayed at it 60 s without a behind judgement.
+    func climbAfter(stayed seconds: Int) -> Int {
+        var r = away()
+        r.feed(clean, 5)
+        r.feed(short, 3)
+        r.feed(clean, 9)
+        r.feed(clean, 1)
+        eq(r.q.rung, R(.efficient, false), "the second climb into Efficient needed 10 clean seconds")
+        r.feed(still, seconds)
+        r.feed(short, 3)
+        eq(r.q.rung, R(.low, false), "…and Auto fell back to Low")
+        var n = 0
+        while r.tick([idA: clean]) == nil && n < 100 { n += 1 }
+        return n + 1
+    }
+    eq(climbAfter(stayed: 57), 10, "a rung left on its 60th second by a behind judgement keeps its hold: the next climb needs 10")
+    eq(climbAfter(stayed: 60), 5, "a rung kept 60 s without a behind judgement loses it: the next climb needs 5")
+}
+
 // MARK: 9. It does not blind itself
 
 do {

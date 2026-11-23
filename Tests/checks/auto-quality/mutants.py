@@ -42,6 +42,8 @@ MUTANTS = [
     ("AQ22 a climb never known", AQ, "climbedHere = running == climbingTo", "climbedHere = false"),
     ("AQ23 every step a climb", AQ, "climbingTo = target > from ? target : nil", "climbingTo = target"),
     ("AQ24 the seconds at a rung not counted", AQ, "        secondsAtRung += 1\n", ""),
+    ("AQ52 a kept rung keeps its hold", AQ, "        if secondsAtRung >= Self.holdMax { climbNeeds[rung] = nil }\n", ""),
+    ("AQ53 the hold cleared after 30 s", AQ, "if secondsAtRung >= Self.holdMax { climbNeeds[rung] = nil }", "if secondsAtRung >= Self.holdMax / 2 { climbNeeds[rung] = nil }"),
     ("AQ25 the hold ignored", AQ, "climbNeeds[rung] ?? LinkJudge.cleanToFine", "LinkJudge.cleanToFine"),
     ("AQ26 a short second does not end the clean run", AQ, "if LinkJudge.isShort(second) { track.cleanLoaded = 0 }", "if LinkJudge.isShort(second) { track.cleanLoaded += 0 }"),
     # Not blinding itself.

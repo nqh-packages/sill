@@ -6,7 +6,7 @@
 //
 // What it checks: `standard` starts away at Low · Standard; `validated()` bounds the away pair as the
 // home one; `changes(to:)` names the away pair's changes as the log does ("away bitrate 4 → 15 Mbps
-// per 60 fps", "away points → Retina"); `effective(away:)`; a device's state shows the pair its
+// per 60 fps", "away points → Retina"); `running(away:auto:)`; a device's state shows the pair its
 // connection controls, and a change from away lands on the away pair and never on the home one, the
 // rest as at home; the whitelist is the same from both routes; who counts as away; when the away
 // quality is the target (and that the flag stays with nobody connected); and the two lines. Also
@@ -27,22 +27,22 @@ let standard = HostConfig.standard
 
 // MARK: HostConfig
 
-eq(standard.awayBitrate, 4_000_000, "standard: away at Low")
+eq(standard.awayBitrate, .fixed(4_000_000), "standard: away at Low")
 eq(standard.awayCaptureScale, 1, "standard: away at Standard")
-eq(standard.bitrate, 15_000_000, "standard: home at Balanced, as before")
+eq(standard.bitrate, .fixed(15_000_000), "standard: home at Balanced, as before")
 eq(standard.captureScale, 2, "standard: home at Retina, as before")
 check(standard.validated() == standard, "standard is valid as it is")
 
 do {
     var c = standard
-    c.awayBitrate = 0; c.awayCaptureScale = 0
-    eq(c.validated().awayBitrate, 1_000_000, "validated: an away bitrate under 1 Mbps is 1 Mbps")
+    c.awayBitrate = .fixed(0); c.awayCaptureScale = 0
+    eq(c.validated().awayBitrate, .fixed(1_000_000), "validated: an away bitrate under 1 Mbps is 1 Mbps")
     eq(c.validated().awayCaptureScale, 1, "validated: an away scale of 0 is Standard")
-    c.awayBitrate = 250_000_000; c.awayCaptureScale = 3
-    eq(c.validated().awayBitrate, 200_000_000, "validated: an away bitrate over 200 Mbps is 200 Mbps")
+    c.awayBitrate = .fixed(250_000_000); c.awayCaptureScale = 3
+    eq(c.validated().awayBitrate, .fixed(200_000_000), "validated: an away bitrate over 200 Mbps is 200 Mbps")
     eq(c.validated().awayCaptureScale, 2, "validated: an away scale of 3 is Retina")
-    c.awayBitrate = 12_345_678; c.awayCaptureScale = 1.5
-    eq(c.validated().awayBitrate, 12_345_678, "validated: a hand-set away bitrate inside the bounds stays")
+    c.awayBitrate = .fixed(12_345_678); c.awayCaptureScale = 1.5
+    eq(c.validated().awayBitrate, .fixed(12_345_678), "validated: a hand-set away bitrate inside the bounds stays")
     eq(c.validated().awayCaptureScale, 2, "validated: 1.5 is Retina")
     c.awayCaptureScale = 1.49
     eq(c.validated().awayCaptureScale, 1, "validated: 1.49 is Standard")
@@ -51,36 +51,36 @@ do {
     c.captureScale = 1; c.awayCaptureScale = 2
     eq(c.validated().captureScale, 1, "validated: the home scale is its own")
     eq(c.validated().awayCaptureScale, 2, "validated: the away scale is its own")
-    c.bitrate = 250_000_000; c.awayBitrate = 4_000_000
-    eq(c.validated().awayBitrate, 4_000_000, "validated: the away bitrate is its own")
+    c.bitrate = .fixed(250_000_000); c.awayBitrate = .fixed(4_000_000)
+    eq(c.validated().awayBitrate, .fixed(4_000_000), "validated: the away bitrate is its own")
 }
 
 do {
     var to = standard
-    to.awayBitrate = 15_000_000
+    to.awayBitrate = .fixed(15_000_000)
     eq(standard.changes(to: to), "away bitrate 4 → 15 Mbps per 60 fps", "changes: the away bitrate")
     to = standard
     to.awayCaptureScale = 2
     eq(standard.changes(to: to), "away points → Retina", "changes: the away scale")
     var from = standard
-    from.awayBitrate = 15_000_000
+    from.awayBitrate = .fixed(15_000_000)
     to = from
-    to.awayBitrate = 8_000_000; to.awayCaptureScale = 2
+    to.awayBitrate = .fixed(8_000_000); to.awayCaptureScale = 2
     eq(from.changes(to: to), "away bitrate 15 → 8 Mbps per 60 fps, away points → Retina", "changes: both (H9's line)")
     to = standard
-    to.bitrate = 8_000_000; to.captureScale = 1; to.awayBitrate = 15_000_000; to.awayCaptureScale = 2
+    to.bitrate = .fixed(8_000_000); to.captureScale = 1; to.awayBitrate = .fixed(15_000_000); to.awayCaptureScale = 2
     eq(standard.changes(to: to), "bitrate 15 → 8 Mbps per 60 fps, Retina → points, away bitrate 4 → 15 Mbps per 60 fps, away points → Retina",
        "changes: the home pair, then the away pair")
     to = standard
-    to.awayBitrate = 8_500_000
+    to.awayBitrate = .fixed(8_500_000)
     eq(standard.changes(to: to), "away bitrate 4 → 8.5 Mbps per 60 fps", "changes: a bitrate that is not whole megabits")
 }
 
 do {
     var c = standard
-    c.bitrate = 40_000_000; c.captureScale = 2
-    check(c.effective(away: true) == (4_000_000, 1), "effective(away: true) is the away pair")
-    check(c.effective(away: false) == (40_000_000, 2), "effective(away: false) is the home pair")
+    c.bitrate = .fixed(40_000_000); c.captureScale = 2
+    check(c.running(away: true, auto: nil) == (4_000_000, 1), "running(away: true) is the away pair")
+    check(c.running(away: false, auto: nil) == (40_000_000, 2), "running(away: false) is the home pair")
 }
 
 // Share clipboard with devices (docs/clipboard-plan.md), HostConfig's other knob since: on in
@@ -92,7 +92,7 @@ do {
     eq(standard.changes(to: off), "share clipboard on → off", "changes: the clipboard's switch")
     eq(off.changes(to: standard), "share clipboard off → on", "changes: and back")
     check(!off.validated().shareClipboard && standard.validated().shareClipboard, "validated keeps it either way")
-    let made = HostConfig(maxFPS: 60, captureScale: 1, bitrate: 8_000_000, awayBitrate: 4_000_000, awayCaptureScale: 1, prioritizeSpeed: false,
+    let made = HostConfig(maxFPS: 60, captureScale: 1, bitrate: .fixed(8_000_000), awayBitrate: .fixed(4_000_000), awayCaptureScale: 1, prioritizeSpeed: false,
                           virtualDisplay: false, directWireless: false, remoteAccess: false, remotePort: 7455, internetAccess: false,
                           requirePairing: true, shareClipboard: false, sendAudio: false, offConsoleView: false,
                           lockAfterSession: false, lockSleepsDisplay: true, lockOnlyAfterAway: false)
@@ -113,7 +113,7 @@ do {
     eq(standard.changes(to: on), "off-console view off → on", "changes: the off-console view's switch")
     eq(on.changes(to: standard), "off-console view on → off", "changes: and back")
     check(on.validated().offConsoleView && !standard.validated().offConsoleView, "validated keeps it either way")
-    let made = HostConfig(maxFPS: 60, captureScale: 1, bitrate: 8_000_000, awayBitrate: 4_000_000, awayCaptureScale: 1, prioritizeSpeed: false,
+    let made = HostConfig(maxFPS: 60, captureScale: 1, bitrate: .fixed(8_000_000), awayBitrate: .fixed(4_000_000), awayCaptureScale: 1, prioritizeSpeed: false,
                           virtualDisplay: false, directWireless: false, remoteAccess: false, remotePort: 7455, internetAccess: false,
                           requirePairing: true, shareClipboard: true, sendAudio: false, offConsoleView: true,
                           lockAfterSession: false, lockSleepsDisplay: true, lockOnlyAfterAway: false)
@@ -135,7 +135,7 @@ do {
     eq(standard.changes(to: on), "lock when the last device leaves off → on", "changes: the lock's switch")
     eq(on.changes(to: standard), "lock when the last device leaves on → off", "changes: and back")
     check(on.validated().lockAfterSession && !standard.validated().lockAfterSession, "validated keeps it either way")
-    let made = HostConfig(maxFPS: 60, captureScale: 1, bitrate: 8_000_000, awayBitrate: 4_000_000, awayCaptureScale: 1, prioritizeSpeed: false,
+    let made = HostConfig(maxFPS: 60, captureScale: 1, bitrate: .fixed(8_000_000), awayBitrate: .fixed(4_000_000), awayCaptureScale: 1, prioritizeSpeed: false,
                           virtualDisplay: false, directWireless: false, remoteAccess: false, remotePort: 7455, internetAccess: false,
                           requirePairing: true, shareClipboard: true, sendAudio: false, offConsoleView: false, lockAfterSession: true,
                           lockSleepsDisplay: true, lockOnlyAfterAway: false)
@@ -174,7 +174,7 @@ do {
        "changes: all three in one line, in the pane's order")
     check(!lit.validated().lockSleepsDisplay && away.validated().lockOnlyAfterAway && standard.validated().lockSleepsDisplay
           && !standard.validated().lockOnlyAfterAway, "validated keeps both either way, with the lock's switch off")
-    let made = HostConfig(maxFPS: 60, captureScale: 1, bitrate: 8_000_000, awayBitrate: 4_000_000, awayCaptureScale: 1, prioritizeSpeed: false,
+    let made = HostConfig(maxFPS: 60, captureScale: 1, bitrate: .fixed(8_000_000), awayBitrate: .fixed(4_000_000), awayCaptureScale: 1, prioritizeSpeed: false,
                           virtualDisplay: false, directWireless: false, remoteAccess: false, remotePort: 7455, internetAccess: false,
                           requirePairing: true, shareClipboard: true, sendAudio: false, offConsoleView: false, lockAfterSession: true,
                           lockSleepsDisplay: false, lockOnlyAfterAway: true)
@@ -206,20 +206,28 @@ do {
     var sameButTheTwo = app
     sameButTheTwo.virtualDisplay = standard.virtualDisplay
     sameButTheTwo.sendAudio = standard.sendAudio
-    check(sameButTheTwo == standard, "app is standard but for the virtual display and Send Audio")
+    sameButTheTwo.bitrate = standard.bitrate
+    sameButTheTwo.awayBitrate = standard.awayBitrate
+    check(sameButTheTwo == standard, "app is standard but for the virtual display, Send Audio and Auto")
+    check(app.bitrate == .auto && app.awayBitrate == .auto, "app (Sill.app): Quality is Auto, home and away")
+    check(standard.bitrate == .fixed(15_000_000) && standard.awayBitrate == .fixed(4_000_000), "standard (the CLI): fixed rates, so headless tests keep theirs")
     check(app.validated() == app, "app is valid as it is")
-    eq(standard.changes(to: app), "virtual display off → on, send audio off → on", "changes: the two knobs that differ")
+    eq(standard.changes(to: app), "bitrate 15 Mbps per 60 fps → Auto, away bitrate 4 Mbps per 60 fps → Auto, virtual display off → on, send audio off → on",
+       "changes: the knobs that differ")
+    check(standard.autoQuality() == standard.autoQuality().autoQuality() && standard.autoQuality().bitrate == .auto
+          && standard.autoQuality().awayBitrate == .auto && standard.autoQuality().maxFPS == standard.maxFPS,
+          "autoQuality() (the CLI's --auto-quality) sets both pairs to Auto and nothing else")
 }
 
 // MARK: DeviceSettings
 
 do {
     var c = standard
-    c.bitrate = 40_000_000; c.captureScale = 2; c.maxFPS = 60; c.prioritizeSpeed = true; c.directWireless = true
-    let away = c.streamSettings(away: true)
+    c.bitrate = .fixed(40_000_000); c.captureScale = 2; c.maxFPS = 60; c.prioritizeSpeed = true; c.directWireless = true
+    let away = c.streamSettings(away: true, auto: nil, takesAuto: false)
     eq(away.bitrate, 4_000_000, "a device away sees the away bitrate")
     eq(away.captureScale, 1, "…and the away scale")
-    let home = c.streamSettings(away: false)
+    let home = c.streamSettings(away: false, auto: nil, takesAuto: false)
     eq(home.bitrate, 40_000_000, "a device at home sees the home bitrate")
     eq(home.captureScale, 2, "…and the home scale")
     for (s, route) in [(away, "away"), (home, "home")] {
@@ -230,25 +238,25 @@ do {
 
 do {
     var c = standard
-    c.bitrate = 40_000_000; c.captureScale = 2
+    c.bitrate = .fixed(40_000_000); c.captureScale = 2
     let change = HostSettingsChange(token: 3, maxFPS: 60, bitrate: 15_000_000, captureScale: 2, prioritizeSpeed: true, virtualDisplay: true,
                                     directWireless: nil)
     let away = c.applyingAway(change)
-    eq(away.awayBitrate, 15_000_000, "applyingAway: the bitrate lands on the away pair")
+    eq(away.awayBitrate, .fixed(15_000_000), "applyingAway: the bitrate lands on the away pair")
     eq(away.awayCaptureScale, 2, "applyingAway: the scale lands on the away pair")
-    eq(away.bitrate, 40_000_000, "applyingAway: the home bitrate stays")
+    eq(away.bitrate, .fixed(40_000_000), "applyingAway: the home bitrate stays")
     eq(away.captureScale, 2, "applyingAway: the home scale stays")
     check(away.maxFPS == 60 && away.prioritizeSpeed && away.virtualDisplay, "applyingAway: the rest as at home")
     let home = c.applying(change)
-    eq(home.bitrate, 15_000_000, "applying: the bitrate lands on the home pair")
-    check(home.awayBitrate == 4_000_000 && home.awayCaptureScale == 1, "applying: the away pair stays")
+    eq(home.bitrate, .fixed(15_000_000), "applying: the bitrate lands on the home pair")
+    check(home.awayBitrate == .fixed(4_000_000) && home.awayCaptureScale == 1, "applying: the away pair stays")
     // Only a bitrate: the away scale is left alone, and the state answers in the field asked about.
     let only = c.applyingAway(HostSettingsChange(bitrate: 25_000_000))
-    check(only.awayCaptureScale == 1 && only.awayBitrate == 25_000_000, "applyingAway of a bitrate alone keeps the away scale")
-    eq(only.streamSettings(away: true).bitrate, 25_000_000, "…and the state a device away is sent answers with it")
-    eq(only.streamSettings(away: false).bitrate, 40_000_000, "…while a device at home still sees the home bitrate")
+    check(only.awayCaptureScale == 1 && only.awayBitrate == .fixed(25_000_000), "applyingAway of a bitrate alone keeps the away scale")
+    eq(only.streamSettings(away: true, auto: nil, takesAuto: false).bitrate, 25_000_000, "…and the state a device away is sent answers with it")
+    eq(only.streamSettings(away: false, auto: nil, takesAuto: false).bitrate, 40_000_000, "…while a device at home still sees the home bitrate")
     let scaleOnly = c.applyingAway(HostSettingsChange(captureScale: 2))
-    check(scaleOnly.awayCaptureScale == 2 && scaleOnly.awayBitrate == 4_000_000 && scaleOnly.captureScale == 2,
+    check(scaleOnly.awayCaptureScale == 2 && scaleOnly.awayBitrate == .fixed(4_000_000) && scaleOnly.captureScale == 2,
           "applyingAway of a scale alone keeps the away bitrate and the home pair")
     var retinaAway = c
     retinaAway.awayCaptureScale = 2
@@ -258,7 +266,7 @@ do {
     let empty = c.applyingAway(HostSettingsChange(token: 9))
     check(empty == c, "applyingAway of nothing changes nothing")
     let dw = c.applyingAway(HostSettingsChange(directWireless: true))
-    check(dw.directWireless && dw.awayBitrate == 4_000_000, "applyingAway lays a shared field as applying does")
+    check(dw.directWireless && dw.awayBitrate == .fixed(4_000_000), "applyingAway lays a shared field as applying does")
 }
 
 do {
@@ -303,8 +311,8 @@ do {
     eq(on.changes(to: standard), "send audio on → off", "changes: …and off again")
     check(standard.applying(HostSettingsChange(sendAudio: true)) == on && on.applyingAway(HostSettingsChange(sendAudio: false)) == standard,
           "a device's Send Audio alone moves nothing else, at home or away")
-    check(on.streamSettings(away: true).sendAudio == true && on.streamSettings(away: false).sendAudio == true
-          && standard.streamSettings(away: true).sendAudio == false && standard.streamSettings(away: false).sendAudio == false,
+    check(on.streamSettings(away: true, auto: nil, takesAuto: false).sendAudio == true && on.streamSettings(away: false, auto: nil, takesAuto: false).sendAudio == true
+          && standard.streamSettings(away: true, auto: nil, takesAuto: false).sendAudio == false && standard.streamSettings(away: false, auto: nil, takesAuto: false).sendAudio == false,
           "a device sees the Mac's Send Audio, at home and away")
 }
 
@@ -364,17 +372,105 @@ do {
 
 do {
     var c = standard
-    c.bitrate = 40_000_000
+    c.bitrate = .fixed(40_000_000)
     eq(AwayPolicy.awayLine(c),
        "Away from home: every connected device is away; streaming at Low · Standard (4 Mbps per 60 fps, points). The home quality stays Pro · Retina.",
        "the away line")
     eq(AwayPolicy.homeLine(c, endpoint: "fe80::1c2d:3e4f:5a6b:7c8d%en0.51447"),
        "Home quality again: a device connected at home (fe80::1c2d:3e4f:5a6b:7c8d%en0.51447); streaming at Pro · Retina.",
        "the home line")
-    c.awayBitrate = 25_000_000; c.awayCaptureScale = 2; c.bitrate = 12_000_000; c.captureScale = 1
+    c.awayBitrate = .fixed(25_000_000); c.awayCaptureScale = 2; c.bitrate = .fixed(12_000_000); c.captureScale = 1
     eq(AwayPolicy.awayLine(c),
        "Away from home: every connected device is away; streaming at High · Retina (25 Mbps per 60 fps, Retina). The home quality stays 12 Mbps · Standard.",
        "the away line at High · Retina, home at a hand-set 12 Mbps")
+}
+
+// MARK: Auto (docs/adaptive-quality-plan.md)
+
+do {
+    var c = standard
+    c.bitrate = .auto; c.awayBitrate = .auto; c.captureScale = 2; c.awayCaptureScale = 1
+    let validated = c.validated()
+    check(validated.bitrate == .auto && validated.awayBitrate == .auto, "validated leaves Auto alone")
+    var fixed = standard
+    fixed.bitrate = .fixed(500_000_000); fixed.awayBitrate = .fixed(1)
+    check(fixed.validated().bitrate == .fixed(200_000_000) && fixed.validated().awayBitrate == .fixed(1_000_000), "validated still clamps a fixed rate")
+    eq(standard.changes(to: { var n = standard; n.bitrate = .auto; return n }()), "bitrate 15 Mbps per 60 fps → Auto", "changes: to Auto")
+    eq(c.changes(to: { var n = c; n.bitrate = .fixed(8_000_000); return n }()), "bitrate Auto → 8 Mbps per 60 fps", "changes: from Auto")
+    eq(c.choice(away: false), .auto, "choice(away: false) is the home setting")
+    eq(standard.choice(away: true), .fixed(4_000_000), "choice(away: true) is the away setting")
+}
+
+do {
+    var c = standard
+    c.bitrate = .auto; c.awayBitrate = .auto; c.captureScale = 2; c.awayCaptureScale = 1
+    func R(_ p: QualityPreset, _ retina: Bool) -> AutoQuality.Rung { AutoQuality.Rung(preset: p, retina: retina) }
+    check(c.running(away: false, auto: nil) == (150_000_000, 2), "running: Auto at home before it has a rung is the start, Extreme · Retina")
+    check(c.running(away: true, auto: nil) == (4_000_000, 1), "running: Auto away before it has a rung is the start, Low · Standard")
+    check(c.running(away: false, auto: R(.balanced, true)) == (15_000_000, 2), "running: Auto runs the rung it is given")
+    check(c.running(away: false, auto: R(.efficient, false)) == (8_000_000, 1), "running: …at the rung's resolution (Standard below Low's climb)")
+    c.captureScale = 1
+    check(c.running(away: false, auto: R(.pro, true)) == (40_000_000, 1), "running: never above the Mac's Resolution")
+    check(c.running(away: false, auto: nil) == (150_000_000, 1), "running: the home start at a Standard Mac is Extreme · Standard")
+    check(standard.running(away: false, auto: R(.low, false)) == (15_000_000, 2), "running: a fixed rate ignores the rung")
+}
+
+do {
+    var c = standard
+    c.bitrate = .auto; c.captureScale = 2
+    let rung = AutoQuality.Rung(preset: .high, retina: true)
+    let taker = c.streamSettings(away: false, auto: rung, takesAuto: true)
+    check(taker.bitrate == 25_000_000 && taker.autoQuality == true && taker.captureScale == 2, "streamSettings: a taker is told Auto, and the running rung as the preset")
+    let older = c.streamSettings(away: false, auto: rung, takesAuto: false)
+    check(older.bitrate == 25_000_000 && older.autoQuality == nil, "streamSettings: an older device sees the running preset and no Auto field")
+    let fixedTaker = standard.streamSettings(away: false, auto: nil, takesAuto: true)
+    check(fixedTaker.autoQuality == false && fixedTaker.bitrate == 15_000_000, "streamSettings: a taker with a fixed rate is told false, so it knows Auto exists")
+    check(standard.streamSettings(away: false, auto: nil, takesAuto: false).autoQuality == nil, "streamSettings: a non-taker with a fixed rate is told nothing of Auto")
+}
+
+do {
+    var c = standard
+    c.bitrate = .fixed(40_000_000); c.awayBitrate = .fixed(8_000_000)
+    let auto = HostSettingsChange(autoQuality: true)
+    check(c.applying(auto).bitrate == .auto && c.applying(auto).awayBitrate == .fixed(8_000_000), "applying: autoQuality true picks Auto on the home pair alone")
+    check(c.applyingAway(auto).awayBitrate == .auto && c.applyingAway(auto).bitrate == .fixed(40_000_000), "applyingAway: …and on the away pair alone")
+    var onAuto = c; onAuto.bitrate = .auto; onAuto.awayBitrate = .auto
+    let preset = HostSettingsChange(bitrate: 25_000_000, autoQuality: false)
+    check(onAuto.applying(preset).bitrate == .fixed(25_000_000) && onAuto.applyingAway(preset).awayBitrate == .fixed(25_000_000),
+          "applying: a bitrate pick fixes the rate (with autoQuality false from a taker)")
+    check(onAuto.applying(HostSettingsChange(bitrate: 25_000_000)).bitrate == .fixed(25_000_000), "applying: an older device's bare bitrate fixes it")
+    check(onAuto.applying(HostSettingsChange(maxFPS: 60)).bitrate == .auto, "applying: another field leaves Auto alone")
+}
+
+do {
+    func accept(_ c: HostSettingsChange) -> (HostSettingsChange, [String]) {
+        DeviceSettings.accepted(c, virtualDisplayAvailable: true, fromRemote: false, paired: true)
+    }
+    let (on, none) = accept(HostSettingsChange(autoQuality: true))
+    check(on.autoQuality == true && on.bitrate == nil && none.isEmpty, "accepted: autoQuality true is taken")
+    let (off, refusedOff) = accept(HostSettingsChange(autoQuality: false))
+    check(off.autoQuality == nil && off.isEmpty && refusedOff.count == 1 && refusedOff[0].contains("auto quality off"),
+          "accepted: autoQuality false alone is refused, by name")
+    let (preset, none2) = accept(HostSettingsChange(bitrate: 25_000_000, autoQuality: false))
+    check(preset.bitrate == 25_000_000 && preset.autoQuality == nil && none2.isEmpty, "accepted: false is taken beside a preset: the pick fixes the rate")
+    let (both, refusedBoth) = accept(HostSettingsChange(bitrate: 25_000_000, autoQuality: true))
+    check(both.bitrate == nil && both.autoQuality == nil && refusedBoth.count == 1 && refusedBoth[0].contains("auto quality") && refusedBoth[0].contains("25000000"),
+          "accepted: true with a bitrate is refused whole, naming both")
+    let (other, none3) = accept(HostSettingsChange(maxFPS: 60, autoQuality: true))
+    check(other.maxFPS == 60 && other.autoQuality == true && none3.isEmpty, "accepted: Auto beside another field is taken, each field its own")
+}
+
+do {
+    var c = standard
+    c.bitrate = .auto; c.awayBitrate = .auto
+    eq(AwayPolicy.awayLine(c),
+       "Away from home: every connected device is away; streaming at Auto (starting at Low · Standard, climbing while the link keeps up). The home quality stays Auto.",
+       "the away line under Auto")
+    eq(AwayPolicy.homeLine(c, endpoint: "10.0.0.5"), "Home quality again: a device connected at home (10.0.0.5); streaming at Auto.", "the home line under Auto")
+    c.bitrate = .fixed(40_000_000)
+    eq(AwayPolicy.awayLine(c),
+       "Away from home: every connected device is away; streaming at Auto (starting at Low · Standard, climbing while the link keeps up). The home quality stays Pro · Retina.",
+       "the away line: Auto away, a fixed home")
 }
 
 print(failures == 0 ? "away-quality: all passed" : "away-quality: \(failures) FAILED")
