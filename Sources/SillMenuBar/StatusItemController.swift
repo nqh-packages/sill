@@ -18,6 +18,8 @@ struct MenuEntry: Equatable {
         case setDirectWireless(Bool)
         case setSendAudio(Bool)
         case setMaxFPS(Int), setBitrate(Int), setCaptureScale(CGFloat)
+        /// Quality's first item: Auto, home pair (docs/adaptive-quality-plan.md).
+        case setAutoQuality
         case toggleLaunchAtLogin
         case showLog, showSettings, quit
         /// Settings on one tab (Remote Access…); the plain `showSettings` stays for ⌘,. (Swift
@@ -112,16 +114,21 @@ enum MenuBuilder {
         menu.append(MenuEntry(kind: .item, title: "Frame Rate", children: [60, 120].map { fps in
             MenuEntry(kind: .item, title: "Up to \(fps) fps", checked: config.maxFPS == fps, action: .setMaxFPS(fps))
         }))
-        var quality = QualityPreset.allCases.map { preset in
-            MenuEntry(kind: .item, title: preset.title, checked: config.bitrate == preset.rawValue, action: .setBitrate(preset.rawValue))
+        var quality = [MenuEntry(kind: .item, title: "Auto", checked: config.bitrate == .auto, action: .setAutoQuality)]
+        quality += QualityPreset.allCases.map { preset in
+            MenuEntry(kind: .item, title: preset.title, checked: config.bitrate == .fixed(preset.rawValue), action: .setBitrate(preset.rawValue))
         }
-        if QualityPreset(rawValue: config.bitrate) == nil {
-            quality.append(MenuEntry(kind: .item, title: QualityPreset.title(forBitrate: config.bitrate), checked: true, enabled: false))
+        if let rate = config.bitrate.rate, QualityPreset(rawValue: rate) == nil {
+            quality.append(MenuEntry(kind: .item, title: QualityPreset.title(forBitrate: rate), checked: true, enabled: false))
         }
         // The home quality, as ever; while every connected device is away, the subtitle says which
-        // quality runs instead (the away one is set in Settings › Streaming, never here).
+        // quality runs instead (the away one is set in Settings › Streaming, never here). Under Auto,
+        // the rung it runs now, passively ("Balanced now"): no notice, a menu read.
+        let awayWords = config.awayBitrate.rate.map { QualityPreset.shortTitle(bitrate: $0, captureScale: Double(config.awayCaptureScale)) } ?? "Auto"
+        let running = p.runningPreset
         let qualityNote = p.away
-            ? "Away from home now: \(QualityPreset.shortTitle(bitrate: config.awayBitrate, captureScale: Double(config.awayCaptureScale)))"
+            ? "Away from home now: \(awayWords)" + (config.awayBitrate == .auto ? running.map { ", \($0) now" } ?? "" : "")
+            : config.bitrate == .auto ? (running.map { "\($0) now" } ?? "Starts at Extreme, lowers when the link can’t keep up")
             : "Per 60 fps; a 120 fps stream gets twice as much"
         menu.append(MenuEntry(kind: .item, title: "Quality", subtitle: qualityNote, children: quality))
         // Standard is one pixel a point: a quarter of a Retina display's pixels, and on a 1x display
@@ -331,7 +338,8 @@ final class StatusItemController: NSObject, NSMenuDelegate {
         case .setDirectWireless(let on): model.settings.config.directWireless = on
         case .setSendAudio(let on): model.settings.config.sendAudio = on
         case .setMaxFPS(let fps): model.settings.config.maxFPS = fps
-        case .setBitrate(let bitrate): model.settings.config.bitrate = bitrate
+        case .setBitrate(let bitrate): model.settings.config.bitrate = .fixed(bitrate)
+        case .setAutoQuality: model.settings.config.bitrate = .auto
         case .setCaptureScale(let scale): model.settings.config.captureScale = scale
         case .toggleLaunchAtLogin: model.loginItem.set(!model.loginItem.isOn)
         case .showLog: model.showLog?()

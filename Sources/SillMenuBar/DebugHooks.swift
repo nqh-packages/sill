@@ -13,7 +13,7 @@ import StreamProtocol
 ///     -SillSetAfter '<s> key=value[,key=value][; <s> …]'
 ///                                              change settings s seconds after launch, exactly as
 ///                                              a control would (maxFPS, captureScale, bitrate,
-///                                              awayBitrate, awayCaptureScale,
+///                                              awayBitrate (a rate, or auto), awayCaptureScale,
 ///                                              prioritizeSpeed, virtualDisplay, directWireless,
 ///                                              sendAudio, remoteAccess, remotePort, internetAccess,
 ///                                              shareClipboard, offConsoleView, lockAfterSession,
@@ -351,6 +351,11 @@ enum DebugHooks {
         }
     }
 
+    /// A Quality for `bitrate=` and `awayBitrate=`: "auto", or a rate in bits per second.
+    private static func choice(_ value: String) -> BitrateChoice? {
+        value.lowercased() == "auto" ? .auto : Int(value).map(BitrateChoice.fixed)
+    }
+
     private static func apply(_ change: String, to config: inout HostConfig, addressName: inout String?, requirePairing: inout Bool?,
                               updateCheck: inout Bool?, pairingSharing: inout Bool?) {
         let kv = change.split(separator: "=", maxSplits: 1).map(String.init)
@@ -360,8 +365,8 @@ enum DebugHooks {
         switch key {
         case "maxFPS": if let v = Int(value) { config.maxFPS = v }
         case "captureScale": if let v = Double(value) { config.captureScale = CGFloat(v) }
-        case "bitrate": if let v = Int(value) { config.bitrate = v }
-        case "awayBitrate": if let v = Int(value) { config.awayBitrate = v }
+        case "bitrate": if let v = choice(value) { config.bitrate = v }
+        case "awayBitrate": if let v = choice(value) { config.awayBitrate = v }
         case "awayCaptureScale": if let v = Double(value) { config.awayCaptureScale = CGFloat(v) }
         case "prioritizeSpeed": config.prioritizeSpeed = flag
         case "virtualDisplay": config.virtualDisplay = flag

@@ -16,7 +16,7 @@ package final class StreamCoordinator {
     package private(set) var config: HostConfig
     /// Settings from the app or a device that wait for the next `select` (a restart, or a switch in
     /// flight). This, else `config`, is the `target`: what the Mac's menu and the devices show.
-    private var pendingConfig: HostConfig?
+    var pendingConfig: HostConfig?
     /// Ceiling for the stream rate (HostConfig). Each device asks for its own panel's rate
     /// through the viewport: 120 on ProMotion, 60 elsewhere, 60 while Low Power Mode caps it.
     private var maxFPS: Int { config.maxFPS }
@@ -43,9 +43,10 @@ package final class StreamCoordinator {
     /// keeps its share of bits.
     private var streamBitrate: Int { bitrate * fps / 60 }
     /// The quality the pipeline runs: the away pair while it runs the away quality (`awayRunning`),
-    /// else the home pair (HostConfig.effective).
-    private var scale: CGFloat { config.effective(away: awayRunning).captureScale }
-    private var bitrate: Int { config.effective(away: awayRunning).bitrate }
+    /// else the home pair (`HostConfig.running`: for Auto, the rung `autoRunning` names).
+    private var scale: CGFloat { config.running(away: awayRunning, auto: autoRunning).captureScale }
+    /// Internal, not private: StreamCoordinator+Auto.swift judges the links at it (`commitRunning`).
+    var bitrate: Int { config.running(away: awayRunning, auto: autoRunning).bitrate }
     private var prioritizeSpeed: Bool { config.prioritizeSpeed }
 
     let server: StreamServer
@@ -112,13 +113,13 @@ package final class StreamCoordinator {
     /// put no display to sleep: they say what they would do.
     private let privacy: PrivacyLock
     /// Set by the signal handler: a select in flight when Ctrl-C lands must not stage anything new.
-    private var shuttingDown = false
+    var shuttingDown = false
     private var stageLosses = 0
     /// The private CGVirtualDisplay API is checked once per run, the first time the mode is on.
     private var apiChecked = false
     /// Why that check failed, if it did: the virtual display then stays off for the whole run.
     private var apiProblem: String?
-    private var encoder: HEVCEncoder? { didSet { encoderBox.current = encoder } }
+    var encoder: HEVCEncoder? { didSet { encoderBox.current = encoder } }
     /// The display's own pixel scale under the running pipeline (CaptureScale): ScreenCaptureKit's for
     /// its filter (`pointPixelScale`), Sill's virtual display's (2) for a staged window, nil for the
     /// test pattern. Set with `active` as a pipeline starts (`startPipeline`); the injector lands
@@ -202,7 +203,7 @@ package final class StreamCoordinator {
     }
     private var rectCache: (id: CGWindowID, rect: CGRect, at: CFAbsoluteTime)?
     private var pendingLaunch: String?
-    private var switching = false
+    var switching = false
     /// A restart of the active source is in flight (a settings change, a resize, a rate change,
     /// the encoder fallback, a lost display): the source being restarted. Nil during a switch to
     /// another source.
@@ -311,7 +312,7 @@ package final class StreamCoordinator {
     /// as before.
     package let remote: RemoteAccess?
     /// Each admitted connection's route (home and its origin, or the remote door's), from the server.
-    private var routes: [ObjectIdentifier: ClientRoute] = [:]
+    var routes: [ObjectIdentifier: ClientRoute] = [:]
     /// Connections the Mac no longer serves (StreamServer.closeSessions: a pairing removed, Remote
     /// Access or internet access off, Require pairing on), from the moment the server marks them until
     /// they leave: nothing they send lands but the up of a key or a button they hold down on the Mac
@@ -347,7 +348,7 @@ package final class StreamCoordinator {
     /// Away from home (docs/remote-bundle-plan.md §5; AwayPolicy): every connected device is away,
     /// so the away quality is the target. Kept while no device is connected; the next to register
     /// decides (`routesChanged`). What the Mac's card, menu and every device are told.
-    private var awayWanted = false
+    var awayWanted = false
     /// The away quality runs: the value the last `select` (or `adopt`) took. The pipeline reads it.
     private(set) var awayRunning = false
     /// A device that joined and flipped `awayWanted` (`routesChanged`): its first viewport, which
@@ -363,7 +364,17 @@ package final class StreamCoordinator {
     /// one when it was judged) is no longer the target's, so the answer to the pick that lowers it
     /// already carries none (the restart's reset follows). The bitrate alone: a change of the capture
     /// scale alone may restart nothing (the software encoder runs at points).
-    private var linkReports: [ObjectIdentifier: LinkReport] = [:]
+    var linkReports: [ObjectIdentifier: LinkReport] = [:]
+    /// Auto (docs/adaptive-quality-plan.md; StreamCoordinator+Auto.swift owns all of these, and
+    /// Tests/checks/auto-seam guards who writes them). The policy: nil while the place's quality is fixed
+    /// and while nothing streams, so the next stream starts at decision 4's start.
+    var auto: AutoQuality?
+    /// The rung the pipeline runs: set only by `commitRunning`. `bitrate` and `scale` read it through
+    /// `HostConfig.running(away:auto:)`.
+    var autoRunning: AutoQuality.Rung?
+    /// Connections whose hello said `autoQuality` at `AutoQualityWire.generation` or above: the only
+    /// ones told about Auto (`settingsState`).
+    var autoTakers: Set<ObjectIdentifier> = []
     /// The quality the devices' links are judged at: the running stream's (`select`'s commit), nil
     /// while nothing streams. A restart that keeps it keeps their judgement (LinkJudge.judgedAfresh).
     private var judgedQuality: LinkJudge.Quality?
@@ -610,6 +621,11 @@ package final class StreamCoordinator {
             let id = ObjectIdentifier(connection)
             Task { @MainActor in self?.linkChanged(id, verdict) }
         }
+        // One hop a second carries every device's closed second and verdict: "Link to …" lines first, then
+        // Auto's step line (StreamCoordinator+Auto.swift).
+        server.onSecond = { [weak self] closed in
+            Task { @MainActor in self?.serverSecond(closed) }
+        }
         server.onKeyframeNeeded = { [weak self] in
             // Network queue → encoder lock: the next repaint carries the keyframe, or the last frame is
             // re-encoded once the window has been still for 50 ms (HEVCEncoder.requestKeyframe).
@@ -632,6 +648,7 @@ package final class StreamCoordinator {
                 self.appsAndIconsSent.remove(id)
                 self.lastPublished[id] = nil
                 self.linkReports[id] = nil
+                self.autoTakers.remove(id)
                 if self.flipWait == id { self.flipWait = nil }
                 self.menus.clientLeft(connection)
                 self.clipboard.clientLeft(connection)
@@ -756,6 +773,13 @@ package final class StreamCoordinator {
                 Task { @MainActor in
                     guard let self, let view = self.listMessages().view else { return }
                     self.server.send(view, to: connection)
+                }
+            }
+            if (hello.autoQuality ?? 0) >= AutoQualityWire.generation {
+                Task { @MainActor in
+                    guard let self, self.routes[id] != nil else { return }
+                    self.autoTakers.insert(id)
+                    self.publishSettings()
                 }
             }
             let name = SafeText.label(hello.device ?? "")
@@ -940,7 +964,7 @@ package final class StreamCoordinator {
     /// What the host is set to: a value still waiting for its restart, else the running one. What
     /// the Mac's menu checks and what devices are told. (Private: the app merges over its own
     /// settings, never over this.)
-    private var target: HostConfig { pendingConfig ?? config }
+    var target: HostConfig { pendingConfig ?? config }
 
     /// Who keeps the settings when a device changes one. Sill.app lays the change over its
     /// HostSettings (saved, shown in its menu and Settings) and returns the result: over the away
@@ -980,6 +1004,7 @@ package final class StreamCoordinator {
         privacy.switched(on: new.lockAfterSession, sleeps: new.lockSleepsDisplay, onlyAway: new.lockOnlyAfterAway)
         guard new != target else { return false }
         pendingConfig = new
+        syncAuto()
         publishSettings()
         Task { @MainActor in await self.applyPending() }   // a burst before it runs is one restart
         return true
@@ -989,14 +1014,20 @@ package final class StreamCoordinator {
     /// the away quality (`awayWanted` against `awayRunning`) unless it waits for a joined device's
     /// first viewport (`flipWait`), which then brings both in one restart. At once when nothing
     /// streaming depends on it, else through one restart of the current source.
-    private func applyPending() async {
+    func applyPending() async {
         let flip = awayWanted != awayRunning && flipWait == nil
-        guard pendingConfig != nil || flip, !switching, !shuttingDown else { return }   // select's defer calls it again
+        guard pendingConfig != nil || flip || autoStepPending, !switching, !shuttingDown else { return }   // select's defer calls it again
         let new = pendingConfig ?? config
         // A flip still waiting for its viewport stays out of a settings change that needs no restart;
         // a restart takes it anyway (select's commit).
         let away = flipWait == nil ? awayWanted : awayRunning
-        guard restartNeeded(for: new, away: away) else { pendingConfig = nil; adopt(new, away: away); return }
+        guard restartNeeded(for: new, away: away) else {
+            pendingConfig = nil
+            adopt(new, away: away)
+            syncAuto()
+            commitRunning(config.choice(away: awayRunning) == .auto ? auto?.rung : nil, streaming: active != .none)
+            return
+        }
         // A restart, not a pick. Turning the virtual display off still brings the staged window
         // forward as it comes home: select's commit decides that, from the value it actually takes.
         await select(active)   // committed inside select
@@ -1017,6 +1048,7 @@ package final class StreamCoordinator {
             print(awayWanted ? AwayPolicy.awayLine(target) : AwayPolicy.homeLine(target, endpoint: endpoint ?? "a device"))
             if let joined { flipAwaits(joined) } else { flipWait = nil }
         }
+        if flipped { syncAuto() }
         status.update { $0.away = awayWanted && !routes.isEmpty }   // publishes (status.onChange)
         return flipped
     }
@@ -1054,7 +1086,7 @@ package final class StreamCoordinator {
         guard active != .none else { return false }
         let wanted = min(new.maxFPS, max(24, clientFPS.values.max() ?? 60))
         let newFPS = streamRate(for: active, wanted: useSoftwareEncoder ? min(wanted, 60) : wanted)
-        let pair = new.effective(away: away)
+        let pair = new.running(away: away, auto: away == awayWanted ? auto?.rung : autoRunning)
         let newScale = useSoftwareEncoder ? min(pair.captureScale, 1.0) : pair.captureScale
         if newFPS != fps || newScale != captureScale { return true }
         if pair.bitrate != bitrate || new.prioritizeSpeed != config.prioritizeSpeed { return true }
@@ -1143,7 +1175,7 @@ package final class StreamCoordinator {
     /// judged afresh when it changes (LinkJudge.judgedAfresh: another bitrate, rate or resolution, or
     /// no stream), and keep their judgement through a restart that keeps it, so a device's report,
     /// line and callout neither go nor come back for a window picked or a rotation.
-    private func judgeLinks(_ quality: LinkJudge.Quality?) {
+    func judgeLinks(_ quality: LinkJudge.Quality?) {
         if LinkJudge.judgedAfresh(from: judgedQuality, to: quality) { server.resetLinks() }
         judgedQuality = quality
     }
@@ -1154,7 +1186,7 @@ package final class StreamCoordinator {
     /// prints nothing, and changes nothing unless it changes the suggestion; fine clears it, with
     /// "keeping up again" only for a judged recovery, never for a restart's reset. The snapshot
     /// change publishes, and each connection's state carries its own.
-    private func linkChanged(_ id: ObjectIdentifier, _ v: LinkJudge.Verdict) {
+    func linkChanged(_ id: ObjectIdentifier, _ v: LinkJudge.Verdict) {
         guard routes[id] != nil else { return }       // gone meanwhile
         let device = status.snapshot.devices.first { $0.id == id }
         let who = device?.name ?? device?.endpoint ?? "a device"
@@ -2054,7 +2086,8 @@ package final class StreamCoordinator {
         fps = streamRate(for: source)
         // The devices' links: judged afresh when the stream comes back at another quality or not at
         // all, kept through a restart that keeps it (a window picked, a rotation, a resize).
-        judgeLinks(source == .none ? nil : LinkJudge.Quality(bitrate: bitrate, fps: fps, captureScale: Double(captureScale)))
+        syncAuto(streaming: source != .none)
+        commitRunning(config.choice(away: awayRunning) == .auto ? auto?.rung : nil, streaming: source != .none)
         let comeForward = bringForward || cameHome
 
         if virtualDisplay {
@@ -2806,7 +2839,7 @@ package final class StreamCoordinator {
 
     /// The Resolution knob of the pair that runs: Retina normally; points when the software encoder is
     /// carrying the stream. A capture runs at it held to its display's own scale (CaptureScale).
-    private var captureScale: CGFloat { useSoftwareEncoder ? min(scale, 1.0) : scale }
+    var captureScale: CGFloat { useSoftwareEncoder ? min(scale, 1.0) : scale }
 
     /// The pixels a point the running pipeline captures at: the knob held to its display's own scale.
     private var streamPixelScale: CGFloat { CaptureScale.effective(knob: captureScale, displayScale: streamDisplayScale) }
@@ -3755,7 +3788,8 @@ package final class StreamCoordinator {
     /// (`away`, from a host with an identity, `remote`: SillHost --pairing alone too, where no
     /// connection is ever away), whether its key is paired (`sessionPaired`), and the rest shared. A
     /// pure function of the target, `awayWanted`, the connection's route, the status snapshot (its
-    /// trust list too) and two constants (appKitLoop, whether the hook is set). The target changes
+    /// trust list too), Auto's `autoRunning` and `autoTakers` (both publish: `commitRunning`, the hello)
+    /// and two constants (appKitLoop, whether the hook is set). The target changes
     /// only in `setTarget`, the snapshot only in `HostStatus.update`, and `awayWanted` only in
     /// `routesChanged`, which updates the snapshot with it; all three publish, so no change can be
     /// missed and none can stick. Never the
@@ -3766,13 +3800,18 @@ package final class StreamCoordinator {
         let thisAway = routes[id]?.isAway ?? false
         // A report about the bitrate that runs while it is still the target's; one about a bitrate a
         // pick has just replaced is stale (the restart's reset clears it a moment later).
-        let link = linkReports[id].flatMap { $0.bitrate == t.effective(away: awayWanted).bitrate ? $0 : nil }
+        let takesAuto = autoTakers.contains(id)
+        let link = autoGoverns(away: thisAway) ? nil
+            : linkReports[id].flatMap { $0.bitrate == t.running(away: awayWanted, auto: autoRung(forAway: awayWanted)).bitrate ? $0 : nil }
         let away = remote.map { _ in
-            AwayQuality(homeBitrate: t.bitrate, homeCaptureScale: Double(t.captureScale),
-                        awayBitrate: t.awayBitrate, awayCaptureScale: Double(t.awayCaptureScale),
-                        thisConnectionAway: thisAway, awayRunning: awayWanted)
+            let home = t.running(away: false, auto: autoRung(forAway: false))
+            let far = t.running(away: true, auto: autoRung(forAway: true))
+            return AwayQuality(homeBitrate: home.bitrate, homeCaptureScale: Double(home.captureScale),
+                               awayBitrate: far.bitrate, awayCaptureScale: Double(far.captureScale),
+                               thisConnectionAway: thisAway, awayRunning: awayWanted,
+                               homeAuto: takesAuto ? t.bitrate == .auto : nil, awayAuto: takesAuto ? t.awayBitrate == .auto : nil)
         }
-        return HostSettingsState(settings: t.streamSettings(away: thisAway),
+        return HostSettingsState(settings: t.streamSettings(away: thisAway, auto: autoRung(forAway: thisAway), takesAuto: takesAuto),
                                  persistent: onDeviceSettingsChange != nil,
                                  virtualDisplayAvailable: appKitLoop,
                                  virtualDisplayNote: virtualDisplayNote(target: t, snapshot: s),
@@ -3782,7 +3821,9 @@ package final class StreamCoordinator {
                                  away: away,
                                  link: link,
                                  audioNote: t.sendAudio ? s.audio?.note : nil,
-                                 sessionPaired: sessionPaired(id))
+                                 sessionPaired: sessionPaired(id),
+                                 autoCaptureScale: takesAuto && autoGoverns(away: thisAway)
+                                     ? Double(t.running(away: thisAway, auto: autoRung(forAway: thisAway)).captureScale) : nil)
     }
 
     /// Whether connection `id`'s key is on this Mac's trust list now, as the status snapshot lists it
@@ -3816,7 +3857,7 @@ package final class StreamCoordinator {
 
     /// To every device whose catalog went out, its own state, when that differs from the last one
     /// it was sent. Prints nothing, so the CLI's output only changes when a device sends a change.
-    private func publishSettings() {
+    func publishSettings() {
         var messages: [(NWConnection, StreamMessage)] = []
         for (id, connection) in connections {
             let state = settingsState(for: id)
@@ -3828,7 +3869,7 @@ package final class StreamCoordinator {
     }
 
     /// "iPad (iPad14,1)" once the device has sent its stats, its address until then.
-    private func deviceName(_ connection: NWConnection) -> String {
+    func deviceName(_ connection: NWConnection) -> String {
         status.snapshot.devices.first { $0.id == ObjectIdentifier(connection) }?.name ?? "\(connection.endpoint)"
     }
 }

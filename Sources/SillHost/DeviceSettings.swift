@@ -10,12 +10,16 @@ import StreamProtocol
 extension HostConfig {
     /// As a device sees them: the quality its connection controls in `bitrate` and `captureScale`,
     /// the away pair for a connection the Mac counts as away (docs/remote-bundle-plan.md §4.2), the
-    /// home pair for any other; the other five are shared.
-    func streamSettings(away: Bool) -> StreamSettings {
-        let pair = effective(away: away)
+    /// home pair for any other; the other five are shared. `auto`: the rung Auto runs this pair's quality
+    /// at, when it does (`running(away:auto:)`): `bitrate` is then that rung, always a preset, which is
+    /// all an older device sees (decision 8). `takesAuto`: the device's hello said `autoQuality`, so it
+    /// is also told whether the pair is Auto (`StreamSettings.autoQuality`); any other device gets nil.
+    func streamSettings(away: Bool, auto: AutoQuality.Rung?, takesAuto: Bool) -> StreamSettings {
+        let pair = running(away: away, auto: auto)
         return StreamSettings(maxFPS: maxFPS, bitrate: pair.bitrate, captureScale: Double(pair.captureScale),
                               prioritizeSpeed: prioritizeSpeed, virtualDisplay: virtualDisplay,
-                              directWireless: directWireless, sendAudio: sendAudio)
+                              directWireless: directWireless, sendAudio: sendAudio,
+                              autoQuality: takesAuto ? choice(away: away) == .auto : nil)
     }
 
     /// This config with a device's change laid over it; nil fields keep their value. `package`:
@@ -23,7 +27,8 @@ extension HostConfig {
     package func applying(_ change: HostSettingsChange) -> HostConfig {
         var c = self
         if let v = change.maxFPS { c.maxFPS = v }
-        if let v = change.bitrate { c.bitrate = v }
+        if change.autoQuality == true { c.bitrate = .auto }
+        if let v = change.bitrate { c.bitrate = .fixed(v) }
         if let v = change.captureScale { c.captureScale = CGFloat(v) }
         if let v = change.prioritizeSpeed { c.prioritizeSpeed = v }
         if let v = change.virtualDisplay { c.virtualDisplay = v }
@@ -37,10 +42,12 @@ extension HostConfig {
     /// lays them. `package`: the app's hook lays such a change over its own settings with it.
     package func applyingAway(_ change: HostSettingsChange) -> HostConfig {
         var c = self
-        if let v = change.bitrate { c.awayBitrate = v }
+        if change.autoQuality == true { c.awayBitrate = .auto }
+        if let v = change.bitrate { c.awayBitrate = .fixed(v) }
         if let v = change.captureScale { c.awayCaptureScale = CGFloat(v) }
         var rest = change
         rest.bitrate = nil
+        rest.autoQuality = nil
         rest.captureScale = nil
         return c.applying(rest)
     }
@@ -94,6 +101,20 @@ enum DeviceSettings {
         }
         if let v = c.bitrate {
             if SettingsChoices.bitrate.contains(v) { ok.bitrate = v } else { refused.append("bitrate \(v)") }
+        }
+        // Auto (docs/adaptive-quality-plan.md): `true` picks it; `false` alone is refused (a fixed rate is
+        // a bitrate pick, which ends Auto), and it is taken, as the pick's no-op, only beside the preset it
+        // goes with: a device that takes Auto sends `{bitrate, autoQuality: false}` for a preset pick.
+        // `true` beside a bitrate is refused whole: the two disagree.
+        if let v = c.autoQuality {
+            if v, c.bitrate != nil {
+                ok.bitrate = nil
+                refused.append("auto quality with bitrate \(c.bitrate ?? 0) (pick one)")
+            } else if v {
+                ok.autoQuality = true
+            } else if c.bitrate == nil {
+                refused.append("auto quality off (pick a quality)")
+            }
         }
         if let v = c.captureScale {
             if SettingsChoices.captureScale.contains(v) { ok.captureScale = v } else { refused.append("capture scale \(v)") }

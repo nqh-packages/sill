@@ -50,6 +50,12 @@ config.shareClipboard = !CommandLine.arguments.contains("--no-clipboard")
 let audioFlag = CommandLine.arguments.contains("--audio")
 config.sendAudio = audioFlag
 
+// `SillHost --auto-quality`: Quality is Auto, home and away, for this run (docs/adaptive-quality-plan.md): the
+// host lowers the encoder's rate one rung at a time while the link cannot carry it, and climbs by restart once
+// it can, logging each step as "Auto: …". Off by default, unlike Sill.app: a headless test keeps its rates
+// (Balanced at home, Low away) and the output is what it always was. A device's pick fixes the rate again.
+if CommandLine.arguments.contains("--auto-quality") { config = config.autoQuality() }
+
 // `SillHost --off-console-view`: show this account while another user is on the screen, for this run
 // (docs/off-console-plan.md, issue #316): while another user's session, the login window or nobody holds
 // this Mac's console, devices see this session's own desktop and windows, to look at, and nothing they send

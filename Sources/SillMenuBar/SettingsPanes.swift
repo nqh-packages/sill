@@ -448,9 +448,10 @@ private struct StreamingPane: View {
                 }
                 .pickerStyle(.segmented)
                 Picker("Quality", selection: $settings.config.bitrate) {
-                    ForEach(QualityPreset.allCases) { Text($0.title).tag($0.rawValue) }
-                    if QualityPreset(rawValue: settings.config.bitrate) == nil {
-                        Text(QualityPreset.title(forBitrate: settings.config.bitrate)).tag(settings.config.bitrate)
+                    Text("Auto").tag(BitrateChoice.auto)
+                    ForEach(QualityPreset.allCases) { Text($0.title).tag(BitrateChoice.fixed($0.rawValue)) }
+                    if let rate = settings.config.bitrate.rate, QualityPreset(rawValue: rate) == nil {
+                        Text(QualityPreset.title(forBitrate: rate)).tag(settings.config.bitrate)
                     }
                 }
                 Picker("Resolution", selection: $settings.config.captureScale) {
@@ -458,15 +459,16 @@ private struct StreamingPane: View {
                     Text("Standard").tag(CGFloat(1))
                 }
             } footer: {
-                Footnote("Each device asks for its own screen’s rate, up to this limit. Quality is per 60 fps; a 120 fps stream gets twice as much. \(QualityPreset.fastLinkNote) Changes apply at once: the current stream restarts for a moment.")
+                Footnote("Each device asks for its own screen’s rate, up to this limit. Auto lowers the quality while the link can’t carry it and raises it when it can. Quality is per 60 fps; a 120 fps stream gets twice as much. \(QualityPreset.fastLinkNote) Changes apply at once: the current stream restarts for a moment.")
             }
             // Away from home (docs/remote-bundle-plan.md §5): its own quality, which a device away
             // sets too; the menu's Quality and Resolution stay the home ones.
             Section {
                 Picker("Quality", selection: $settings.config.awayBitrate) {
-                    ForEach(QualityPreset.allCases) { Text($0.title).tag($0.rawValue) }
-                    if QualityPreset(rawValue: settings.config.awayBitrate) == nil {
-                        Text(QualityPreset.title(forBitrate: settings.config.awayBitrate)).tag(settings.config.awayBitrate)
+                    Text("Auto").tag(BitrateChoice.auto)
+                    ForEach(QualityPreset.allCases) { Text($0.title).tag(BitrateChoice.fixed($0.rawValue)) }
+                    if let rate = settings.config.awayBitrate.rate, QualityPreset(rawValue: rate) == nil {
+                        Text(QualityPreset.title(forBitrate: rate)).tag(settings.config.awayBitrate)
                     }
                 }
                 Picker("Resolution", selection: $settings.config.awayCaptureScale) {

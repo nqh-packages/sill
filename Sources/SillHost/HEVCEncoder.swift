@@ -55,7 +55,9 @@ final class HEVCEncoder {
     /// before some moment from one made after it (`latestSerial` then).
     let serial: Int
     private let fps: Int
-    private let bitrate: Int
+    /// Bits per second the stream runs at: the first session's, then each `lowerBitrate`. Guarded by
+    /// `lock`, so `makeReplacement` makes a slow-state session at the current rate, never the first one.
+    private var bitrate: Int
     private let prioritizeSpeed: Bool
     /// The session frames go into. It changes only in `submit`, on `encodeQueue`, when a new one
     /// replaces it; read there and in `deinit`.
@@ -460,16 +462,44 @@ final class HEVCEncoder {
     /// on (making one takes tens of ms, which must count against no frame's clock); `submit` hands
     /// the next frame to it. One that cannot be made leaves the stream on the old one.
     private func makeReplacement() {
-        let (w, h, fps, bitrate, speed) = (width, height, fps, bitrate, prioritizeSpeed)
+        lock.lock(); let rate = bitrate; lock.unlock()
+        let (w, h, fps, speed) = (width, height, fps, prioritizeSpeed)
         DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-            let made = try? HEVCEncoder.makeSession(width: w, height: h, fps: fps, bitrate: bitrate, prioritizeSpeed: speed, software: false)
+            let made = try? HEVCEncoder.makeSession(width: w, height: h, fps: fps, bitrate: rate, prioritizeSpeed: speed, software: false)
             guard let self else { if let made { HEVCEncoder.retire(made) }; return }
             self.lock.lock()
-            let taken = made != nil && !self.mailbox.dead
-            if taken { self.replacement = made } else { self.slowState?.replacementFailed(at: CACurrentMediaTime()) }
+            let outdated = made != nil && self.bitrate != rate
+            let taken = made != nil && !self.mailbox.dead && !outdated
+            if taken { self.replacement = made } else if !outdated { self.slowState?.replacementFailed(at: CACurrentMediaTime()) }
             self.lock.unlock()
             if !taken, let made { HEVCEncoder.retire(made) }
+            if outdated { self.makeReplacement() }
         }
+    }
+
+    /// Lowers the running session's rate in place, as `Scripts/encoder-check/verify-hardware.sh ratelive`
+    /// measured it (docs/evidence/adaptive-quality): AverageBitRate = `bps` and DataRateLimits =
+    /// [`bps` / 8, 1], on `encodeQueue`, the queue that submits. Never higher: it returns false and
+    /// changes nothing (the hardware encoder does not follow a raise: 25 → 40 stayed at 17.5 Mbps;
+    /// the software one does, and Auto still climbs by restart there, so one rule holds on both). A
+    /// slow-state replacement made before it is retired and made again at the new rate, so a swap never
+    /// restores the old one. Called only by `StreamCoordinator.lowerLive` (Tests/checks/auto-seam).
+    @discardableResult
+    func lowerBitrate(to bps: Int) -> Bool {
+        lock.lock()
+        guard bps > 0, bps < bitrate, !mailbox.dead else { lock.unlock(); return false }
+        bitrate = bps
+        let stale = replacement
+        replacement = nil
+        lock.unlock()
+        if let stale { Self.retire(stale); makeReplacement() }
+        encodeQueue.async { [weak self] in
+            guard let session = self?.session else { return }
+            VTSessionSetProperty(session, key: kVTCompressionPropertyKey_AverageBitRate, value: bps as CFNumber)
+            VTSessionSetProperty(session, key: kVTCompressionPropertyKey_DataRateLimits, value: [bps / 8, 1] as CFArray)
+        }
+        bump("enc.lowered")
+        return true
     }
 
     /// A session holding no frame, invalidated off the caller's queue (the call can block).

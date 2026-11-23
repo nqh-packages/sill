@@ -51,6 +51,9 @@ struct StatusPresentation: Equatable {
     /// Every connected device is away from home, so the away quality is the target: the menu's
     /// Quality subtitle says so (docs/remote-bundle-plan.md §5.7).
     var away = false
+    /// The preset the running stream's rate is nearest to ("Balanced"), for the menu's Quality subtitle
+    /// under Auto ("Balanced now"); nil while nothing streams.
+    var runningPreset: String?
 }
 
 /// Whether Sill holds its two permissions, as last read.
@@ -137,7 +140,18 @@ enum StatusText {
                                   virtualDisplayNote: virtualDisplayNote(s),
                                   tooltip: "Sill — \(header)", accessibilityLabel: "Sill, \(header)",
                                   advertisedName: name, remoteAccessNote: remoteAccessNote(s.remote),
-                                  canPair: s.remote.map { $0.identityProblem == nil } ?? false, away: s.away)
+                                  canPair: s.remote.map { $0.identityProblem == nil } ?? false, away: s.away,
+                                  runningPreset: s.stream.map { runningPresetName(mbps: $0.mbps, fps: $0.fps) })
+    }
+
+    /// The preset whose rate at `fps` is nearest the stream's whole megabits: a stream's rate is its
+    /// preset's per 60 fps, scaled to its frame rate.
+    static func runningPresetName(mbps: Int, fps: Int) -> String {
+        let scale = Double(max(fps, 1)) / 60
+        let nearest = QualityPreset.allCases.min {
+            abs(Double($0.rawValue) * scale / 1_000_000 - Double(mbps)) < abs(Double($1.rawValue) * scale / 1_000_000 - Double(mbps))
+        }
+        return nearest?.name ?? "Auto"
     }
 
     /// "iPad Wants to Pair", for 5 minutes after a device's ask (the host ends it sooner: when the

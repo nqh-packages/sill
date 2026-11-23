@@ -31,15 +31,28 @@ enum AwayPolicy {
     /// away; streaming at Low · Standard (4 Mbps per 60 fps, points). The home quality stays Pro ·
     /// Retina."
     static func awayLine(_ c: HostConfig) -> String {
-        "Away from home: every connected device is away; streaming at \(title(c.awayBitrate, c.awayCaptureScale)) "
-            + "(\(HostConfig.mbps(c.awayBitrate)) Mbps per 60 fps, \(scaleWord(c.awayCaptureScale))). "
-            + "The home quality stays \(title(c.bitrate, c.captureScale))."
+        let streaming: String
+        switch c.awayBitrate {
+        case .auto: streaming = "Auto (starting at Low · Standard, climbing while the link keeps up)"
+        case .fixed(let b): streaming = "\(title(b, c.awayCaptureScale)) (\(HostConfig.mbps(b)) Mbps per 60 fps, \(scaleWord(c.awayCaptureScale)))"
+        }
+        return "Away from home: every connected device is away; streaming at \(streaming). "
+            + "The home quality stays \(name(c.bitrate, c.captureScale))."
     }
 
     /// The line when a device at home brings the home quality back: "Home quality again: a device
-    /// connected at home (fe80::1c2d:3e4f:5a6b:7c8d%en0.51447); streaming at Pro · Retina."
+    /// connected at home (fe80::1c2d:3e4f:5a6b:7c8d%en0.51447); streaming at Pro · Retina." Under Auto:
+    /// "streaming at Auto."
     static func homeLine(_ c: HostConfig, endpoint: String) -> String {
-        "Home quality again: a device connected at home (\(endpoint)); streaming at \(title(c.bitrate, c.captureScale))."
+        "Home quality again: a device connected at home (\(endpoint)); streaming at \(name(c.bitrate, c.captureScale))."
+    }
+
+    /// "Auto", or "Pro · Retina" for a rate a pick fixed.
+    static func name(_ choice: BitrateChoice, _ captureScale: CGFloat) -> String {
+        switch choice {
+        case .auto: "Auto"
+        case .fixed(let bitrate): title(bitrate, captureScale)
+        }
     }
 
     /// "Low · Standard", from the host's knobs.

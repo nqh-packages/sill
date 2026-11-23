@@ -209,6 +209,16 @@ final class StreamServer {
     /// carried rate is first measured. Called on the network queue, from the once-a-second sweep and
     /// `resetLinks`.
     var onClientLinkChanged: ((NWConnection, LinkJudge.Verdict) -> Void)?
+    /// Each sweep's closed seconds, once, for every registered client: its `LinkJudge.Second` and the
+    /// verdict that second's close gave (nil: no change). With it set the sweep reports its verdicts only
+    /// here (never also through `onClientLinkChanged`, which `resetLinks` still uses), so the owner can
+    /// say "Link to …" before it lets Auto judge the same second (docs/adaptive-quality-plan.md). Called
+    /// on the network queue.
+    var onSecond: (([ObjectIdentifier: ClosedSecond]) -> Void)?
+    struct ClosedSecond {
+        let second: LinkJudge.Second
+        let verdict: LinkJudge.Verdict?
+    }
     /// The Mac's pointer (PointerWatch): who moves it, sampled at each tick and, while it moves over
     /// the source and a device is sent it, at the stream's frame rate; every device that is not
     /// moving it is sent where it is (kind 26). Set before `start()`.
@@ -1358,13 +1368,16 @@ final class StreamServer {
         let since = lastSweepAt
         lastSweepAt = now
         var waiting: [Client] = []
+        var closed: [ObjectIdentifier: ClosedSecond] = [:]
         for client in clients.values {
             let second = LinkJudge.Second(sent: client.sentThisSecond, withheld: client.withheldThisSecond, taken: client.takenThisSecond,
                                           waiting: client.pendingBytes, heard: client.lastHeardAt > since)
             client.sentThisSecond = 0
             client.withheldThisSecond = 0
             client.takenThisSecond = 0
-            if let verdict = client.judge.close(second) { onClientLinkChanged?(client.connection, verdict) }
+            let verdict = client.judge.close(second)
+            if onSecond != nil { closed[ObjectIdentifier(client.connection)] = ClosedSecond(second: second, verdict: verdict) }
+            else if let verdict { onClientLinkChanged?(client.connection, verdict) }
             guard client.route.isRemote else { continue }
             let silent = now - client.lastHeardAt
             if now - client.connectedAt >= Self.remoteSilence, silent > Self.remoteSilence {
@@ -1375,6 +1388,7 @@ final class StreamServer {
                 waiting.append(client)
             }
         }
+        onSecond?(closed)
         // A client that lost a frame asks for its keyframe when a later frame comes (`paceRemote`).
         // Once the window has gone still, none comes, and it would keep the picture from before the
         // drop until the window next changes: the end of a scroll, the last letters typed. So the

@@ -6,19 +6,34 @@ import CoreGraphics
 ///
 /// The coordinator takes a new value only between pipelines (inside `select`), so one pipeline
 /// never mixes two settings. See `StreamCoordinator.setTarget`.
+/// What a Quality setting says: Auto (docs/adaptive-quality-plan.md), or a rate a pick fixed. Not on the
+/// wire (an enum would fail an older reader's decode): the wire carries `StreamSettings.bitrate` (what
+/// runs, always a rate) and `autoQuality`. `package`: Sill.app saves it.
+package enum BitrateChoice: Hashable, Sendable {
+    case auto
+    /// Bits per second per 60 fps: a preset, or anything `validated()` keeps (1–200 Mbps) by hand.
+    case fixed(Int)
+
+    /// The rate a pick fixed; nil for Auto.
+    package var rate: Int? {
+        if case .fixed(let rate) = self { rate } else { nil }
+    }
+}
+
 package struct HostConfig: Equatable, Sendable {
     /// Ceiling for the stream rate; each device asks for its own panel's rate (60 until it does).
     package var maxFPS: Int
     /// 2 = Retina capture, 1 = points (much cheaper). Pixels per point at most: a capture runs at the
     /// lesser of this and its display's own scale (CaptureScale), so on a 1x display both are 1x.
     package var captureScale: CGFloat
-    /// Bits per second per 60 fps; a faster stream gets proportionally more.
-    package var bitrate: Int
+    /// Bits per second per 60 fps; a faster stream gets proportionally more. Or Auto: the rung
+    /// `AutoQuality` runs (`running(away:auto:)`), at most the Mac's Resolution.
+    package var bitrate: BitrateChoice
     /// The away quality (docs/remote-bundle-plan.md §5): what streams while every connected device is
     /// away from home (through a VPN or over the internet). Per 60 fps and 2/1, like `bitrate` and
     /// `captureScale`, which are the home quality: what the Mac's menu sets and what runs while any
     /// device is at home. A device away sets these, never the home pair (`applyingAway`).
-    package var awayBitrate: Int
+    package var awayBitrate: BitrateChoice
     package var awayCaptureScale: CGFloat
     /// Apple: trades quality for encode speed; try after the baseline.
     package var prioritizeSpeed: Bool
@@ -96,7 +111,7 @@ package struct HostConfig: Equatable, Sendable {
     package var lockOnlyAfterAway: Bool
 
     /// Every knob is required, so the compiler finds each place that builds one when a knob is added.
-    package init(maxFPS: Int, captureScale: CGFloat, bitrate: Int, awayBitrate: Int, awayCaptureScale: CGFloat,
+    package init(maxFPS: Int, captureScale: CGFloat, bitrate: BitrateChoice, awayBitrate: BitrateChoice, awayCaptureScale: CGFloat,
                  prioritizeSpeed: Bool, virtualDisplay: Bool, directWireless: Bool, remoteAccess: Bool, remotePort: Int,
                  internetAccess: Bool, requirePairing: Bool, shareClipboard: Bool, sendAudio: Bool, offConsoleView: Bool,
                  lockAfterSession: Bool, lockSleepsDisplay: Bool, lockOnlyAfterAway: Bool) {
@@ -132,8 +147,8 @@ package struct HostConfig: Equatable, Sendable {
     /// Send Audio off here; Sill.app's is on since 2026-10-27
     /// (`app`). Lock this Mac when the last device leaves off in both: a Mac locks by itself only once its user says so;
     /// under it, Turn off its display too on and Only after a device away from home off (the plan's recommendations).
-    package static let standard = HostConfig(maxFPS: 120, captureScale: 2, bitrate: 15_000_000,
-                                             awayBitrate: 4_000_000, awayCaptureScale: 1,
+    package static let standard = HostConfig(maxFPS: 120, captureScale: 2, bitrate: .fixed(15_000_000),
+                                             awayBitrate: .fixed(4_000_000), awayCaptureScale: 1,
                                              prioritizeSpeed: false, virtualDisplay: false, directWireless: false,
                                              remoteAccess: false, remotePort: 7455, internetAccess: false,
                                              requirePairing: true, shareClipboard: true, sendAudio: false,
@@ -151,8 +166,17 @@ package struct HostConfig: Equatable, Sendable {
         // Send Audio on too (Noah, 2026-10-27: "Send Audio should be on by default"): a fresh Sill.app
         // sends the Mac's sound to its devices; the CLI's `--audio` still opts in. A saved key wins.
         c.sendAudio = true
-        return c
+        return c.autoQuality()
     }()
+
+    /// Auto in both pairs (docs/adaptive-quality-plan.md): `app`'s Quality, and the CLI's with
+    /// `--auto-quality`. The CLI keeps fixed rates by default, so headless tests keep theirs.
+    package func autoQuality() -> HostConfig {
+        var c = self
+        c.bitrate = .auto
+        c.awayBitrate = .auto
+        return c
+    }
 
     /// The remote door's port when none is set.
     package static let defaultRemotePort = 7455
@@ -165,9 +189,9 @@ package struct HostConfig: Equatable, Sendable {
         var c = self
         c.maxFPS = min(max(maxFPS, 24), 120)
         c.captureScale = captureScale >= 1.5 ? 2 : 1
-        c.bitrate = min(max(bitrate, 1_000_000), 200_000_000)
+        if case .fixed(let b) = bitrate { c.bitrate = .fixed(min(max(b, 1_000_000), 200_000_000)) }
         c.awayCaptureScale = awayCaptureScale >= 1.5 ? 2 : 1
-        c.awayBitrate = min(max(awayBitrate, 1_000_000), 200_000_000)
+        if case .fixed(let b) = awayBitrate { c.awayBitrate = .fixed(min(max(b, 1_000_000), 200_000_000)) }
         if remotePort != 0 && !(1024...65535).contains(remotePort) { c.remotePort = Self.defaultRemotePort }
         return c
     }
@@ -183,9 +207,9 @@ package struct HostConfig: Equatable, Sendable {
         func scaleName(_ s: CGFloat) -> String { s >= 1.5 ? "Retina" : "points" }
         var parts: [String] = []
         if maxFPS != new.maxFPS { parts.append("frame rate limit \(maxFPS) → \(new.maxFPS) fps") }
-        if bitrate != new.bitrate { parts.append("bitrate \(Self.mbps(bitrate)) → \(Self.mbps(new.bitrate)) Mbps per 60 fps") }
+        if bitrate != new.bitrate { parts.append("bitrate \(Self.describe(bitrate, to: new.bitrate))") }
         if captureScale != new.captureScale { parts.append("\(scaleName(captureScale)) → \(scaleName(new.captureScale))") }
-        if awayBitrate != new.awayBitrate { parts.append("away bitrate \(Self.mbps(awayBitrate)) → \(Self.mbps(new.awayBitrate)) Mbps per 60 fps") }
+        if awayBitrate != new.awayBitrate { parts.append("away bitrate \(Self.describe(awayBitrate, to: new.awayBitrate))") }
         if awayCaptureScale != new.awayCaptureScale { parts.append("away \(scaleName(awayCaptureScale)) → \(scaleName(new.awayCaptureScale))") }
         if prioritizeSpeed != new.prioritizeSpeed { parts.append("speed \(onOff(prioritizeSpeed)) → \(onOff(new.prioritizeSpeed))") }
         if virtualDisplay != new.virtualDisplay { parts.append("virtual display \(onOff(virtualDisplay)) → \(onOff(new.virtualDisplay))") }
@@ -209,10 +233,34 @@ package struct HostConfig: Equatable, Sendable {
         return parts.isEmpty ? "no change" : parts.joined(separator: ", ")
     }
 
-    /// The quality the pipeline runs (docs/remote-bundle-plan.md §5.4): the away pair while every
-    /// connected device is away (`away`), else the home one.
-    package func effective(away: Bool) -> (bitrate: Int, captureScale: CGFloat) {
-        away ? (awayBitrate, awayCaptureScale) : (bitrate, captureScale)
+    /// What is SET for the pair `away` picks (Sill.app's menu, `changes(to:)`, `StreamCoordinator.syncAuto`):
+    /// not what runs.
+    package func choice(away: Bool) -> BitrateChoice { away ? awayBitrate : bitrate }
+
+    /// What runs (docs/remote-bundle-plan.md §5.4, now with Auto): the pair `away` picks (the away pair
+    /// while every connected device is away, else the home one); for Auto the rung `auto` runs
+    /// (`StreamCoordinator.autoRunning`), or the place's start before it has one, at the rung's
+    /// resolution and never above the Mac's Resolution. The one function every reader of "the running
+    /// bitrate" goes through (`restartNeeded`, `streamSettings`, the coordinator's `bitrate`). A reader
+    /// that wants the Mac's *setting* reads `choice(away:)`.
+    func running(away: Bool, auto: AutoQuality.Rung?) -> (bitrate: Int, captureScale: CGFloat) {
+        let scale = away ? awayCaptureScale : captureScale
+        switch choice(away: away) {
+        case .fixed(let bitrate):
+            return (bitrate, scale)
+        case .auto:
+            let rung = auto ?? AutoQuality.start(place: away ? .away : .home, retina: scale >= 1.5)
+            return (rung.bitrate, min(CGFloat(rung.captureScale), scale))
+        }
+    }
+
+    /// "15 → 8 Mbps per 60 fps", "Auto → 15 Mbps per 60 fps", "4 Mbps per 60 fps → Auto" (`changes(to:)`).
+    package static func describe(_ old: BitrateChoice, to new: BitrateChoice) -> String {
+        func words(_ choice: BitrateChoice) -> String {
+            choice.rate.map { "\(mbps($0)) Mbps per 60 fps" } ?? "Auto"
+        }
+        if let a = old.rate, let b = new.rate { return "\(mbps(a)) → \(mbps(b)) Mbps per 60 fps" }
+        return "\(words(old)) → \(words(new))"
     }
 
     /// "15", or "8.5" for a bitrate that is not whole megabits.

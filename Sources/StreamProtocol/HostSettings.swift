@@ -41,7 +41,7 @@ import Foundation
 //
 // Away from home (docs/remote-bundle-plan.md §5) splits Quality and Resolution in two: the home
 // quality and the away quality. An away variant of a setting goes in HostConfig's away knobs
-// (`validated()`, `changes(to:)`, `effective(away:)`), `applyingAway` and `streamSettings(away:)` in
+// (`validated()`, `changes(to:)`, `running(away:auto:)`), `applyingAway` and `streamSettings(away:)` in
 // DeviceSettings.swift, `AwayQuality` below, and the app's away keys (HostSettings, DebugHooks, the
 // Streaming pane), and never in `HostSettingsChange`: where a pick lands is the host's decision, by
 // the connection's route, so every device, old or new, sets what its connection controls.

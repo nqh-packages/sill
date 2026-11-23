@@ -32,6 +32,13 @@ import SillHostCore
 /// it, and so does Settings › Streaming's "Away from home" section. Until the first change the keys do
 /// not exist (`defaults read … awayBitrate` says so), which is how Low · Standard reads.
 ///
+/// Auto (docs/adaptive-quality-plan.md): Quality is Auto, or a rate a pick fixed. `autoQuality` and
+/// `awayAutoQuality` (Bool) say which, beside the kept `bitrate` and `awayBitrate`, which hold the last
+/// fixed rate (an older Sill reads those two and nothing else). On by default, and `autoQualityMigration`
+/// (Int) makes it so once on every Mac that updates: while it is below 1 the load writes both keys true
+/// and sets it to 1; a later preset pick fixes the rate and sticks. A `-bitrate` or `-awayBitrate`
+/// launch argument fixes the rate for that run, saved or not, as it always did.
+///
 /// `updateCheck` (automatic update checks) is here too, outside HostConfig: it moves no listener and
 /// no pipeline. What the checks found is UpdateChecker's own (updateLastCheck, updateETag,
 /// updateLatestTag, updateLatestURL, in the same defaults). So is `showPairingWindowToScreenSharing`
@@ -42,6 +49,8 @@ final class HostSettings {
     enum Key {
         static let maxFPS = "maxFPS", captureScale = "captureScale", bitrate = "bitrate"
         static let awayBitrate = "awayBitrate", awayCaptureScale = "awayCaptureScale"
+        static let autoQuality = "autoQuality", awayAutoQuality = "awayAutoQuality"
+        static let autoQualityMigration = "autoQualityMigration"
         static let prioritizeSpeed = "prioritizeSpeed", virtualDisplay = "virtualDisplay", directWireless = "directWireless"
         static let remoteAccess = "remoteAccess", remotePort = "remotePort", internetAccess = "internetAccess"
         static let remoteAddressName = "remoteAddressName", remoteDevicesSeen = "remoteDevicesSeen"
@@ -124,8 +133,10 @@ final class HostSettings {
         defaults.register(defaults: [
             Key.maxFPS: base.maxFPS,
             Key.captureScale: Double(base.captureScale),
-            Key.bitrate: base.bitrate,
-            Key.awayBitrate: base.awayBitrate,
+            Key.bitrate: HostConfig.standard.bitrate.rate ?? 15_000_000,
+            Key.awayBitrate: HostConfig.standard.awayBitrate.rate ?? 4_000_000,
+            Key.autoQuality: base.bitrate == .auto,
+            Key.awayAutoQuality: base.awayBitrate == .auto,
             Key.awayCaptureScale: Double(base.awayCaptureScale),
             Key.prioritizeSpeed: base.prioritizeSpeed,
             // On, unlike the CLI (Noah, 2026-10-27): an install that never set the key streams a picked
@@ -155,10 +166,11 @@ final class HostSettings {
             // Off: whoever can see this Mac's screen remotely could read a code (PairingWindowSharing).
             Key.showPairingWindowToScreenSharing: false,
         ])
+        Self.migrateAutoQuality(defaults)
         config = HostConfig(maxFPS: defaults.integer(forKey: Key.maxFPS),
                             captureScale: CGFloat(defaults.double(forKey: Key.captureScale)),
-                            bitrate: defaults.integer(forKey: Key.bitrate),
-                            awayBitrate: defaults.integer(forKey: Key.awayBitrate),
+                            bitrate: Self.choice(defaults, auto: Key.autoQuality, rate: Key.bitrate),
+                            awayBitrate: Self.choice(defaults, auto: Key.awayAutoQuality, rate: Key.awayBitrate),
                             awayCaptureScale: CGFloat(defaults.double(forKey: Key.awayCaptureScale)),
                             prioritizeSpeed: defaults.bool(forKey: Key.prioritizeSpeed),
                             virtualDisplay: defaults.bool(forKey: Key.virtualDisplay),
@@ -186,13 +198,34 @@ final class HostSettings {
         logShowsStats = defaults.bool(forKey: Key.logShowsStats)
     }
 
+    /// The Mac's Quality for one pair: Auto when its key says so and no launch argument fixed the rate for
+    /// this run (`-bitrate 8000000`), else the rate its key holds.
+    private static func choice(_ defaults: UserDefaults, auto: String, rate: String) -> BitrateChoice {
+        let fixedForThisRun = ProcessInfo.processInfo.arguments.contains("-\(rate)")
+        return defaults.bool(forKey: auto) && !fixedForThisRun ? .auto : .fixed(defaults.integer(forKey: rate))
+    }
+
+    /// Auto is the key alone, and a rate also the rate's key, so the last fixed rate survives Auto.
+    private static func save(_ choice: BitrateChoice, _ defaults: UserDefaults, auto: String, rate: String) {
+        defaults.set(choice == .auto, forKey: auto)
+        if let fixed = choice.rate { defaults.set(fixed, forKey: rate) }
+    }
+
+    /// Every Mac moves to Auto once on update (decision 1): runs while `autoQualityMigration` is below 1.
+    private static func migrateAutoQuality(_ defaults: UserDefaults) {
+        guard defaults.integer(forKey: Key.autoQualityMigration) < 1 else { return }
+        defaults.set(true, forKey: Key.autoQuality)
+        defaults.set(true, forKey: Key.awayAutoQuality)
+        defaults.set(1, forKey: Key.autoQualityMigration)
+    }
+
     /// Writes only the keys that changed, so a launch-argument override of another key is not
     /// made permanent by an unrelated change.
     private func save(changedFrom old: HostConfig) {
         if config.maxFPS != old.maxFPS { defaults.set(config.maxFPS, forKey: Key.maxFPS) }
         if config.captureScale != old.captureScale { defaults.set(Double(config.captureScale), forKey: Key.captureScale) }
-        if config.bitrate != old.bitrate { defaults.set(config.bitrate, forKey: Key.bitrate) }
-        if config.awayBitrate != old.awayBitrate { defaults.set(config.awayBitrate, forKey: Key.awayBitrate) }
+        if config.bitrate != old.bitrate { Self.save(config.bitrate, defaults, auto: Key.autoQuality, rate: Key.bitrate) }
+        if config.awayBitrate != old.awayBitrate { Self.save(config.awayBitrate, defaults, auto: Key.awayAutoQuality, rate: Key.awayBitrate) }
         if config.awayCaptureScale != old.awayCaptureScale { defaults.set(Double(config.awayCaptureScale), forKey: Key.awayCaptureScale) }
         if config.prioritizeSpeed != old.prioritizeSpeed { defaults.set(config.prioritizeSpeed, forKey: Key.prioritizeSpeed) }
         if config.virtualDisplay != old.virtualDisplay { defaults.set(config.virtualDisplay, forKey: Key.virtualDisplay) }

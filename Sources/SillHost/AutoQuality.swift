@@ -66,8 +66,10 @@ struct AutoQuality: Equatable {
     /// harness's `autostill` case, to be measured there.
     static let loadedDivisor = 4
     /// A climb that is judged behind within `failedClimbWithin` seconds of arriving doubles the clean
-    /// seconds the next climb to that rung needs, up to `holdMax`. A calibration, not a decoded rule
-    /// (open question 4); gated by the pacing harness's `autodown` case, to be measured there.
+    /// seconds the next climb to that rung needs, up to `holdMax`; the hold is cleared once Auto has
+    /// stayed at that rung `holdMax` seconds without a behind judgement (a rung it keeps is no longer
+    /// one it fails). A calibration, not a decoded rule (open question 4); gated by the pacing
+    /// harness's `autodown` case, to be measured there.
     static let failedClimbWithin = 10, holdMax = 60
 
     let place: Place
@@ -107,6 +109,11 @@ struct AutoQuality: Equatable {
         self.ladder = Self.ladder(retina: retina)
         self.cappedByLink = cappedByLink
         self.rung = place == .home ? ladder[ladder.count - 1] : ladder[0]
+    }
+
+    /// The rung a place starts at (decision 4), for readers that need no policy: `HostConfig.running`.
+    static func start(place: Place, retina: Bool) -> Rung {
+        Self(place: place, retina: retina).rung
     }
 
     /// Retina: Low · Standard, then every preset above Low at Retina. The ladder skips Low · Retina:
@@ -172,6 +179,7 @@ struct AutoQuality: Equatable {
                                                        carriedKbps: LinkJudge.carriedKbps(of: tracks[lowest.id]?.recent ?? [])))
         }
 
+        if secondsAtRung >= Self.holdMax { climbNeeds[rung] = nil }
         guard let i = ladder.firstIndex(of: rung), i + 1 < ladder.count, !governing.isEmpty else { return nil }
         let up = ladder[i + 1]
         guard governing.allSatisfy({ (tracks[$0]?.cleanLoaded ?? 0) >= needs(up) }) else { return nil }
