@@ -1,0 +1,457 @@
+// Candidate 1: "Auto" adaptive stream quality, the type sketch.
+//
+// Typecheck alone:      swiftc -typecheck Sketch.swift
+// Against the repo:     swiftc -typecheck -D REPO Sketch.swift <HostSettings.swift> <LinkJudge.swift, import stripped>
+// (the second is how Tests/checks/link-judge/build.sh compiles LinkJudge with QualityPreset).
+//
+// Layout of this file, top to bottom:
+//   0. Stubs of the repo types, only when not compiled against them (#if !REPO).
+//   1. AutoQuality: the policy. NEW Sources/SillHost/AutoQuality.swift. Pure, swiftc-checked.
+//   2. LinkJudge: one static extracted so Auto and the judge share the carried-rate rule.
+//   3. BitrateChoice: HostConfig.bitrate / awayBitrate retyped. Sources/SillHost/HostConfig.swift.
+//   4. The wire's new optional fields (shadow structs: the real ones gain these stored properties).
+//   5. The encoder's live setter. Sources/SillHost/HEVCEncoder.swift.
+//   6. The coordinator's seam: one commit point for what runs. Sources/SillHost/StreamCoordinator.swift.
+//   7. The server's per-second feed. Sources/SillHost/StreamServer.swift.
+//   8. The device: one quality menu for both pickers, and the resolution notice. iOSClient.
+
+import Foundation
+
+// MARK: - 0. Stubs (the repo's own types under -D REPO)
+
+#if !REPO
+public enum QualityPreset: Int, CaseIterable, Sendable {
+    case low = 4_000_000, efficient = 8_000_000, balanced = 15_000_000, high = 25_000_000, pro = 40_000_000
+    case ultra = 80_000_000, extreme = 150_000_000
+    public var name: String { fatalError("stub") }
+    public static func name(forBitrate bitrate: Int) -> String { fatalError("stub") }
+    public static func shortTitle(bitrate: Int, captureScale: Double) -> String { fatalError("stub") }
+}
+
+struct LinkJudge {
+    struct Second: Equatable {
+        var sent: Int
+        var withheld: Int
+        var taken: Int
+        var waiting: Int
+        var heard: Bool
+    }
+    static let window = 5, shortToBehind = 3, cleanToFine = 5, stallSeconds = 3
+    static let measureWaiting = 16 * 1024, measureNeeded = 3
+    static let headroom = 0.7
+    static func isShort(_ s: Second) -> Bool { fatalError("stub") }
+    static func suggestion(carriedKbps: Int?, bitrate: Int, fps: Int, captureScale: Double) -> (bitrate: Int, captureScale: Double?)? {
+        fatalError("stub")
+    }
+    static func mbps(kbps: Int) -> String { fatalError("stub") }
+    /// Section 2's extraction, present in the stub so both compile modes see it.
+    static func carriedKbps(of seconds: [Second]) -> Int? { fatalError("stub") }
+}
+#endif
+
+// MARK: - 1. AutoQuality (NEW Sources/SillHost/AutoQuality.swift)
+
+/// Auto (docs/adaptive-quality-plan.md): the rung the Mac's one encoder runs at, decided once a second
+/// from what the host did for each device that governs it. Pure (Foundation, StreamProtocol's
+/// QualityPreset and LinkJudge's rules), checked with swiftc (Tests/checks/auto-quality), compiled into
+/// the pacing harness too (Scripts/pacing/build.sh `host_files`).
+///
+/// It owns three things and nothing else: the ladder, the rung it wants, and each device's window of
+/// seconds since the running rung last changed. It never reads LinkJudge's state (which is reset and
+/// hidden on every bitrate change, `judgedAfresh`, `settingsState`): it shares LinkJudge's *rules*
+/// (`isShort`, the 3-of-5 and 5-clean timing, the carried rate, `suggestion`) and keeps its own
+/// windows, so its own steps can never blind it.
+///
+/// Invariants:
+/// - `rung` is always on `ladder`; the ladder's top is Extreme (decision 3), its bottom Low · Standard.
+/// - A step is returned only while the pipeline runs `rung` (`running == rung`): a restart still
+///   pending is never judged on, so `close` is idempotent across a pending restart.
+/// - Every window is cleared when the running rung changes, whoever changed it: the seconds a rung is
+///   judged on were all spent at that rung.
+struct AutoQuality: Equatable {
+    /// A point on the ladder: a preset's bitrate (per 60 fps) and Retina or Standard.
+    struct Rung: Hashable, Comparable {
+        let preset: QualityPreset
+        let retina: Bool
+        var bitrate: Int { preset.rawValue }
+        var captureScale: Double { retina ? 2 : 1 }
+        static func < (a: Rung, b: Rung) -> Bool {
+            a.preset.rawValue != b.preset.rawValue ? a.preset.rawValue < b.preset.rawValue : (!a.retina && b.retina)
+        }
+    }
+
+    /// Where Auto started, which sets the start (decision 4). Home and away each get their own
+    /// AutoQuality: a flip makes a new one.
+    enum Place: Equatable { case home, away }
+
+    /// How a step reaches the encoder. `live`: the running session's rate lowered in place, one preset
+    /// down, same resolution (the only change the encoder follows live: docs/evidence/adaptive-quality).
+    /// `restart`: a new session (every climb, every resolution change, and a jump of two or more rungs).
+    enum How: Equatable { case live, restart }
+
+    enum Why: Equatable {
+        /// Frames withheld in `LinkJudge.shortToBehind` of the last `window` seconds from this device;
+        /// `carriedKbps` what its link carried, when measured.
+        case behind(device: ObjectIdentifier, carriedKbps: Int?)
+        /// Every governing device clean and loaded for this many seconds in a row.
+        case clean(seconds: Int)
+    }
+
+    struct Step: Equatable {
+        let from: Rung
+        let to: Rung
+        let how: How
+        let why: Why
+    }
+
+    /// Open question 1 (DESIGN.md). True: the FIRST judgement after Auto starts (or flips home/away) is
+    /// the start's cap (decision 4: "capped by the link the first seconds show"): its target is what the
+    /// link carried (`LinkJudge.suggestion`), reached in one restart when two or more rungs down. Every
+    /// later judgement is one rung, live (decisions 2 and 5 as written). False: the first judgement is one
+    /// rung too (~15 s from Extreme to Balanced on 24 Mbps Wi-Fi).
+    static let startCappedByLink = true
+    /// A climb counts a clean second only when the stream offered at least this share of its frame rate
+    /// (sent + withheld >= fps / loadedDivisor): a still window is clean at any rate and says nothing about
+    /// the rung above. Calibration, to be measured with the pacing harness (DESIGN.md, open question 3).
+    static let loadedDivisor = 4
+    /// A climb that is judged behind within `failedClimbWithin` seconds of arriving doubles the clean
+    /// seconds the next climb to that rung needs, up to `holdMax`. Calibration (open question 4).
+    static let failedClimbWithin = 10, holdMax = 60
+
+    let place: Place
+    /// Ascending; built once from the Mac's Resolution (`ladder(retina:)`).
+    let ladder: [Rung]
+    /// The rung Auto wants. What the pipeline runs is the coordinator's (`StreamCoordinator.autoRunning`).
+    private(set) var rung: Rung
+
+    /// One device's seconds at the running rung, oldest first, at most `LinkJudge.window`; and its clean,
+    /// loaded seconds in a row.
+    private struct Track: Equatable {
+        var recent: [LinkJudge.Second] = []
+        var cleanLoaded = 0
+    }
+    private var tracks: [ObjectIdentifier: Track] = [:]
+    /// The running rung the windows were filled at; nil before the first second.
+    private var judgedAt: Rung?
+    /// Seconds since the running rung last changed, and whether a climb brought it there.
+    private var secondsAtRung = 0
+    private var climbedHere = false
+    /// Clean seconds a climb into a rung needs, when more than `LinkJudge.cleanToFine` (a failed climb).
+    private var climbNeeds: [Rung: Int] = [:]
+    /// The start's cap has been judged (`startCappedByLink`): set by the first behind judgement, and by
+    /// the first climb (a link that let Auto climb needed no cap). Never cleared: a new start is a new value.
+    private var capped = false
+
+    /// Home: the ladder's top (Extreme, at the Mac's Resolution); the first judgement caps it by what the
+    /// link carried. Away: the bottom (Low · Standard), climbing.
+    init(place: Place, retina: Bool) {
+        self.place = place
+        self.ladder = Self.ladder(retina: retina)
+        self.rung = place == .home ? ladder[ladder.count - 1] : ladder[0]
+    }
+
+    /// Retina: Low · Standard, then every preset at Retina (the only Standard rung is below Low:
+    /// decision 2). Standard: every preset at Standard. Top: Extreme (decision 3).
+    static func ladder(retina: Bool) -> [Rung] {
+        let presets = QualityPreset.allCases.sorted { $0.rawValue < $1.rawValue }
+        return retina ? [Rung(preset: .low, retina: false)] + presets.map { Rung(preset: $0, retina: true) }
+                      : presets.map { Rung(preset: $0, retina: false) }
+    }
+
+    /// The devices whose links govern the rung (decision 6): those at home while any is, else all.
+    /// `away`: each connected device, true when the Mac counts it away (ClientRoute.isAway).
+    static func governing(_ away: [ObjectIdentifier: Bool]) -> Set<ObjectIdentifier> {
+        let home = away.filter { !$0.value }.keys
+        return Set(home.isEmpty ? Array(away.keys) : Array(home))
+    }
+
+    /// Closes one second for every connected device (`seconds`, the server's sweep) and returns the step
+    /// to take, if any; `rung` is already the step's `to` when it returns. `running`: the rung the
+    /// pipeline runs now. `fps`: the stream's rate (the carried rate is compared at it, as
+    /// `LinkJudge.suggestion` does).
+    mutating func close(_ seconds: [ObjectIdentifier: LinkJudge.Second], governing: Set<ObjectIdentifier>,
+                        running: Rung, fps: Int) -> Step? {
+        // TODO:
+        // 1. if running != judgedAt { tracks = [:]; judgedAt = running; secondsAtRung = 0 }   // never blinded, never double-counted
+        //    (climbedHere is set by the step that made the change, below)
+        // 2. guard running == rung else { return nil }                                        // a restart is pending
+        // 3. tracks = tracks.filter { seconds[$0.key] != nil }                                // the gone are forgotten
+        //    for (id, s) in seconds { append s to tracks[id].recent (keep last LinkJudge.window);
+        //        cleanLoaded = isShort(s) ? 0 : (isLoaded(s, fps) ? cleanLoaded + 1 : cleanLoaded) }
+        //    secondsAtRung += 1
+        // 4. behind = governing ids whose recent.filter(LinkJudge.isShort).count >= LinkJudge.shortToBehind
+        //    if !behind.isEmpty {
+        //        target = behind.map { downTarget(from: rung, carriedKbps: LinkJudge.carriedKbps(of: tracks[$0].recent),
+        //                                         fps, ladder, capping: !capped) }.min();  capped = true
+        //        if climbedHere && secondsAtRung <= failedClimbWithin { climbNeeds[rung] = min(holdMax, 2 * needs(rung)) }
+        //        return take(to: target, why: .behind(device: the slowest, carriedKbps: its carried))
+        //    }
+        // 5. guard let up = rung above, governing is not empty,
+        //          governing.allSatisfy({ tracks[$0].cleanLoaded >= needs(up) }) else { return nil }
+        //    return take(to: up, why: .clean(seconds: needs(up)))
+        //    take(): rung = to; climbedHere = to > from; capped = true; Step(from, to, how: Self.how(from, to, ladder), why)
+        fatalError("not implemented")
+    }
+
+    /// Where a judgement goes. The start's cap (`capping`, with `startCappedByLink`):
+    /// `LinkJudge.suggestion` at this rung mapped onto the ladder (what fits in 70 % of the carried rate;
+    /// one preset down without a measure; Low · Standard from Low · Retina), so the cap and the old
+    /// callout name the same quality. A behind link carries under the stream's ~0.7 × target, so the cap
+    /// is at most ~0.49 × the rung: two or more rungs, a restart. Otherwise one rung down, live (or a
+    /// restart for Low · Retina → Low · Standard). Nil at the bottom (nothing lower: Auto holds).
+    static func downTarget(from rung: Rung, carriedKbps: Int?, fps: Int, ladder: [Rung], capping: Bool) -> Rung? {
+        // TODO: guard let i = ladder.firstIndex(of: rung), i > 0 else { return nil }
+        //       guard capping && startCappedByLink else { return ladder[i - 1] }
+        //       suggestion(carriedKbps:bitrate:fps:captureScale:) -> Rung(preset, retina: scale.map { $0 >= 1.5 } ?? rung.retina)
+        //       clamped to ladder[0]...ladder[i - 1]
+        fatalError("not implemented")
+    }
+
+    /// Live only for one rung down at the same resolution (the measured case); a restart otherwise.
+    static func how(from: Rung, to: Rung, ladder: [Rung]) -> How {
+        guard to < from, from.retina == to.retina,
+              let i = ladder.firstIndex(of: from), let j = ladder.firstIndex(of: to), i - j == 1 else { return .restart }
+        return .live
+    }
+
+    /// The second offered at least fps / `loadedDivisor` frames: the window moved.
+    static func isLoaded(_ s: LinkJudge.Second, fps: Int) -> Bool {
+        s.sent + s.withheld >= max(1, fps / loadedDivisor)
+    }
+
+    /// Clean seconds a climb into `rung` needs: `LinkJudge.cleanToFine` (decision 5), more after it failed.
+    func needs(_ rung: Rung) -> Int { climbNeeds[rung] ?? LinkJudge.cleanToFine }
+
+    // MARK: The host's lines (decision 7: the Mac's log names every step; nothing else does)
+
+    /// "Auto: Extreme → Balanced (the link to iPad (iPad14,1) carried about 21 Mbps); restarting."
+    /// "Auto: Ultra → Pro (frames withheld from iPad (iPad14,1) in 3 of the last 5 seconds); lowered live."
+    /// "Auto: Low · Retina → Low · Standard (…); restarting."  (a resolution is named only when it changes)
+    /// "Auto: Pro → Ultra (clean for 5 s); restarting."
+    static func stepLine(_ step: Step, device: (ObjectIdentifier) -> String) -> String {
+        fatalError("not implemented")
+    }
+
+    /// At the start, once: "Auto: starting at Extreme · Retina at home; it lowers the quality when the link
+    /// cannot carry it." / "Auto: starting at Low · Standard away from home; it climbs while the link keeps up."
+    static func startLine(place: Place, rung: Rung) -> String { fatalError("not implemented") }
+
+    /// The wire generation a device's hello names to be told about Auto (`Hello.autoQuality`).
+    static let wireGeneration = 1
+}
+
+// MARK: - 2. LinkJudge (Sources/SillHost/LinkJudge.swift, behaviour unchanged)
+
+#if REPO
+extension LinkJudge {
+    /// The carried-rate rule as a function of seconds, extracted from the instance property
+    /// `carriedKbps` (which becomes `Self.carriedKbps(of: recent)`), so AutoQuality's windows and the
+    /// judge's use one rule. Tests/checks/link-judge keeps its numbers; its mutants move with it.
+    static func carriedKbps(of seconds: [Second]) -> Int? { fatalError("not implemented") }
+}
+#endif
+
+// MARK: - 3. BitrateChoice (Sources/SillHost/HostConfig.swift)
+
+/// What the Mac's Quality says, for the home pair (`HostConfig.bitrate`) and the away pair
+/// (`HostConfig.awayBitrate`): Auto, or a rate fixed by a pick. The two properties keep their names and
+/// change type, so the compiler lists every reader: each must say what Auto means there (a menu's check
+/// mark, a log line, the running rate). Not on the wire (an enum would fail an older reader's decode):
+/// the wire carries `bitrate` (what runs) and `autoQuality` (section 4).
+/// `package` in the repo (Sill.app saves it); internal here so the sketch typechecks without -package-name.
+enum BitrateChoice: Hashable, Sendable {
+    case auto
+    /// Bits per second per 60 fps: a preset, or anything `validated()` keeps (1–200 Mbps) by hand.
+    case fixed(Int)
+}
+
+/// The changed knobs only; every other HostConfig field is as it is.
+/// `package` in the repo, as HostConfig is.
+struct HostConfigChanged: Equatable, Sendable {
+    var bitrate: BitrateChoice          // was Int
+    var captureScale: Double            // CGFloat in the repo; the Mac's Resolution, Auto's ceiling
+    var awayBitrate: BitrateChoice      // was Int
+    var awayCaptureScale: Double
+
+    /// What is SET for the pair `away` picks (Sill.app's menu, `changes(to:)`, `syncAuto`): not what runs.
+    /// `package` in the repo.
+    func choice(away: Bool) -> BitrateChoice { away ? awayBitrate : bitrate }
+
+    /// `standard` (the CLI): .fixed(15_000_000) home, .fixed(4_000_000) away, as today, so headless tests
+    /// keep their rates; `--auto-quality` sets both to .auto. `app` (Sill.app): .auto both (decision 1).
+
+    /// What runs (docs/remote-bundle-plan.md §5.4, now with Auto): the pair `away` picks; for .auto the
+    /// rung `auto` runs (`StreamCoordinator.autoRunning`), or the place's start before it has one, at the
+    /// rung's resolution, never above the Mac's Resolution. The one function every reader of "the
+    /// running bitrate" goes through: `restartNeeded`, `streamSettings`, the coordinator's `bitrate`.
+    /// Internal, not `package` (AutoQuality is SillHostCore's own, as LinkJudge is). Replaces
+    /// `effective(away:)`, which is deleted rather than kept beside it (two ways to ask "what runs"
+    /// would each gain callers): a reader that wants the Mac's *setting* reads `bitrate`/`awayBitrate`.
+    func running(away: Bool, auto: AutoQuality.Rung?) -> (bitrate: Int, captureScale: Double) {
+        fatalError("not implemented")
+    }
+
+    /// "bitrate Auto → 15 Mbps per 60 fps", "away bitrate 4 Mbps per 60 fps → Auto" (`changes(to:)`).
+    static func describe(_ c: BitrateChoice) -> String { fatalError("not implemented") }
+}
+
+// MARK: - 4. The wire (Sources/StreamProtocol): new optional fields only
+
+/// `Hello` gains (Compatibility.swift):
+///     public var autoQuality: Int?
+/// 1 (`AutoQuality.wireGeneration`) from a device that shows Auto. Nil from every device before: it is
+/// never sent `StreamSettings.autoQuality` or `HostSettingsState.autoCaptureScale`.
+struct HelloAdditions { var autoQuality: Int? }
+
+/// `StreamSettings` gains (HostSettings.swift), with no default in `init` (every host must say):
+///     public var autoQuality: Bool?
+/// True: the quality this connection's controls set is Auto; `bitrate` is then the rung Auto runs (or
+/// will start at), always a preset. Nil from hosts before, and to a device whose hello did not say
+/// `autoQuality` (decision 8: it sees `bitrate`, the running rate, as its preset).
+struct StreamSettingsAdditions { var autoQuality: Bool? }
+
+/// `HostSettingsChange` gains:
+///     public var autoQuality: Bool?
+/// True picks Auto for the pair this connection sets (home, or away for a device away). False is
+/// refused ("auto quality off: pick a quality"): a fixed rate is a `bitrate` pick, which ends Auto
+/// (decision 1). With a `bitrate` in the same change, both are refused. `isEmpty` and `applied(to:)`
+/// learn it; an older host ignores the key, answers with its old state, and the device's ledger reads a
+/// refusal; a newer device never sends it to a host whose state had no `autoQuality` (ledger rule 9).
+struct HostSettingsChangeAdditions { var autoQuality: Bool? }
+
+/// `HostSettingsState` gains:
+///     public var autoCaptureScale: Double?
+/// The resolution Auto runs this connection's quality at, while it does (2 or 1); nil otherwise, from
+/// older hosts, and to a device that did not say `autoQuality`. A device shows the resolution notice
+/// when it goes from 2 to 1 (decision 7). Not in StreamSettings: no device sets it.
+///
+/// And `link` is nil for every connection while the running quality is Auto (decisions 7 and 8): the
+/// suggestion and the callout's button stop, which every device skips unharmed.
+struct HostSettingsStateAdditions { var autoCaptureScale: Double? }
+
+// MARK: - 5. The encoder's live setter (Sources/SillHost/HEVCEncoder.swift)
+
+/// Shown on a stand-in: the real class keeps everything else as it is.
+final class HEVCEncoderChanges {
+    private let lock = NSLock()
+    /// Was `let bitrate`. Under `lock`: `makeReplacement` reads it there, so a session replaced for the
+    /// slow state (`replacesSlowSessions`, on by default) is made at the lowered rate, not the first one.
+    private var bitrate: Int = 0
+
+    /// Lowers the running session's rate in place, as `Scripts/encoder-check/ratelive` measured it:
+    /// AverageBitRate = bps and DataRateLimits = [bps / 8, 1], on `encodeQueue` (the queue that submits).
+    /// A replacement already made at the old rate gets the same two properties when `submit` takes it.
+    /// Never higher: returns false and changes nothing (the hardware encoder does not follow a raise:
+    /// 25 → 40 stayed at 17.5 Mbps). The software encoder follows either way; Auto still climbs by restart
+    /// there, so one rule holds on both.
+    @discardableResult
+    func lowerBitrate(to bps: Int) -> Bool {
+        // TODO: lock; guard bps < bitrate else { unlock; return false }; bitrate = bps; unlock
+        //       encodeQueue.async { set(AverageBitRate, bps); set(DataRateLimits, [bps / 8, 1]) on session }
+        //       Stats.bump("enc.lowered")
+        fatalError("not implemented")
+    }
+}
+
+// MARK: - 6. The coordinator's seam (Sources/SillHost/StreamCoordinator.swift, @MainActor)
+
+/// The coordinator's new state and the four functions that are all of Auto's shell. Shown as a
+/// protocol so the sketch typechecks; in the repo these are private members of StreamCoordinator.
+@MainActor
+protocol CoordinatorAutoSeam: AnyObject {
+    /// The policy: one owner. Nil while the running place's quality is fixed and while nothing streams
+    /// (so the next stream starts at decision 4's start). Made and dropped only by `syncAuto`.
+    var auto: AutoQuality? { get set }
+    /// The rung the pipeline runs: set only by `commitRunning`. `bitrate` and `scale` (the coordinator's
+    /// running pair) are `config.running(away: awayRunning, auto: autoRunning)`.
+    var autoRunning: AutoQuality.Rung? { get }
+    /// Connections whose hello said `autoQuality` >= 1 (from `server.onClientHello`, as
+    /// `viewsOffConsole` is kept; cleared in `onClientDisconnected`). `settingsState` reads it; the hello
+    /// can follow the first kind 16, so a hello that adds a taker publishes the settings again.
+    var autoTakers: Set<ObjectIdentifier> { get set }
+
+    /// After `setTarget`, `routesChanged` and a stream's start or stop: makes an AutoQuality when the
+    /// target's choice for `awayWanted`'s place is .auto and there is none for that place (or the Mac's
+    /// Resolution changed its ladder), drops it when the choice is fixed or nothing streams. Logs
+    /// `startLine` when it makes one. Idempotent.
+    func syncAuto()
+
+    /// `server.onSecond`, hopped to the main actor: `auto.close(seconds, governing:
+    /// AutoQuality.governing(routes' isAway), running: autoRunning, fps: fps)`; a step prints its line
+    /// and bumps `auto.live` or `auto.restart`, then: live, `lowerLive(step.to)`; restart,
+    /// `applyPending()` (whose guard now also wakes for `auto?.rung != autoRunning`, and whose
+    /// `restartNeeded` resolves the target through `running(away:auto: auto?.rung)`).
+    func autoSecond(_ seconds: [ObjectIdentifier: LinkJudge.Second])
+
+    /// The rung a connection's pair is told (`settingsState`): Auto's running rung when Auto runs that
+    /// place (`awayWanted == away` and the choice is .auto), else nil (`running(away:auto:)` then gives
+    /// the place's start for an Auto pair, or the fixed rate).
+    func autoRung(forAway away: Bool) -> AutoQuality.Rung?
+
+    /// A live step: `encoder.lowerBitrate(to: rung.bitrate * fps / 60)`; when it says false (no encoder,
+    /// a raise) the step goes by `applyPending` instead; then `commitRunning(rung)`.
+    func lowerLive(_ rung: AutoQuality.Rung)
+
+    /// THE commit point of what runs, called by `select`'s commit (with `auto?.rung`, or nil for a fixed
+    /// quality) and by `lowerLive`. In one go: `autoRunning = rung`; `judgeLinks(LinkJudge.Quality(
+    /// bitrate: bitrate, fps: fps, captureScale: ...))` (the judge's reports start afresh, as for any new
+    /// quality); `status.stream`'s mbps, so `RunningStream.mbps` agrees with `settings.bitrate`; and
+    /// `publishSettings()`. `restartNeeded`, the link filter in `settingsState` and every device then
+    /// read the same rung.
+    func commitRunning(_ rung: AutoQuality.Rung?)
+}
+
+// MARK: - 7. The server's per-second feed (Sources/SillHost/StreamServer.swift)
+
+/// `StreamServer` gains one callback, fired at the end of each `sweep` (on `queue`) with every
+/// registered client's second, the same `LinkJudge.Second` its judge closed:
+///     var onSecond: (([ObjectIdentifier: LinkJudge.Second]) -> Void)?
+/// Nothing it sends or drops changes: away devices keep `paceRemote`'s per-device dropping (decision 6).
+struct ServerAdditions { var onSecond: (([ObjectIdentifier: LinkJudge.Second]) -> Void)? }
+
+// MARK: - 8. The device (iOSClient)
+
+/// Quality's menu as both pickers build it (HostSettingsPanel.qualityPicker and
+/// ControlCenterSheet.qualityPicker, today two hand-kept copies): one pure description, so Auto is
+/// added once. NEW iOSClient/QualityMenu.swift, checked with swiftc (Tests/checks/away-copy).
+enum QualityMenu {
+    enum Pick: Hashable {
+        case auto
+        case rate(Int)
+    }
+    struct Item: Equatable {
+        let pick: Pick
+        let title: String     // "Auto", "Extreme — 150 Mbps", "Custom — 12 Mbps" (shown, never offered)
+        let offered: Bool
+    }
+    /// Auto first, only from a Mac whose state says `autoQuality` (non-nil); then the presets; then a
+    /// hand-set rate shown, not offered.
+    static func items(_ s: StreamSettings) -> [Item] { fatalError("not implemented") }
+    /// `.auto` while `autoQuality` is true, else `.rate(bitrate)`.
+    static func selection(_ s: StreamSettings) -> Pick { fatalError("not implemented") }
+    /// The row's value: "Auto" (silent about the rung, decision 7), or the preset's name.
+    static func label(_ s: StreamSettings) -> String { fatalError("not implemented") }
+    /// What a pick sends: `HostSettingsChange(autoQuality: true)` or `HostSettingsChange(bitrate:)`. Both
+    /// name the ledger's one `.bitrate` field (`HostSettingsChange.fields`), so either replaces the other.
+    static func change(_ p: Pick) -> HostSettingsChangeAdditions { fatalError("not implemented") }
+}
+
+/// The resolution notice (decision 7), in AwayCopy.swift beside the callout.
+enum AutoCopy {
+    /// "Lowered to Standard resolution to keep up." when `autoCaptureScale` goes from 2 to 1 under the
+    /// same Auto; nil for anything else (the climb back is silent, as every bitrate change is).
+    /// The stream screen shows it for 3 s where `AwayCopy.streamLine` shows.
+    static func resolutionNotice(was: Double?, now: Double?) -> String? { fatalError("not implemented") }
+}
+
+#if REPO
+extension QualityMenu {
+    /// Under -D REPO the real StreamSettings is in scope; this checks the menu's input type is the wire's.
+    static func check(_ s: StreamSettings) -> Int { s.bitrate }
+}
+#else
+public struct StreamSettings: Hashable {
+    public var bitrate: Int
+    public var captureScale: Double
+}
+#endif

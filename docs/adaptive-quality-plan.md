@@ -70,3 +70,53 @@ M2 Pro, 2026-11-23, 60 fps, a still desktop with a moving band of text-like bloc
 - **Checks:** Tests/checks/link-judge, away-quality, away-wire, away-copy, ledger, compatibility
   (each with mutants.py).
 - **Analytics:** none in the codebase; records are log lines and `Stats` counters.
+
+## Design (synthesized 2026-11-23)
+
+The design package is docs/design/adaptive-quality/: DESIGN.md (base), MODULES.md (every file, wire
+field, check and harness case), Sketch.swift.txt (types and signatures), JUDGE.md (the cross-judge).
+
+### Synthesis decision
+
+Two independent candidates (Claude Opus 5.5, Gemini 4 Neon) converged on one shape: a pure
+`AutoQuality` owned by the coordinator, a ladder of (preset, Retina/Standard) rungs, a step's `how`
+derived from the two rungs (one rung down at one resolution = live; everything else = restart), and
+per-device windows of their own so Auto's steps cannot blind it. The base is candidate 1 (cross-judge
+26/30 against 20/30): one commit point for what runs (`commitRunning`), LinkJudge's rules shared but
+never its state, `effective(away:)` replaced rather than kept beside the new reader, one iOS
+`QualityMenu` for both pickers, and pacing-harness cases whose gates are derived from a simulated link.
+
+Grafted from candidate 2:
+- **One hop a second.** `StreamServer` hands the coordinator each second's `(id, Second, Verdict?)`
+  in one main-actor hop, so the "Link to …" line always precedes the Auto step line and no reset races.
+- **A preset pick while Auto runs is never lost.** A device that takes Auto sends
+  `{bitrate, autoQuality: false}` for a preset pick (host: `false` is taken only with a bitrate), and
+  the ledger treats Auto and the preset as one field, so picking the preset Auto happens to run at still
+  fixes it. An older device sends `{bitrate}`, which fixes as today.
+- **The callout stays for a device Auto does not govern** (an away device beside a home one): `link` is
+  withheld only from connections whose pair Auto runs.
+- `AwayQuality` gains `homeAuto`/`awayAuto` (takers only) so the away header reads "Auto · Standard".
+- The resolution notice is idempotent per drop and posts a VoiceOver announcement.
+- `HEVCEncoder` retires a slow-state replacement made before a live lower, so a swap never restores
+  the old rate.
+
+### Open questions, resolved on the evidence (Huy: decisions are direction)
+
+1. **Home start vs pace.** The first behind judgement after Auto starts or flips caps to what the link
+   carried (`LinkJudge.suggestion` on the ladder), one restart; every later step is one rung, live, per
+   3-of-5. Arithmetic: behind means carried < ~0.7 × the rung and the fit is ≤ 0.7 × carried, so the cap
+   is always two or more rungs (a live multi-rung drop costs ~41 frames). ~3 s and one blip instead of
+   ~15 s of stutter.
+2. **Encoder-side drops are invisible to the link judge** (ratelive 3024×1964: 7/s at 8 Mbps, 34/s at
+   4 Mbps). The Retina ladder skips Low · Retina: Efficient · Retina → Low · Standard. Calibration from
+   that measurement, recorded as such.
+3. **Climb evidence:** a clean second counts only when the stream offered ≥ fps/4 frames. Labelled
+   calibration; the `autostill` harness case holds it.
+4. **Failed climb hold:** a climb judged behind within 10 s doubles the next climb's clean seconds to
+   that rung, up to 60 s. Labelled calibration; the `autodown` case gates it.
+5. Away start: Low at the away Resolution (Standard by default).
+6. The Mac's menu checks "Auto" and its subtitle names the rung ("Balanced now"); passive, no notice.
+   The CLI stays fixed by default (`--auto-quality` opts in) so headless tests keep their rates and the
+   CLI's stdout stays byte-identical.
+7. The backlog after a live step can make 1–2 short seconds at the new rung: the `autodrift` case
+   gates one step per drop of the link.
