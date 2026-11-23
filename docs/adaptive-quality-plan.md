@@ -175,3 +175,21 @@ Deviations, as findings:
    up)" and "The home quality stays Auto."; fixed pairs read as before.
 6. `lowerBitrate` is covered by the host run and the encoder's one rule; the hardware encoder's live behaviour was not run
    here (ratelive is the operator's), and the headless software encoder never needed a live step in the runs.
+
+## Results: S4 (iOS client, 2026-11-23)
+
+Branch `feat/ios-auto-quality`. `iOSClient/QualityMenu.swift` (new, pure) is the one description both
+Quality pickers build from; `HostSettingsLedger` maps `autoQuality` onto `.bitrate` (Auto and a preset
+are one field; rule 9 strips it for a host whose state had it nil); `AutoCopy.resolutionNotice` (2 → 1
+only) feeds a 3 s notice in `StreamScreen` where the link's line shows, posted when
+`autoCaptureScale` changes (so once per drop) with a VoiceOver announcement; the hello says
+`AutoQualityWire.generation`; the away header reads "Auto · Standard" from `homeAuto`/`awayAuto`.
+Mock cases `-SillSettingsCase auto|autolowered`. Checks: ledger (21 of 21 mutants), away-copy (29 of 29).
+
+Primitives: Auto is one more `Picker` item (`.menu` style) in the existing rows; the notice is the
+existing `LinkLineView` capsule. No gap, nothing hand-rolled.
+
+Not proven: harness photos (light, dark, largest text). `Scripts/agent-simulators.sh list` shows
+"Sill agents Duo/iPad" not created, and creating a simulator is outside this slice. The harness only
+launches and photographs (never taps), so the open menu cannot be photographed by it either: the row
+reading "Auto" can (`-SillSettings 1 -SillSettingsCase auto`).

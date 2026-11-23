@@ -218,6 +218,9 @@ struct StreamScreen: View {
     @State private var pendingViewport: Task<Void, Never>? = nil
     @State private var linkLine = LinkLine()
     @State private var linkLineCheck: Task<Void, Never>? = nil
+    /// Auto's notice that it lowered Retina to Standard, for 3 s where the link's line shows.
+    @State private var resolutionNotice: String? = nil
+    @State private var resolutionNoticeEnds: Task<Void, Never>? = nil
 
     @State private var tour: TourRun? = nil
     @State private var tourTargets: [TourTarget: CGRect] = [:]
@@ -490,6 +493,7 @@ struct StreamScreen: View {
         .onChange(of: client.remoteRoute) { _, _ in sendViewport() }
         .onChange(of: linkReportLine, initial: true) { _, _ in updateLinkLine() }
         .onChange(of: linkLineAllowed) { _, _ in updateLinkLine() }
+        .onChange(of: client.settings.host?.autoCaptureScale) { old, new in noteAutoScale(was: old, now: new) }
         .onChange(of: client.lockView) { _, on in if on { AccessibilityNotification.Announcement(LockedMac.viewLine).post() } }
         .onChange(of: pictureReady, initial: true) { _, ready in if ready { pictureCame() } }
         .onChange(of: tourCard, initial: true) { _, card in tourCardChanged(card) }
@@ -857,7 +861,20 @@ struct StreamScreen: View {
 
     private var streamLine: String? {
         if client.lockView { return linkLineAllowed ? LockedMac.viewLine : nil }
-        return shownLinkLine
+        return shownLinkLine ?? (linkLineAllowed ? resolutionNotice : nil)
+    }
+
+    /// Auto's resolution drop (AutoCopy.resolutionNotice): onChange fires on a change only, so a state
+    /// that repeats the scale never posts the notice twice for one drop.
+    private func noteAutoScale(was: Double?, now: Double?) {
+        guard let words = AutoCopy.resolutionNotice(was: was, now: now) else { return }
+        resolutionNotice = words
+        AccessibilityNotification.Announcement(words).post()
+        resolutionNoticeEnds?.cancel()
+        resolutionNoticeEnds = Task { @MainActor in
+            try? await Task.sleep(for: .seconds(3))
+            if !Task.isCancelled { resolutionNotice = nil }
+        }
     }
     private var streamLineLines: Int { client.lockView ? 3 : 2 }
 

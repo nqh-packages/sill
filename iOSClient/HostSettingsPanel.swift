@@ -577,12 +577,12 @@ struct HostSettingsPanel: View {
     /// 2026-11-12: "just showing the Mbps in the menu itself would work to solve this"). A menu's own label can
     /// differ from its choices from iOS 18 on; before that the row shows the whole title, as it did.
     @ViewBuilder private func qualityPicker(_ shown: StreamSettings) -> some View {
-        let selection = binding(shown.bitrate) { HostSettingsChange(bitrate: $0) }
+        let selection = binding(QualityMenu.selection(shown)) { QualityMenu.change($0, in: shown) }
         if #available(iOS 18.0, *) {
             Picker("Quality", selection: selection) {
                 qualityChoices(shown)
             } currentValueLabel: {
-                Text(QualityPreset.name(forBitrate: shown.bitrate))
+                Text(QualityMenu.label(shown))
             }
             .pickerStyle(.menu)
             .fixedSize()     // one line; the row stacks instead when it does not fit beside the title
@@ -594,11 +594,7 @@ struct HostSettingsPanel: View {
     }
 
     @ViewBuilder private func qualityChoices(_ shown: StreamSettings) -> some View {
-        ForEach(QualityPreset.allCases) { Text($0.title).tag($0.rawValue) }
-        if QualityPreset(rawValue: shown.bitrate) == nil {
-            // Set by hand on the Mac: shown, never offered (the Mac's menu does the same).
-            Text(QualityPreset.title(forBitrate: shown.bitrate)).tag(shown.bitrate)
-        }
+        ForEach(QualityMenu.items(shown), id: \.pick) { Text($0.title).tag($0.pick) }
     }
 
     /// Shows the value the panel displays; moving the control sends that one field. Nothing else

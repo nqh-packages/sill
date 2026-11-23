@@ -24,7 +24,7 @@ extension HostSettingsChange {
     var fields: [SettingsField] {
         var f: [SettingsField] = []
         if maxFPS != nil { f.append(.maxFPS) }
-        if bitrate != nil { f.append(.bitrate) }
+        if bitrate != nil || autoQuality != nil { f.append(.bitrate) }
         if captureScale != nil { f.append(.captureScale) }
         if prioritizeSpeed != nil { f.append(.prioritizeSpeed) }
         if virtualDisplay != nil { f.append(.virtualDisplay) }
@@ -37,7 +37,7 @@ extension HostSettingsChange {
     func only(_ field: SettingsField) -> HostSettingsChange {
         switch field {
         case .maxFPS: HostSettingsChange(maxFPS: maxFPS)
-        case .bitrate: HostSettingsChange(bitrate: bitrate)
+        case .bitrate: HostSettingsChange(bitrate: bitrate, autoQuality: autoQuality)
         case .captureScale: HostSettingsChange(captureScale: captureScale)
         case .prioritizeSpeed: HostSettingsChange(prioritizeSpeed: prioritizeSpeed)
         case .virtualDisplay: HostSettingsChange(virtualDisplay: virtualDisplay)
@@ -53,7 +53,7 @@ extension HostSettingsChange {
                            prioritizeSpeed: other.prioritizeSpeed ?? prioritizeSpeed,
                            virtualDisplay: other.virtualDisplay ?? virtualDisplay,
                            directWireless: other.directWireless ?? directWireless,
-                           sendAudio: other.sendAudio ?? sendAudio)
+                           sendAudio: other.sendAudio ?? sendAudio, autoQuality: other.autoQuality ?? autoQuality)
     }
 }
 
@@ -78,12 +78,14 @@ extension HostSettingsChange {
 /// 7. Reset on every tear-down, and never persisted: a Mac's settings are only ever the ones it
 ///    sent on this connection.
 /// 8. Nothing is sent on its own: only `pick`, called from a control's action, produces a change.
-/// 9. A field this Mac did not report (nil in its state: an older host; Direct Wireless and Send
-///    Audio) is never sent, so an older host is never asked for what it cannot show. A property of the
+/// 9. A field this Mac did not report (nil in its state: an older host; Direct Wireless, Send
+///    Audio and Auto) is never sent, so an older host is never asked for what it cannot show. A property of the
 ///    model, not of the view.
 /// 10. Direct Wireless is never sent on a session the Mac says is not paired (`sessionPaired` false:
 ///    an unpaired key at a door that lets any device in, or a plain door): the Mac takes it only
 ///    from a paired device, and the panel disables the switch there (`takesDirectWireless`).
+/// 11. Auto and a preset are one field (`.bitrate`): picking either replaces a pending pick of the
+///    other, and a pending Auto pick is answered by a state whose `autoQuality` is true.
 struct SettingsLedger: Equatable {
     /// One field's unanswered pick. `change` names that field only.
     struct Entry: Equatable {
@@ -117,7 +119,12 @@ struct SettingsLedger: Equatable {
             if field == .sendAudio, shown.sendAudio == nil { continue }
             // Rule 10: the Mac would refuse it.
             if field == .directWireless, host?.takesDirectWireless == false { continue }
-            let single = change.only(field)
+            var single = change.only(field)
+            // Rule 9: Auto is Quality's own field, so a state without it gets the bitrate alone.
+            if field == .bitrate, shown.autoQuality == nil {
+                single.autoQuality = nil
+                if single.isEmpty { continue }
+            }
             guard single.applied(to: shown) != shown else { continue }
             pending[field] = Entry(change: single, token: token, sentAt: now)
             out = out.adding(single)
