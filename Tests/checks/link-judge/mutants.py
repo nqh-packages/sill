@@ -18,7 +18,7 @@ MUTANTS = [
     ("LJ10 a stall ends only when bytes are taken", "            if !dead { state = shorts >= Self.shortToBehind ? .behind : .fine }", "            if s.taken > 0 { state = shorts >= Self.shortToBehind ? .behind : .fine }"),
     ("LJ11 stalled after 2 s", "cleanToFine = 5, stallSeconds = 3", "cleanToFine = 5, stallSeconds = 2"),
     ("LJ12 the carried rate from 2 seconds", "static let measureWaiting = 16 * 1024, measureNeeded = 3", "static let measureWaiting = 16 * 1024, measureNeeded = 2"),
-    ("LJ13 a second with exactly 16 KB waiting not measured", "recent.filter { $0.waiting >= Self.measureWaiting }", "recent.filter { $0.waiting > Self.measureWaiting }"),
+    ("LJ13 a second with exactly 16 KB waiting not measured", "seconds.filter { $0.waiting >= measureWaiting }", "seconds.filter { $0.waiting > measureWaiting }"),
     ("LJ14 a reset not marked", "Verdict(state: .fine, withheld: 0, offered: 0, carriedKbps: nil, waiting: 0, reset: true)", "Verdict(state: .fine, withheld: 0, offered: 0, carriedKbps: nil, waiting: 0, reset: false)"),
     ("LJ15 no report when the rate is first measured", "        if let now = carried, reportedCarried.map({ Double(abs(now - $0)) >= Self.carriedMove * Double($0) }) ?? true {\n            reportedCarried = now\n            return verdict\n        }\n", ""),
     ("LJ16 a stall always ends behind", "            if !dead { state = shorts >= Self.shortToBehind ? .behind : .fine }", "            if !dead { state = .behind }"),

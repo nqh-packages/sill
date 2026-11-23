@@ -22,6 +22,11 @@ MUTANTS = {
         "    enum CodingKeys: String, CodingKey { case state, withheldPerSecond, bitrate, carriedKbps = \"carried\", suggestedBitrate, suggestedCaptureScale }\n    /// What the link carried in the seconds it was the limit, kilobits per second; nil until three\n")],
     "W9 thisConnectionAway under another name on the wire": [("    /// The Mac counts this connection as away: its Quality and Resolution picks set the away\n",
         "    enum CodingKeys: String, CodingKey { case homeBitrate, homeCaptureScale, awayBitrate, awayCaptureScale, thisConnectionAway = \"away\", awayRunning }\n    /// The Mac counts this connection as away: its Quality and Resolution picks set the away\n")],
+    "W10 AwayQuality's awayAuto never stored": [("self.homeAuto = homeAuto; self.awayAuto = awayAuto", "self.homeAuto = homeAuto; self.awayAuto = nil")],
+    "W11 AwayQuality's homeAuto never stored": [("self.homeAuto = homeAuto; self.awayAuto = awayAuto", "self.homeAuto = nil; self.awayAuto = awayAuto")],
+    "W12 the state never stores autoCaptureScale": [("self.autoCaptureScale = autoCaptureScale", "self.autoCaptureScale = nil")],
+    "W13 StreamSettings never stores autoQuality": [("        self.sendAudio = sendAudio\n        self.autoQuality = autoQuality\n    }\n}\n\n/// The pipeline", "        self.sendAudio = sendAudio\n    }\n}\n\n/// The pipeline")],
+    "W14 a non-taker's autoCaptureScale 2 by default": [("sessionPaired: Bool? = nil, autoCaptureScale: Double? = nil) {", "sessionPaired: Bool? = nil, autoCaptureScale: Double? = 2) {")],
 }
 caught = 0
 for name, edits in MUTANTS.items():

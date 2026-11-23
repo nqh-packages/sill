@@ -153,9 +153,13 @@ struct LinkJudge {
     /// second; nil until `measureNeeded` such seconds. A mean, not a median: messages are taken
     /// whole, so a keyframe that crosses in 2 s counts as a second of nothing and a second of all
     /// of it.
-    var carriedKbps: Int? {
-        let measured = recent.filter { $0.waiting >= Self.measureWaiting }
-        guard measured.count >= Self.measureNeeded else { return nil }
+    var carriedKbps: Int? { Self.carriedKbps(of: recent) }
+
+    /// The carried rate as a function of seconds (the last `window`, oldest first), so the judge's
+    /// own window and AutoQuality's per-device windows (docs/adaptive-quality-plan.md) use one rule.
+    static func carriedKbps(of seconds: [Second]) -> Int? {
+        let measured = seconds.filter { $0.waiting >= measureWaiting }
+        guard measured.count >= measureNeeded else { return nil }
         let mean = Double(measured.reduce(0) { $0 + $1.taken }) / Double(measured.count)
         return Int((mean * 8 / 1000).rounded())
     }

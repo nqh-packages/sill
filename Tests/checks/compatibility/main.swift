@@ -350,6 +350,80 @@ let nextMessage = StreamMessage(kind: .nextDisplay, timestamp: 1, isKeyframe: fa
 check(StreamMessage.parseHeader(nextMessage).map { $0.kind == .nextDisplay && $0.payloadLength == 0 } == true
       && nextMessage[nextMessage.startIndex] == 47, "kind 47's header parses, its payload empty")
 
+// Auto (docs/adaptive-quality-plan.md, decision 8): the hello's generation, StreamSettings.autoQuality,
+// HostSettingsChange.autoQuality, HostSettingsState.autoCaptureScale and AwayQuality's two flags, every
+// one optional; older payloads decode the new JSON and the new types decode the old (each `Before…`
+// is the type as it was before Auto).
+struct BeforeHello: Codable, Equatable { var appVersion: String?; var build: String?; var `protocol`: Int?; var device: String?; var audio: [String]?; var offConsoleView: Int? }
+struct BeforeSettings: Codable, Equatable {
+    var maxFPS: Int; var bitrate: Int; var captureScale: Double; var prioritizeSpeed: Bool; var virtualDisplay: Bool; var directWireless: Bool?; var sendAudio: Bool?
+}
+struct BeforeChange: Codable, Equatable {
+    var token: Int?; var maxFPS: Int?; var bitrate: Int?; var captureScale: Double?; var prioritizeSpeed: Bool?; var virtualDisplay: Bool?; var directWireless: Bool?; var sendAudio: Bool?
+}
+struct BeforeState: Codable, Equatable { var settings: BeforeSettings; var persistent: Bool; var virtualDisplayAvailable: Bool; var softwareEncoder: Bool; var sessionPaired: Bool? }
+struct BeforeAway: Codable, Equatable {
+    var homeBitrate: Int; var homeCaptureScale: Double; var awayBitrate: Int; var awayCaptureScale: Double; var thisConnectionAway: Bool; var awayRunning: Bool
+}
+check(AutoQualityWire.generation == 1, "Auto's wire generation is 1")
+let autoHello = Hello(appVersion: "1.1", build: "9", protocol: 1, device: "iPad (iPad14,1)", autoQuality: AutoQualityWire.generation)
+check(json(autoHello) == #"{"appVersion":"1.1","autoQuality":1,"build":"9","device":"iPad (iPad14,1)","protocol":1}"#,
+      "the hello says Auto under \"autoQuality\": \(json(autoHello))")
+check(Wire.decode(Hello.self, from: Wire.encode(autoHello)) == autoHello, "a hello with Auto round-trips")
+check(!json(Hello(appVersion: "1.0")).contains("autoQuality"), "a hello without it has no autoQuality key (a device before Auto)")
+check(Wire.decode(Hello.self, from: Data(#"{"appVersion":"1.0","build":"42","protocol":1,"device":"iPad"}"#.utf8))?.autoQuality == nil,
+      "an older device's hello: no Auto, so no taker")
+check(Wire.decode(Hello.self, from: Data("{}".utf8))?.autoQuality == nil, "{}: no Auto")
+check(Wire.decode(Hello.self, from: Data(#"{"autoQuality":"yes"}"#.utf8)) == nil, "Auto as a string does not decode")
+check(Wire.decode(BeforeHello.self, from: Wire.encode(autoHello)) == BeforeHello(appVersion: "1.1", build: "9", protocol: 1, device: "iPad (iPad14,1)"),
+      "a host before Auto reads the new hello and skips autoQuality")
+let autoSettings = StreamSettings(maxFPS: 120, bitrate: 25_000_000, captureScale: 2, prioritizeSpeed: false, virtualDisplay: false,
+                                  directWireless: false, sendAudio: nil, autoQuality: true)
+check(json(autoSettings).contains(#""autoQuality":true"#) && Wire.decode(StreamSettings.self, from: Wire.encode(autoSettings)) == autoSettings,
+      "StreamSettings carries autoQuality and round-trips")
+check(!json(StreamSettings(maxFPS: 120, bitrate: 25_000_000, captureScale: 2, prioritizeSpeed: false, virtualDisplay: false,
+                           directWireless: false, sendAudio: nil)).contains("autoQuality"), "a host without Auto leaves autoQuality out")
+check(Wire.decode(BeforeSettings.self, from: Wire.encode(autoSettings))
+      == BeforeSettings(maxFPS: 120, bitrate: 25_000_000, captureScale: 2, prioritizeSpeed: false, virtualDisplay: false, directWireless: false, sendAudio: nil),
+      "an older device reads the new settings, the running rate as its preset, and skips autoQuality")
+check(Wire.decode(StreamSettings.self, from: Data(#"{"maxFPS":60,"bitrate":8000000,"captureScale":1,"prioritizeSpeed":true,"virtualDisplay":false}"#.utf8))?.autoQuality == nil,
+      "an older host's settings: autoQuality nil")
+check(HostSettingsChange(autoQuality: true).isEmpty == false && HostSettingsChange(autoQuality: false).isEmpty == false && HostSettingsChange(token: 3).isEmpty,
+      "a change with only autoQuality is not empty")
+check(HostSettingsChange(autoQuality: true).applied(to: autoSettings).autoQuality == true
+      && HostSettingsChange(autoQuality: false).applied(to: autoSettings).autoQuality == false
+      && HostSettingsChange(maxFPS: 60).applied(to: autoSettings).autoQuality == true,
+      "applied(to:) lays autoQuality over the settings and keeps it when the change has none")
+check(json(HostSettingsChange(token: 5, autoQuality: true)) == #"{"autoQuality":true,"token":5}"#, "kind 17 with Auto: \(json(HostSettingsChange(token: 5, autoQuality: true)))")
+check(Wire.decode(BeforeChange.self, from: Wire.encode(HostSettingsChange(token: 5, autoQuality: true))) == BeforeChange(token: 5),
+      "a host before Auto reads a change with autoQuality as an empty one and skips the key")
+check(Wire.decode(HostSettingsChange.self, from: Data(#"{"token":5,"bitrate":40000000}"#.utf8))?.autoQuality == nil, "an older device's change: autoQuality nil")
+let autoAway = AwayQuality(homeBitrate: 150_000_000, homeCaptureScale: 2, awayBitrate: 4_000_000, awayCaptureScale: 1, thisConnectionAway: false,
+                           awayRunning: false, homeAuto: true, awayAuto: true)
+let autoState = HostSettingsState(settings: autoSettings, persistent: true, virtualDisplayAvailable: true, softwareEncoder: false,
+                                  away: autoAway, sessionPaired: true, autoCaptureScale: 1)
+check(Wire.decode(HostSettingsState.self, from: Wire.encode(autoState)) == autoState, "a state with Auto's fields round-trips")
+check(json(autoState).contains(#""autoCaptureScale":1"#) && json(autoState).contains(#""homeAuto":true"#) && json(autoState).contains(#""awayAuto":true"#),
+      "…under autoCaptureScale, homeAuto and awayAuto")
+let plainState = HostSettingsState(settings: StreamSettings(maxFPS: 120, bitrate: 25_000_000, captureScale: 2, prioritizeSpeed: false, virtualDisplay: false,
+                                                           directWireless: false, sendAudio: nil),
+                                   persistent: true, virtualDisplayAvailable: true, softwareEncoder: false,
+                                   away: AwayQuality(homeBitrate: 150_000_000, homeCaptureScale: 2, awayBitrate: 4_000_000, awayCaptureScale: 1,
+                                                     thisConnectionAway: false, awayRunning: false))
+check(!json(plainState).contains("autoCaptureScale") && !json(plainState).contains("homeAuto") && !json(plainState).contains("awayAuto") && !json(plainState).contains("autoQuality"),
+      "a state to a device that did not say Auto has none of the four keys")
+check(Wire.decode(BeforeState.self, from: Wire.encode(autoState)) == BeforeState(settings: BeforeSettings(maxFPS: 120, bitrate: 25_000_000, captureScale: 2,
+      prioritizeSpeed: false, virtualDisplay: false, directWireless: false, sendAudio: nil), persistent: true, virtualDisplayAvailable: true, softwareEncoder: false, sessionPaired: true),
+      "an older device reads the new state and skips autoQuality and autoCaptureScale")
+check(Wire.decode(BeforeAway.self, from: Wire.encode(autoAway)) == BeforeAway(homeBitrate: 150_000_000, homeCaptureScale: 2, awayBitrate: 4_000_000, awayCaptureScale: 1,
+      thisConnectionAway: false, awayRunning: false), "…and AwayQuality without its two flags")
+check(Wire.decode(AwayQuality.self, from: Wire.encode(BeforeAway(homeBitrate: 4, homeCaptureScale: 1, awayBitrate: 4, awayCaptureScale: 1, thisConnectionAway: true, awayRunning: true)))
+      == AwayQuality(homeBitrate: 4, homeCaptureScale: 1, awayBitrate: 4, awayCaptureScale: 1, thisConnectionAway: true, awayRunning: true),
+      "an older host's AwayQuality decodes with both flags nil")
+check(Wire.decode(HostSettingsState.self, from: Wire.encode(BeforeState(settings: BeforeSettings(maxFPS: 60, bitrate: 8_000_000, captureScale: 1, prioritizeSpeed: true,
+      virtualDisplay: false, directWireless: nil, sendAudio: nil), persistent: false, virtualDisplayAvailable: false, softwareEncoder: true, sessionPaired: nil)))?.autoCaptureScale == nil,
+      "an older host's state: autoCaptureScale nil")
+
 // For H4: what cb0ec55's StreamProtocol must read.
 let out = CommandLine.arguments.count > 1 ? CommandLine.arguments[1] : nil
 if let out {

@@ -84,15 +84,22 @@ public struct StreamSettings: Codable, Hashable, Sendable {
     /// host without sound (the device's switch shows off and disabled, says to update the Mac, and
     /// never sends it).
     public var sendAudio: Bool?
+    /// Auto (docs/adaptive-quality-plan.md): true when the quality this connection's controls set is
+    /// Auto, and `bitrate` is then the rung Auto runs (or will start at), always a preset. Optional
+    /// because it came eighth: nil is a host without Auto, and a device whose hello did not say
+    /// `Hello.autoQuality` (it sees `bitrate`, the running rate, as its preset).
+    public var autoQuality: Bool?
 
     /// `directWireless` and `sendAudio` have no default: every host must say, so the compiler finds
-    /// one that forgets.
+    /// one that forgets. `autoQuality` is nil by default until the host's `streamSettings` says (the
+    /// coordinator's slice of docs/adaptive-quality-plan.md).
     public init(maxFPS: Int, bitrate: Int, captureScale: Double, prioritizeSpeed: Bool, virtualDisplay: Bool,
-                directWireless: Bool?, sendAudio: Bool?) {
+                directWireless: Bool?, sendAudio: Bool?, autoQuality: Bool? = nil) {
         self.maxFPS = maxFPS; self.bitrate = bitrate; self.captureScale = captureScale
         self.prioritizeSpeed = prioritizeSpeed; self.virtualDisplay = virtualDisplay
         self.directWireless = directWireless
         self.sendAudio = sendAudio
+        self.autoQuality = autoQuality
     }
 }
 
@@ -118,7 +125,8 @@ public struct RunningStream: Codable, Hashable, Sendable {
 /// --remote or --pairing); nil from any other host, which has one quality for every device. One
 /// without a remote door (SillHost --pairing alone) sends it too, and no connection there is ever
 /// away (`thisConnectionAway` and `awayRunning` false). Every field is required: a host that sends
-/// it sends all of it.
+/// it sends all of it, but for the two Auto flags, which only a host that Auto runs on sends, and
+/// only to a device whose hello said `autoQuality`.
 public struct AwayQuality: Codable, Hashable, Sendable {
     /// What runs while any connected device is at home: the Mac menu's Quality and Resolution.
     public var homeBitrate: Int
@@ -133,12 +141,18 @@ public struct AwayQuality: Codable, Hashable, Sendable {
     /// Every connected device is away, so the away quality is the target: the host's wish, never its
     /// pipeline's (a restart may still be taking it, as `settings` can be ahead of `stream`).
     public var awayRunning: Bool
+    /// The home and the away quality are Auto (`homeBitrate` and `awayBitrate` are then the rung each
+    /// starts at, or last ran at): the away header reads "Auto · Standard". Optional: nil from hosts
+    /// before Auto and to a device that did not say `autoQuality`.
+    public var homeAuto: Bool?
+    public var awayAuto: Bool?
 
     public init(homeBitrate: Int, homeCaptureScale: Double, awayBitrate: Int, awayCaptureScale: Double,
-                thisConnectionAway: Bool, awayRunning: Bool) {
+                thisConnectionAway: Bool, awayRunning: Bool, homeAuto: Bool? = nil, awayAuto: Bool? = nil) {
         self.homeBitrate = homeBitrate; self.homeCaptureScale = homeCaptureScale
         self.awayBitrate = awayBitrate; self.awayCaptureScale = awayCaptureScale
         self.thisConnectionAway = thisConnectionAway; self.awayRunning = awayRunning
+        self.homeAuto = homeAuto; self.awayAuto = awayAuto
     }
 }
 
@@ -222,17 +236,23 @@ public struct HostSettingsState: Codable, Hashable, Sendable {
     /// device that pairs during its session hears true. Nil from hosts before 2026-10-29, which took
     /// Direct Wireless from any session at home. The connection's own, like `away` and `link`.
     public var sessionPaired: Bool?
+    /// The resolution Auto runs this connection's quality at, while it does (2 or 1); nil otherwise,
+    /// from hosts before Auto, and to a device that did not say `Hello.autoQuality`. A device shows
+    /// its resolution notice when it goes from 2 to 1. Not in `StreamSettings`: no device sets it.
+    /// While Auto runs the host sends `link` nil to every connection, which every device skips unharmed.
+    public var autoCaptureScale: Double?
 
     public init(settings: StreamSettings, persistent: Bool, virtualDisplayAvailable: Bool,
                 virtualDisplayNote: String? = nil, softwareEncoder: Bool, stream: RunningStream? = nil,
                 answering: Int? = nil, away: AwayQuality? = nil, link: LinkReport? = nil, audioNote: String? = nil,
-                sessionPaired: Bool? = nil) {
+                sessionPaired: Bool? = nil, autoCaptureScale: Double? = nil) {
         self.settings = settings; self.persistent = persistent
         self.virtualDisplayAvailable = virtualDisplayAvailable; self.virtualDisplayNote = virtualDisplayNote
         self.softwareEncoder = softwareEncoder; self.stream = stream; self.answering = answering
         self.away = away; self.link = link
         self.audioNote = audioNote
         self.sessionPaired = sessionPaired
+        self.autoCaptureScale = autoCaptureScale
     }
 }
 
@@ -258,20 +278,27 @@ public struct HostSettingsChange: Codable, Hashable, Sendable {
     /// revised). The beta's hosts (2026-10-20 to 27) refused it, on or off, and named it in their log
     /// ("send audio (set on this Mac only)"), so a device's switch went back to the Mac's value.
     public var sendAudio: Bool?
+    /// True picks Auto for the pair this connection sets (home, or away for a device away). False is
+    /// refused: a fixed rate is a `bitrate` pick, which ends Auto (docs/adaptive-quality-plan.md,
+    /// decision 1), and `false` with a `bitrate` in one change is refused too. A device sends it only
+    /// to a host whose state had `StreamSettings.autoQuality` (ledger rule 9); an older host ignores
+    /// the key and answers with its old state.
+    public var autoQuality: Bool?
 
     public init(token: Int? = nil, maxFPS: Int? = nil, bitrate: Int? = nil, captureScale: Double? = nil,
                 prioritizeSpeed: Bool? = nil, virtualDisplay: Bool? = nil, directWireless: Bool? = nil,
-                sendAudio: Bool? = nil) {
+                sendAudio: Bool? = nil, autoQuality: Bool? = nil) {
         self.token = token; self.maxFPS = maxFPS; self.bitrate = bitrate; self.captureScale = captureScale
         self.prioritizeSpeed = prioritizeSpeed; self.virtualDisplay = virtualDisplay
         self.directWireless = directWireless
         self.sendAudio = sendAudio
+        self.autoQuality = autoQuality
     }
 
     /// All setting fields nil (the token does not count).
     public var isEmpty: Bool {
         maxFPS == nil && bitrate == nil && captureScale == nil && prioritizeSpeed == nil && virtualDisplay == nil
-            && directWireless == nil && sendAudio == nil
+            && directWireless == nil && sendAudio == nil && autoQuality == nil
     }
 
     /// `s` with this change laid over it: the device's merge (its ledger, and the DEBUG mock's
@@ -287,6 +314,7 @@ public struct HostSettingsChange: Codable, Hashable, Sendable {
         if let v = virtualDisplay { r.virtualDisplay = v }
         if let v = directWireless { r.directWireless = v }
         if let v = sendAudio { r.sendAudio = v }
+        if let v = autoQuality { r.autoQuality = v }
         return r
     }
 }

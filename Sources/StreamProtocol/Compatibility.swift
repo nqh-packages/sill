@@ -96,6 +96,13 @@ public struct SillVersion: Comparable, Hashable, Sendable, CustomStringConvertib
     }
 }
 
+/// What a device's hello says about Auto (`Hello.autoQuality`), beside `LockedMac.viewGeneration`. Not
+/// named `AutoQuality`: SillHostCore's policy type is, and the host imports this module.
+public enum AutoQualityWire {
+    /// The generation a device that shows Auto sends; a host serves Auto to a hello at or above it.
+    public static let generation = 1
+}
+
 /// Kind 23: the first message of every session connection a device makes (home door, remote door,
 /// a move's network connection), written straight to that connection before anything else, so a
 /// host can judge the device before it sends it anything (DeviceGate). Never on a pairing
@@ -119,11 +126,17 @@ public struct Hello: Codable, Sendable, Equatable {
     /// docs/off-console-plan.md): a host sends it the view's list. Nil from every device before: a host sends
     /// it the locked list without windows, as Sill for Mac 0.6.0 does.
     public var offConsoleView: Int?
+    /// `AutoQualityWire.generation` (1) from a device that shows Auto as a Quality choice
+    /// (docs/adaptive-quality-plan.md): a host sends it `StreamSettings.autoQuality`,
+    /// `HostSettingsState.autoCaptureScale` and `AwayQuality.homeAuto`/`awayAuto`. Nil from every
+    /// device before: a host never sends it those, and shows it the running rate as its nearest preset.
+    public var autoQuality: Int?
 
     public init(appVersion: String? = nil, build: String? = nil, protocol: Int? = nil, device: String? = nil,
-                audio: [String]? = nil, offConsoleView: Int? = nil) {
+                audio: [String]? = nil, offConsoleView: Int? = nil, autoQuality: Int? = nil) {
         self.appVersion = appVersion; self.build = build; self.protocol = `protocol`; self.device = device
         self.audio = audio
         self.offConsoleView = offConsoleView
+        self.autoQuality = autoQuality
     }
 }

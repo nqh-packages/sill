@@ -157,6 +157,16 @@ do {
     var w = LinkJudge()
     for taken in [1_000_000, 1_000_000, 1_000_000, 1_000_000, 1_000_000, 4_000_000] { _ = w.close(m(taken)) }
     eq(w.carriedKbps, 12_800, "only the last 5 seconds count: (4 × 1 + 4 MB) / 5 = 12.8 Mbps")
+    // The rule as a function of seconds (AutoQuality's windows use it): the same numbers as the instance's.
+    eq(LinkJudge.carriedKbps(of: [m(0), m(0)]), nil, "carriedKbps(of:): 2 measured seconds are too few")
+    eq(LinkJudge.carriedKbps(of: [m(0), m(0), m(2_250_000)]), 6_000, "carriedKbps(of:): 0, 0 and 2.25 MB read 6 Mbps (a mean)")
+    eq(LinkJudge.carriedKbps(of: [m(1_000_000), m(1_000_000), S(sent: 60, withheld: 0, taken: 5_000_000, waiting: 16 * 1024 - 1, heard: true)]), nil,
+       "carriedKbps(of:): a second under 16 KB waiting is not measured")
+    eq(LinkJudge.carriedKbps(of: [m(1_000_000), m(1_000_000), S(sent: 60, withheld: 0, taken: 400_000, waiting: 16 * 1024, heard: true)]), 6_400,
+       "carriedKbps(of:): one with 16 KB waiting is: 6.4 Mbps")
+    eq(LinkJudge.carriedKbps(of: []), nil, "carriedKbps(of:): no seconds, no rate")
+    eq(LinkJudge.carriedKbps(of: [m(1_000_000), m(1_000_000), m(1_000_000), m(1_000_000), m(1_000_000), m(4_000_000)].suffix(5).map { $0 }), 12_800,
+       "carriedKbps(of:): the judge's last 5 seconds give 12.8 Mbps")
 }
 do {
     func m(_ withheld: Int) -> S { S(sent: 60 - withheld, withheld: withheld, taken: 750_000, waiting: 300_000, heard: true) }

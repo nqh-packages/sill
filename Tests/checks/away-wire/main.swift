@@ -146,5 +146,33 @@ do {
     check(QualityPreset.shortTitle(bitrate: 15_000_000, captureScale: 1.49) == "Balanced · Standard", "1.49 counts as Standard")
 }
 
+// MARK: Auto's flags (docs/adaptive-quality-plan.md): optional, only to a device that takes them
+
+do {
+    let auto = AwayQuality(homeBitrate: 150_000_000, homeCaptureScale: 2, awayBitrate: 4_000_000, awayCaptureScale: 1,
+                           thisConnectionAway: false, awayRunning: false, homeAuto: true, awayAuto: true)
+    let d = encode(auto)
+    check(decode(AwayQuality.self, d) == auto, "AwayQuality with Auto's flags round-trips")
+    check(keys(d) == ["homeBitrate", "homeCaptureScale", "awayBitrate", "awayCaptureScale", "thisConnectionAway", "awayRunning", "homeAuto", "awayAuto"],
+          "…under homeAuto and awayAuto: \(keys(d).sorted())")
+    check(keys(encode(away)) == ["homeBitrate", "homeCaptureScale", "awayBitrate", "awayCaptureScale", "thisConnectionAway", "awayRunning"],
+          "AwayQuality for a device without Auto has neither key")
+    check(decode(AwayQuality.self, encode(away))?.homeAuto == nil && decode(AwayQuality.self, encode(away))?.awayAuto == nil,
+          "an older host's AwayQuality decodes with both flags nil")
+    let taker = HostSettingsState(settings: StreamSettings(maxFPS: 60, bitrate: 25_000_000, captureScale: 2, prioritizeSpeed: false, virtualDisplay: false,
+                                                           directWireless: nil, sendAudio: nil, autoQuality: true),
+                                  persistent: true, virtualDisplayAvailable: true, softwareEncoder: false, away: auto, link: nil, autoCaptureScale: 2)
+    let tj = encode(taker)
+    check(decode(HostSettingsState.self, tj) == taker, "a taker's state round-trips")
+    check(keys(tj).contains("autoCaptureScale") && !keys(tj).contains("link") && object(tj)["settings"].flatMap { $0 as? [String: Any] }?["autoQuality"] as? Bool == true,
+          "…with autoCaptureScale and settings.autoQuality, and no link while Auto runs")
+    check(decode(BaseState.self, tj) != nil, "an older device reads a taker's state and skips the new keys")
+    let plain = HostSettingsState(settings: settings, persistent: false, virtualDisplayAvailable: false, softwareEncoder: true, away: away)
+    check(!keys(encode(plain)).contains("autoCaptureScale") && decode(HostSettingsState.self, encode(plain))?.autoCaptureScale == nil,
+          "a non-taker's state has no autoCaptureScale")
+    check(object(encode(plain))["settings"].flatMap { $0 as? [String: Any] }?["autoQuality"] == nil, "…and no settings.autoQuality")
+    check(decode(StreamSettings.self, encode(settings))?.autoQuality == nil, "StreamSettings without Auto decodes with autoQuality nil")
+}
+
 print(failures == 0 ? "away-wire: all passed" : "away-wire: \(failures) FAILED")
 exit(failures == 0 ? 0 : 1)
