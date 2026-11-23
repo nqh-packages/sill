@@ -120,3 +120,27 @@ Grafted from candidate 2:
    CLI's stdout stays byte-identical.
 7. The backlog after a live step can make 1–2 short seconds at the new rung: the `autodrift` case
    gates one step per drop of the link.
+
+### codebase-design check (2026-11-23)
+
+- **AutoQuality is deep.** Interface: `init(place:retina:)`, `rung`, `close(_:governing:running:fps:)
+  -> Step?`, `governing(_:)`, `stepLine`, `startLine`. Behind it: the ladder, the windows, the
+  cross-device merge, the cap, the hold and the live-or-restart rule. Deletion test: deleting it would
+  spread all of that into the coordinator. Change: `downTarget`, `how`, `isLoaded` and `needs` are
+  `private`; `Tests/checks/auto-quality` drives everything through `close` (the interface is the test
+  surface), not past it.
+- **The coordinator side gets its own file.** StreamCoordinator.swift is 3,842 lines; Auto's shell
+  (`syncAuto`, `autoSecond`, `lowerLive`, `commitRunning` and its three stored properties' uses) goes in
+  `Sources/SillHost/StreamCoordinator+Auto.swift`, an extension, so Auto's coordination lives in one
+  place and the monolith gains only the stored properties and the calls at `select`'s commit,
+  `restartNeeded` and `settingsState`.
+- **The seam is guarded.** New check `Tests/checks/auto-seam` (Python, like repo-rules) declares and
+  enforces: `lowerBitrate(` is called only from StreamCoordinator+Auto.swift; `autoRunning` is assigned
+  only inside `commitRunning`; `AutoQuality(` is constructed only there, in Tests/checks/auto-quality
+  and in Scripts/pacing. Each failure prints the file, the line, the rule and a `fix:` line; fixtures
+  prove each rule fires and its allow-list names files that exist. CLAUDE.md's pointer stays as is;
+  docs/LAYOUT.md names the check.
+- Seams with one adapter (`StreamServer.onSecond`) stay plain callbacks; no protocol is introduced.
+- Not built: product analytics. The app has no analytics source (zero operating costs); Auto's
+  outcomes are the "Auto:" log lines and the `auto.live`, `auto.restart`, `enc.lowered` counters.
+- No tip: Auto is the default and asks nothing of the person; picking a preset is the existing control.
