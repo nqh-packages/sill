@@ -21,6 +21,7 @@ MUTANTS = [
     ("AQ4 the home start one below the top", AQ, "self.rung = place == .home ? ladder[ladder.count - 1] : ladder[0]", "self.rung = place == .home ? ladder[ladder.count - 2] : ladder[0]"),
     ("AQ5 the top is below Extreme", AQ, "guard let i = ladder.firstIndex(of: rung), i + 1 < ladder.count, !governing.isEmpty else { return nil }", "guard let i = ladder.firstIndex(of: rung), i + 2 < ladder.count, !governing.isEmpty else { return nil }"),
     # The cap.
+    ("AQ6a the cap without a measure falls back to one rung", AQ, "        guard !short.isEmpty else { return nil }", "        guard short.isEmpty else { return nil }"),
     ("AQ6 the start's cap disabled", AQ, "static let startCappedByLink = true", "static let startCappedByLink = false"),
     ("AQ7 a step does not spend the cap", AQ, "        capped = true\n        climbingTo", "        climbingTo"),
     ("AQ8 the cap keeps Retina for Low", AQ, "fit.captureScale.map { $0 >= 1.5 } ?? rung.retina", "fit.captureScale.map { $0 >= 1.5 } ?? true"),
@@ -58,7 +59,7 @@ MUTANTS = [
     ("AQ34 a device not governing can be behind", AQ, "let behind = governing.filter { id in", "let behind = Set(tracks.keys).filter { id in"),
     ("AQ35 the highest target of the behind devices", AQ, "asks.min(by: { $0.target < $1.target })", "asks.max(by: { $0.target < $1.target })"),
     ("AQ36 a climb with no device governing", AQ, "i + 1 < ladder.count, !governing.isEmpty else { return nil }", "i + 1 < ladder.count else { return nil }"),
-    ("AQ37 the step names no rate", AQ, "carriedKbps: LinkJudge.carriedKbps(of: tracks[lowest.id]?.recent ?? [])))", "carriedKbps: nil))"),
+    ("AQ37 the step names no rate", AQ, "carriedKbps: capping ? Self.startEstimateKbps(recent) : LinkJudge.carriedKbps(of: recent)))", "carriedKbps: nil))"),
     # The lines.
     ("AQ38 a live line says lowering", AQ, '"lowered live"', '"lowering live"'),
     ("AQ39 a restart line says restarted", AQ, '"restarting"', '"restarted"'),

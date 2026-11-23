@@ -279,9 +279,8 @@ LINK_GATES = {
 def downs(r): return [a for a in r["autos"] if a[2] < a[1]]
 def ups(r): return [a for a in r["autos"] if a[2] > a[1]]
 def spaced(times, least): return all(b - a >= least - 0.5 for a, b in zip(times, times[1:]))   # the sweep's phase: half a second
-# 24 Mbit/s: the first step within 5 s of the first keyframe; High reached within 20 s of it (the start's cap
-# is one restart, and a start that measured nothing walks down live, a rung every 3 to 5 s: the harness's
-# loopback fills its buffers before the judge has the three measured seconds the cap needs, so it walks);
+# 24 Mbit/s: the first step within 5 s of the first keyframe is the start's cap: one restart, to High or
+# below (sized from what the link took in the short seconds when LinkJudge has not measured yet);
 # then never above Pro; at least 80 % of the last 60 s at High; each climb into Pro waits the failed climb's
 # hold after the live step back (10, 20, 40, 60, 60 s, less 2 s for the sweep's phase: the auto-quality
 # check's simulated link). A calibration measured here, not a decoded rule.
@@ -289,6 +288,7 @@ def autodown_gate(r):
     steps = r["autos"]
     if not steps or r["firstKey"] is None: return False
     if steps[0][0] - r["firstKey"] > 5: return False
+    if steps[0][3] != "restart" or steps[0][2] > PRESETS.index("High"): return False
     at_high = next((a[0] for a in steps if a[2] <= PRESETS.index("High")), None)
     if at_high is None or at_high - r["firstKey"] > 20: return False
     if any(a[2] > PRESETS.index("Pro") for a in steps if a[0] > at_high): return False
@@ -303,7 +303,8 @@ def autodown_gate(r):
     holds = [60 if i >= 3 else 10 * 2 ** i for i in range(8)]
     down_from_pro = [a[0] for a in steps if a[1] == PRESETS.index("Pro") and a[2] < a[1]]
     up_to_pro = [a[0] for a in steps if a[2] == PRESETS.index("Pro") and a[2] > a[1]]
-    return all(u - d >= holds[i] - 2 for i, (d, u) in enumerate(zip(down_from_pro[1:], up_to_pro[1:])))
+    pairs = [(d, next((u for u in up_to_pro if u > d), None)) for d in down_from_pro]
+    return all(u - d >= holds[i] - 2 for i, (d, u) in enumerate(pairs) if u is not None)
 # 60 → 24 Mbit/s at 30 s: every step down but the first (the start's) is lowered live, one rung, at least 3 s
 # apart; a step down comes after the fall; never a restart down after the start.
 def autodrift_gate(r):
@@ -320,7 +321,7 @@ def autoclimb_gate(r):
 def autostill_gate(r):
     return bool(r["stillSpells"]) and not any(start <= a[0] <= start + length for start, length in r["stillSpells"] for a in ups(r))
 AUTO_GATES = {
-    "autodown": ("the first step within 5 s of the first keyframe, High within 20 s of it; never above Pro after; ≥ 80 % of the last 60 s at High; climbs into Pro spaced by the hold",
+    "autodown": ("the first step within 5 s of the first keyframe, a restart to High or below; High within 20 s of it; never above Pro after; ≥ 80 % of the last 60 s at High; climbs into Pro spaced by the hold",
                  autodown_gate),
     "autodrift": ("after the start every step down lowered live, ≥ 3 s apart, one at least after the fall, none by restart", autodrift_gate),
     "autoclimb": ("every step up a restart ≥ 5 s apart, Extreme within 60 s of the rise", autoclimb_gate),

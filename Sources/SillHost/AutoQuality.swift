@@ -167,7 +167,8 @@ struct AutoQuality: Equatable {
             let capping = !capped
             capped = true
             let asks = behind.compactMap { id -> (target: Rung, id: ObjectIdentifier)? in
-                let carried = LinkJudge.carriedKbps(of: tracks[id]?.recent ?? [])
+                let recent = tracks[id]?.recent ?? []
+                let carried = capping ? Self.startEstimateKbps(recent) : LinkJudge.carriedKbps(of: recent)
                 return Self.downTarget(from: rung, carriedKbps: carried, fps: fps, ladder: ladder, capping: capping && cappedByLink)
                     .map { ($0, id) }
             }
@@ -175,8 +176,9 @@ struct AutoQuality: Equatable {
             if climbedHere && secondsAtRung <= Self.failedClimbWithin {
                 climbNeeds[rung] = min(Self.holdMax, 2 * needs(rung))
             }
+            let recent = tracks[lowest.id]?.recent ?? []
             return take(to: lowest.target, why: .behind(device: lowest.id,
-                                                       carriedKbps: LinkJudge.carriedKbps(of: tracks[lowest.id]?.recent ?? [])))
+                                                       carriedKbps: capping ? Self.startEstimateKbps(recent) : LinkJudge.carriedKbps(of: recent)))
         }
 
         if secondsAtRung >= Self.holdMax { climbNeeds[rung] = nil }
@@ -184,6 +186,19 @@ struct AutoQuality: Equatable {
         let up = ladder[i + 1]
         guard governing.allSatisfy({ (tracks[$0]?.cleanLoaded ?? 0) >= needs(up) }) else { return nil }
         return take(to: up, why: .clean(seconds: needs(up)))
+    }
+
+    /// The rate the start's cap is sized to: LinkJudge's carried rate when measured, else the mean of
+    /// what the link took in this window's short seconds. A device judged behind is link-bound (frames
+    /// were withheld for its backlog), so what it took then is what its link carries; the cap needs no
+    /// `measureNeeded` seconds of backlog to know it (pacing harness `autodown`: no measure by the first
+    /// behind, so the cap fell back to one preset down and the start walked ~8 s instead).
+    private static func startEstimateKbps(_ recent: [LinkJudge.Second]) -> Int? {
+        if let measured = LinkJudge.carriedKbps(of: recent) { return measured }
+        let short = recent.filter(LinkJudge.isShort).filter { $0.taken > 0 }
+        guard !short.isEmpty else { return nil }
+        let mean = Double(short.reduce(0) { $0 + $1.taken }) / Double(short.count)
+        return Int((mean * 8 / 1000).rounded())
     }
 
     /// Takes a step: `rung` moves and the start's cap is spent.

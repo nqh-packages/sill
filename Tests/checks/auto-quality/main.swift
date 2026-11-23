@@ -32,8 +32,11 @@ let names: [ObjectIdentifier: String] = [idA: "iPad (iPad14,1)", idB: "iPhone (i
 
 func R(_ p: QualityPreset, _ retina: Bool = true) -> Rung { Rung(preset: p, retina: retina) }
 
-/// A short second (20 of 60 withheld) that measured nothing (little waiting); a clean, loaded one; a still one.
-let short = S(sent: 40, withheld: 20, taken: 1_000_000, waiting: 4_000, heard: true)
+/// A short second (20 of 60 withheld) that measured nothing (little waiting, nothing taken); a clean,
+/// loaded one; a still one.
+let short = S(sent: 40, withheld: 20, taken: 0, waiting: 4_000, heard: true)
+/// A short second whose link took `kbps` but whose backlog never reached LinkJudge's measure.
+func unmeasured(_ kbps: Int) -> S { S(sent: 40, withheld: 20, taken: kbps * 1000 / 8, waiting: 4_000, heard: true) }
 let clean = S(sent: 60, withheld: 0, taken: 300_000, waiting: 0, heard: true)
 let still = S(sent: 0, withheld: 0, taken: 200, waiting: 0, heard: true)
 /// A short second on a link that carries `kbps`: bytes waiting, so the second is measured.
@@ -126,6 +129,18 @@ do {
     var four: [Step] = []
     for second in [short, clean, clean, clean, short, short] { four += [t.tick([idA: second])].compactMap { $0 } }
     eq(four.count, 0, "3 short in 6 but 2 in the last 5: nothing")
+}
+
+// MARK: 5a. The start's cap before LinkJudge measures (the pacing harness's autodown)
+
+do {
+    var r = home()
+    let cap = r.feed(unmeasured(24_000), 3)
+    eq(cap.map(tag), ["Extreme>Balanced restart"], "no measure yet: the cap sizes from what the short seconds took, one restart")
+    eq(cap.first?.why, .behind(device: idA, carriedKbps: 24_000), "…and names that rate")
+    eq(r.feed(unmeasured(12_000), 3).map(tag), ["Balanced>Efficient live"], "after the cap, an unmeasured behind is one rung, live")
+    let later = r.feed(limited(5_000), 3)
+    eq(later.first?.why, .behind(device: idA, carriedKbps: 5_000), "after the cap, a measured behind names LinkJudge's carried rate")
 }
 
 // MARK: 5. The start's cap
