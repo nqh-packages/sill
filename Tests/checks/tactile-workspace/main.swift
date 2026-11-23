@@ -382,5 +382,20 @@ do {
           fx == [.releaseHeldKeys, .clearLatchedModifiers] && s.deckDragProgress == 0)
 }
 
+// MARK: - 10. Floating chrome clears the software keyboard and its key row
+
+do {
+    let rest = StreamWorkspaceState.chromeBottomClearance(containerWidth: 393, safeBottom: 34, keyboardOcclusion: 0)
+    check("no keyboard: chrome rests on the home-indicator margin", rest == 34)
+    let pad = StreamWorkspaceState.chromeBottomClearance(containerWidth: 1024, safeBottom: 0, keyboardOcclusion: 0)
+    check("no keyboard on iPad: chrome keeps its 22 pt floor", pad == 22)
+    let up = StreamWorkspaceState.chromeBottomClearance(containerWidth: 393, safeBottom: 34, keyboardOcclusion: 358)
+    check("keyboard + key row up: chrome sits above both", up >= 358 + 8, "got \(up)")
+    let accessoryOnly = StreamWorkspaceState.chromeBottomClearance(containerWidth: 393, safeBottom: 34, keyboardOcclusion: 20)
+    check("hardware keyboard (key row only, shorter than the margin): margin wins", accessoryOnly == 34)
+    let bad = StreamWorkspaceState.chromeBottomClearance(containerWidth: 393, safeBottom: 34, keyboardOcclusion: .nan)
+    check("non-finite keyboard reading falls back to the resting margin", bad == 34)
+}
+
 print("\(passes) passed, \(fails) failed")
 exit(fails == 0 ? 0 : 1)

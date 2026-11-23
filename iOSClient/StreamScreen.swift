@@ -622,6 +622,11 @@ struct StreamScreen: View {
 
     /// Shared bottom footprint for both the iOS keyboard + 56 pt floating bar and the pull-up
     /// Control Deck, so swapping Keyboard <-> Trackpad keeps the Mac window and top bar locked in place.
+    private var keyboardOcclusion: CGFloat {
+        guard keyboardShown, let f = keyboardFrame.frame, f.height > 0 else { return 0 }
+        return f.height
+    }
+
     private func phoneInputFootprint(for size: CGSize) -> CGFloat {
         min(max(size.height * 0.43, 296), 372)
     }
@@ -751,7 +756,8 @@ struct StreamScreen: View {
                 let padAvoidance = Self.floatingPadAvoidance(
                     capsule: workspace.capsule,
                     insets: insets,
-                    containerWidth: size.width
+                    containerWidth: size.width,
+                    keyboardOcclusion: keyboardOcclusion
                 )
                 PadFloatingTrackpadView(
                     client: client,
@@ -780,10 +786,12 @@ struct StreamScreen: View {
                     state: workspace,
                     containerSize: size,
                     insets: insets,
+                    keyboardOcclusion: keyboardOcclusion,
                     textScale: $textScale,
                     onTextScaleCommit: { dispatch(.textScaleCommitted) },
                     dispatch: animatedDispatch
                 )
+                .animation(.easeOut(duration: 0.22), value: keyboardOcclusion)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -792,10 +800,15 @@ struct StreamScreen: View {
     private static func floatingPadAvoidance(
         capsule: CapsuleVisibility,
         insets: FullScreenPolicy.Insets,
-        containerWidth: CGFloat
+        containerWidth: CGFloat,
+        keyboardOcclusion: CGFloat
     ) -> EdgeInsets {
         let baseSide = max(12, max(insets.left, insets.right))
-        let baseBottom = max(containerWidth >= 600 ? 22 : 14, insets.bottom)
+        let baseBottom = CGFloat(StreamWorkspaceState.chromeBottomClearance(
+            containerWidth: Double(containerWidth),
+            safeBottom: Double(insets.bottom),
+            keyboardOcclusion: Double(keyboardOcclusion)
+        ))
         let baseTop = max(containerWidth >= 600 ? 36 : 12, insets.top + 10)
         var e = EdgeInsets(top: baseTop, leading: baseSide, bottom: baseBottom, trailing: baseSide)
         if case .expanded(let edge) = capsule {

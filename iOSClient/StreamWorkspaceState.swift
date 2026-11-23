@@ -449,6 +449,16 @@ public struct StreamWorkspaceState: Equatable, Sendable {
         }
     }
 
+    public static func chromeBottomClearance(
+        containerWidth: Double,
+        safeBottom: Double,
+        keyboardOcclusion: Double
+    ) -> Double {
+        let resting = max(containerWidth >= 600 ? 22 : 14, safeBottom)
+        guard keyboardOcclusion.isFinite, keyboardOcclusion > 0 else { return resting }
+        return max(resting, keyboardOcclusion + 10)
+    }
+
     public static func capsuleSnapTarget(
         for normalizedProjectedPoint: WorkspacePoint,
         currentEdge: CapsuleEdge

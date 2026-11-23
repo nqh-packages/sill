@@ -17,6 +17,7 @@ struct PadFloatingCapsule: View {
     let state: StreamWorkspaceState
     let containerSize: CGSize
     let insets: FullScreenPolicy.Insets
+    var keyboardOcclusion: CGFloat = 0
     @Binding var textScale: Double?
     var onTextScaleCommit: () -> Void = {}
     let dispatch: (StreamWorkspaceState.Action) -> Void
@@ -60,7 +61,8 @@ struct PadFloatingCapsule: View {
     }
 
     private var isCompactVertical: Bool {
-        state.capsule.edge.isVertical && containerSize.height > 0 && containerSize.height < 460
+        state.capsule.edge.isVertical && containerSize.height > 0
+            && containerSize.height - max(0, keyboardOcclusion) < 460
     }
 
     /// Narrow portrait widths (iPhone portrait, < 500 pt) show a compact horizontal palette
@@ -80,7 +82,11 @@ struct PadFloatingCapsule: View {
         return max(multitaskingClearance, insets.top + 10)
     }
     private var bottomMargin: CGFloat {
-        max(containerSize.width >= 600 ? 22 : 14, insets.bottom)
+        CGFloat(StreamWorkspaceState.chromeBottomClearance(
+            containerWidth: Double(containerSize.width),
+            safeBottom: Double(insets.bottom),
+            keyboardOcclusion: Double(keyboardOcclusion)
+        ))
     }
     private var sideMargin: CGFloat { max(12, max(insets.left, insets.right)) }
 
