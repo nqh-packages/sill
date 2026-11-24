@@ -60,6 +60,7 @@ Scripts/make-app.sh --install --open    # Noah: replace /Applications/Sill.app (
 SILL_UNIVERSAL=1 Scripts/make-app.sh    # .build/Sill.app for Apple silicon and Intel (arm64 and x86_64), as releases are since 0.6.0 (#62): twice the build time
 SILL_SIGN_IDENTITY='Developer ID Application: … (9V2FMKQ3WU)' Scripts/make-app.sh --release   # M6
 SILL_SIGN_IDENTITY='Developer ID Application: … (9V2FMKQ3WU)' SILL_NOTARY_PROFILE=sill-notary Scripts/release.sh [--dry-run]   # M6: the notarized download (docs/release-checklist.md)
+SILL_NOTARY_PROFILE=asc …                # notarize through the asc CLI's App Store Connect key instead of a notarytool profile
 Scripts/release-ios.sh                  # the iOS app for App Store Connect: archive, export .build/ios/export/Sill.ipa, check it; uploads nothing
 Scripts/release-ios.sh --bump --upload  # Noah: the next build to TestFlight (docs/release-checklist.md, TestFlight; --privacy-report, --print-version)
 Scripts/make-dmg.sh --sign - .build/Sill.app .build/Sill.dmg   # the download's disk image of any build, ad hoc (release.sh makes the real one)

@@ -30,7 +30,8 @@
 #
 # SILL_SIGN_IDENTITY names a Developer ID Application identity in your keychain: its name, part of
 # it, or its SHA-1 hash, as for make-app.sh. SILL_NOTARY_PROFILE is the profile name you gave
-# `xcrun notarytool store-credentials` (a dry run only warns when it is missing).
+# `xcrun notarytool store-credentials` (a dry run only warns when it is missing), or `asc` to notarize
+# through the asc CLI's own App Store Connect API key (`asc auth status` shows it).
 # docs/release-checklist.md says how to get both, and what to do with the zip.
 #
 # --publish makes the release in SILL_RELEASE_REPO, by default nqh-packages/sill: the one repository
@@ -164,9 +165,9 @@ tag_problems() {
 main_ancestry_problem() {
     local head
     head="$(git rev-parse HEAD 2>/dev/null)" || return 0
-    if ! git rev-parse -q --verify refs/remotes/origin/main >/dev/null 2>&1; then
+    if ! git rev-parse -q --verify refs/remotes/$release_remote/main >/dev/null 2>&1; then
         echo "This checkout has no origin/main, so it can't tell whether HEAD (${head:0:12}) is on main, where a release is tagged: git fetch origin, then again."
-    elif ! git merge-base --is-ancestor HEAD refs/remotes/origin/main; then
+    elif ! git merge-base --is-ancestor HEAD refs/remotes/$release_remote/main; then
         echo "HEAD (${head:0:12}) isn't on origin/main as this checkout knows it. A release is tagged on main's line, so every later nightly carries it (docs/one-click-update-plan.md §12f, N11 e): merge it to main and tag main's commit, or git fetch origin if origin/main here is old."
     fi
 }
@@ -230,6 +231,9 @@ preflight_problems() {
         if [ -z "$profile" ]; then
             echo "SILL_NOTARY_PROFILE is not set. Store your notary credentials once with 'xcrun notarytool store-credentials sill-notary', then set SILL_NOTARY_PROFILE=sill-notary."
         fi
+        if [ "$profile" = asc ] && ! command -v asc >/dev/null 2>&1; then
+            echo "SILL_NOTARY_PROFILE=asc needs the asc CLI on PATH, signed in (asc auth login)."
+        fi
         for tool in notarytool stapler; do
             xcrun --find "$tool" >/dev/null 2>&1 \
                 || echo "xcrun can't find $tool. Select Xcode as the developer directory: sudo xcode-select -s /Applications/Xcode.app"
@@ -273,7 +277,7 @@ in_release_workflow() {
 # release workflow (in_release_workflow).
 remote_tag_problem() {
     local version="$1" lines remote head
-    if ! lines="$(git ls-remote --tags origin "refs/tags/v$version" "refs/tags/v$version^{}" 2>/dev/null)"; then
+    if ! lines="$(git ls-remote --tags "$release_remote" "refs/tags/v$version" "refs/tags/v$version^{}" 2>/dev/null)"; then
         echo "Couldn't read origin's tags (git ls-remote origin failed). --publish needs the tag v$version on origin, naming HEAD: git push origin v$version."
         return 0
     fi
@@ -290,6 +294,8 @@ remote_tag_problem() {
 # The one repository whose releases every Sill.app's update check reads
 # (Sources/SillMenuBar/UpdatePolicy.swift, `feed`).
 feed_repo=nqh-packages/sill
+# The git remote that holds feed_repo: origin, or SILL_RELEASE_REMOTE in a checkout whose origin is another fork.
+release_remote="${SILL_RELEASE_REMOTE:-origin}"
 
 # Whether $1, a repository as gh takes it ([HOST/]OWNER/REPO, or its URL), is `feed_repo`.
 is_feed_repo() {
@@ -369,16 +375,46 @@ cleanup() {
     if [ -n "$dmg_mounts" ]; then rmdir "$dmg_mounts" 2>/dev/null || true; fi
 }
 
+# The first value of key $1 anywhere in the JSON file $2 (asc's answers nest it under data/attributes).
+asc_field() {
+    python3 -I -c 'import json,sys
+def find(v,k):
+    if isinstance(v,dict):
+        if k in v and not isinstance(v[k],(dict,list)): return v[k]
+        for x in v.values():
+            r=find(x,k)
+            if r is not None: return r
+    if isinstance(v,list):
+        for x in v:
+            r=find(x,k)
+            if r is not None: return r
+r=find(json.load(open(sys.argv[2])),sys.argv[1])
+sys.exit(1) if r is None else print(r)' "$1" "$2"
+}
+
 # Sends $1 to Apple's notary service and waits for its answer: accepted, or the script stops with
 # Apple's reasons. The answer goes to $2 (a plist), Apple's log to $3.
 notarize() {
     local file="$1" result="$2" log="$3" profile="$SILL_NOTARY_PROFILE" status id submitted=0
     rm -f "$result" "$log"
     say "Sending $file to Apple's notary service and waiting for its answer (usually a few minutes)"
-    xcrun notarytool submit "$file" --keychain-profile "$profile" --wait --output-format plist >"$result" || submitted=$?
-    status="$(plist_value status "$result")" || status=""
-    id="$(plist_value id "$result")" || id=""
-    if [ -n "$id" ]; then
+    if [ "$profile" = asc ]; then
+        asc notarization submit --file "$file" --wait --timeout 1h --output json >"$result" || submitted=$?
+        status="$(asc_field status "$result")" || status=""
+        id="$(asc_field id "$result")" || id=""
+        if [ -n "$id" ]; then
+            if asc notarization log --id "$id" --fetch --path "$log" --overwrite >/dev/null 2>&1; then
+                echo "Apple's notary log: $log"
+            else
+                echo "warning: couldn't fetch the notary log; try: asc notarization log --id $id --fetch" >&2
+            fi
+        fi
+    else
+        xcrun notarytool submit "$file" --keychain-profile "$profile" --wait --output-format plist >"$result" || submitted=$?
+        status="$(plist_value status "$result")" || status=""
+        id="$(plist_value id "$result")" || id=""
+    fi
+    if [ -n "$id" ] && [ "$profile" != asc ]; then
         # Apple's log lists every issue, and its warnings even when the submission is accepted.
         if xcrun notarytool log "$id" --keychain-profile "$profile" "$log" >/dev/null 2>&1; then
             echo "Apple's notary log: $log"
