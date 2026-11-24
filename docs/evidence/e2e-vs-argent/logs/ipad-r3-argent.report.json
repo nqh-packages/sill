@@ -1,0 +1,1874 @@
+{
+  "ok": false,
+  "total": 4,
+  "passed": 3,
+  "failed": 1,
+  "skipped": 0,
+  "durationMs": 42263,
+  "e2eTests": [
+    {
+      "path": "connect-screen.yaml",
+      "status": "pass",
+      "report": {
+        "e2eTest": "connect-screen",
+        "flow": "connect-screen",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": true,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "message": "Connect screen opens and closes Add a Mac",
+            "durationMs": 0,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "durationMs": 1951,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 2143
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Add a Mac",
+                "identifier": "plus"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 2144,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 60
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "Reconnect automatically"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 60,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 4,
+            "kind": "idle",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "durationMs": 1024,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 5,
+            "kind": "echo",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "message": "Tap Add a Mac toolbar button",
+            "durationMs": 0,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 6,
+            "kind": "tap",
+            "e2eTest": "connect-screen",
+            "target": "(0.962, 0.033)",
+            "status": "pass",
+            "durationMs": 896,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 7,
+            "kind": "tool",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 377
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Cancel"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 377,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 8,
+            "kind": "idle",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "durationMs": 950,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 9,
+            "kind": "echo",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "message": "Tap Cancel in Add a Mac sheet",
+            "durationMs": 0,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 10,
+            "kind": "tap",
+            "e2eTest": "connect-screen",
+            "target": "(0.216, 0.254)",
+            "status": "pass",
+            "durationMs": 329,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 11,
+            "kind": "tool",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 112
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "Reconnect automatically"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 112,
+            "flow": "connect-screen"
+          }
+        ],
+        "startedAt": 1795488282575,
+        "durationMs": 8228
+      }
+    },
+    {
+      "path": "pad-pencilkit-chrome.yaml",
+      "status": "pass",
+      "report": {
+        "e2eTest": "pad-pencilkit-chrome",
+        "flow": "pad-pencilkit-chrome",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": true,
+        "passed": 20,
+        "failed": 0,
+        "skipped": 0,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "iPad dock - text size, drag to trailing edge, corner orb, floating trackpad",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "durationMs": 2094,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 1165
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 1172,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 40
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Minimize controls"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 40,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 4,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "Tap Text size on bottom dock and pick 1 times",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 5,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.962)",
+            "status": "pass",
+            "durationMs": 316,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 63
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Off"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 64,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 7,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.919)",
+            "status": "pass",
+            "durationMs": 315,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 8,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.962)",
+            "status": "pass",
+            "durationMs": 314,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 9,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "Drag dock from Minimize controls to trailing edge (820, 600 pt -> 0.983, 0.496)",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 10,
+            "kind": "swipe",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "to (0.983, 0.496) from (0.716, 0.962)",
+            "status": "pass",
+            "durationMs": 1879,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 11,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 39
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 40,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 12,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "Open and close Text size on trailing vertical rail",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 13,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.526)",
+            "status": "pass",
+            "durationMs": 314,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 14,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 58
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Off"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 58,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 15,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.526)",
+            "status": "pass",
+            "durationMs": 326,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 16,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "Minimize to corner orb and expand back",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 17,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.658)",
+            "status": "pass",
+            "durationMs": 329,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 18,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 454
+            },
+            "args": {
+              "condition": "hidden",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 455,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 19,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.962)",
+            "status": "pass",
+            "durationMs": 325,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 20,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 46
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 47,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 21,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "Open and close floating trackpad",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 22,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.592)",
+            "status": "pass",
+            "durationMs": 1091,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 23,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 114
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "Move the trackpad"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 115,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 24,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.882, 0.656)",
+            "status": "pass",
+            "durationMs": 315,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 25,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 476
+            },
+            "args": {
+              "condition": "hidden",
+              "selector": {
+                "text": "Move the trackpad"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 477,
+            "flow": "pad-pencilkit-chrome"
+          }
+        ],
+        "startedAt": 1795488290818,
+        "durationMs": 10455
+      }
+    },
+    {
+      "path": "smoke.yaml",
+      "status": "pass",
+      "report": {
+        "e2eTest": "smoke",
+        "flow": "smoke",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": true,
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "message": "iPad chrome launches with its controls",
+            "durationMs": 0,
+            "flow": "smoke"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "durationMs": 1883,
+            "flow": "smoke"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 1031
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 1035,
+            "flow": "smoke"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 56
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Text size"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 56,
+            "flow": "smoke"
+          },
+          {
+            "index": 4,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 41
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Keyboard",
+                "identifier": "keyboard"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 42,
+            "flow": "smoke"
+          },
+          {
+            "index": 5,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 30
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Trackpad",
+                "identifier": "rectangle.and.hand.point.up.left"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 30,
+            "flow": "smoke"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 27
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Controls",
+                "identifier": "slider.horizontal.3"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 28,
+            "flow": "smoke"
+          },
+          {
+            "index": 7,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 27
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Minimize controls",
+                "identifier": "arrow.down.right.and.arrow.up.left"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 28,
+            "flow": "smoke"
+          }
+        ],
+        "startedAt": 1795488301282,
+        "durationMs": 3449
+      }
+    },
+    {
+      "path": "switcher-and-controls.yaml",
+      "status": "fail",
+      "report": {
+        "e2eTest": "switcher-and-controls",
+        "flow": "switcher-and-controls",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": false,
+        "passed": 6,
+        "failed": 1,
+        "skipped": 5,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "message": "Switcher picks Desktop, then Control Center opens",
+            "durationMs": 0,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "durationMs": 1870,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 1110
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 1111,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 3,
+            "kind": "echo",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "message": "Tap Apps to open Unified Switcher (triggers known 100% CPU product bug)",
+            "durationMs": 0,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 4,
+            "kind": "tap",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.429, 0.962)",
+            "status": "pass",
+            "durationMs": 318,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 5,
+            "kind": "tool",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 560
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Done"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 561,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 136
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "Windows"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 137,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 7,
+            "kind": "echo",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "message": "Pick Desktop card and return to stream controls",
+            "durationMs": 0,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 8,
+            "kind": "tap",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.5, 0.6)",
+            "status": "pass",
+            "durationMs": 10716,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 9,
+            "kind": "tool",
+            "e2eTest": "switcher-and-controls",
+            "status": "fail",
+            "tool": "await-ui-element",
+            "reason": "await-ui-element condition not judged (unreadable): last tree fetch failed: tree fetch did not complete within the 5000ms wait budget",
+            "result": {
+              "success": false,
+              "elapsed": 5002,
+              "note": "last tree fetch failed: tree fetch did not complete within the 5000ms wait budget",
+              "cause": "unreadable"
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Controls",
+                "identifier": "slider.horizontal.3"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 5003,
+            "artifacts": {
+              "screen": "/tmp/argent-ipad-r3/switcher-and-controls/step-7-screen.png"
+            },
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 10,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "message": "Open Control Center and scroll to Disconnect from Mac mini",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 11,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.668, 0.962)",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 12,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 13,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 14,
+            "kind": "swipe",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "up",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 15,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          }
+        ],
+        "startedAt": 1795488304741,
+        "durationMs": 20059
+      }
+    }
+  ],
+  "flows": [
+    {
+      "path": "connect-screen.yaml",
+      "status": "pass",
+      "report": {
+        "e2eTest": "connect-screen",
+        "flow": "connect-screen",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": true,
+        "passed": 9,
+        "failed": 0,
+        "skipped": 0,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "message": "Connect screen opens and closes Add a Mac",
+            "durationMs": 0,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "durationMs": 1951,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 2143
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Add a Mac",
+                "identifier": "plus"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 2144,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 60
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "Reconnect automatically"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 60,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 4,
+            "kind": "idle",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "durationMs": 1024,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 5,
+            "kind": "echo",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "message": "Tap Add a Mac toolbar button",
+            "durationMs": 0,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 6,
+            "kind": "tap",
+            "e2eTest": "connect-screen",
+            "target": "(0.962, 0.033)",
+            "status": "pass",
+            "durationMs": 896,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 7,
+            "kind": "tool",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 377
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Cancel"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 377,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 8,
+            "kind": "idle",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "durationMs": 950,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 9,
+            "kind": "echo",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "message": "Tap Cancel in Add a Mac sheet",
+            "durationMs": 0,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 10,
+            "kind": "tap",
+            "e2eTest": "connect-screen",
+            "target": "(0.216, 0.254)",
+            "status": "pass",
+            "durationMs": 329,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 11,
+            "kind": "tool",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 112
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "Reconnect automatically"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 112,
+            "flow": "connect-screen"
+          }
+        ],
+        "startedAt": 1795488282575,
+        "durationMs": 8228
+      }
+    },
+    {
+      "path": "pad-pencilkit-chrome.yaml",
+      "status": "pass",
+      "report": {
+        "e2eTest": "pad-pencilkit-chrome",
+        "flow": "pad-pencilkit-chrome",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": true,
+        "passed": 20,
+        "failed": 0,
+        "skipped": 0,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "iPad dock - text size, drag to trailing edge, corner orb, floating trackpad",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "durationMs": 2094,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 1165
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 1172,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 40
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Minimize controls"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 40,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 4,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "Tap Text size on bottom dock and pick 1 times",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 5,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.962)",
+            "status": "pass",
+            "durationMs": 316,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 63
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Off"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 64,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 7,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.919)",
+            "status": "pass",
+            "durationMs": 315,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 8,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.962)",
+            "status": "pass",
+            "durationMs": 314,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 9,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "Drag dock from Minimize controls to trailing edge (820, 600 pt -> 0.983, 0.496)",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 10,
+            "kind": "swipe",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "to (0.983, 0.496) from (0.716, 0.962)",
+            "status": "pass",
+            "durationMs": 1879,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 11,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 39
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 40,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 12,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "Open and close Text size on trailing vertical rail",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 13,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.526)",
+            "status": "pass",
+            "durationMs": 314,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 14,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 58
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Off"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 58,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 15,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.526)",
+            "status": "pass",
+            "durationMs": 326,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 16,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "Minimize to corner orb and expand back",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 17,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.658)",
+            "status": "pass",
+            "durationMs": 329,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 18,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 454
+            },
+            "args": {
+              "condition": "hidden",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 455,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 19,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.962)",
+            "status": "pass",
+            "durationMs": 325,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 20,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 46
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 47,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 21,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "Open and close floating trackpad",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 22,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.592)",
+            "status": "pass",
+            "durationMs": 1091,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 23,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 114
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "Move the trackpad"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 115,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 24,
+            "kind": "tap",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.882, 0.656)",
+            "status": "pass",
+            "durationMs": 315,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 25,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 476
+            },
+            "args": {
+              "condition": "hidden",
+              "selector": {
+                "text": "Move the trackpad"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 477,
+            "flow": "pad-pencilkit-chrome"
+          }
+        ],
+        "startedAt": 1795488290818,
+        "durationMs": 10455
+      }
+    },
+    {
+      "path": "smoke.yaml",
+      "status": "pass",
+      "report": {
+        "e2eTest": "smoke",
+        "flow": "smoke",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": true,
+        "passed": 7,
+        "failed": 0,
+        "skipped": 0,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "message": "iPad chrome launches with its controls",
+            "durationMs": 0,
+            "flow": "smoke"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "durationMs": 1883,
+            "flow": "smoke"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 1031
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 1035,
+            "flow": "smoke"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 56
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Text size"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 56,
+            "flow": "smoke"
+          },
+          {
+            "index": 4,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 41
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Keyboard",
+                "identifier": "keyboard"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 42,
+            "flow": "smoke"
+          },
+          {
+            "index": 5,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 30
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Trackpad",
+                "identifier": "rectangle.and.hand.point.up.left"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 30,
+            "flow": "smoke"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 27
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Controls",
+                "identifier": "slider.horizontal.3"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 28,
+            "flow": "smoke"
+          },
+          {
+            "index": 7,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 27
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Minimize controls",
+                "identifier": "arrow.down.right.and.arrow.up.left"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 28,
+            "flow": "smoke"
+          }
+        ],
+        "startedAt": 1795488301282,
+        "durationMs": 3449
+      }
+    },
+    {
+      "path": "switcher-and-controls.yaml",
+      "status": "fail",
+      "report": {
+        "e2eTest": "switcher-and-controls",
+        "flow": "switcher-and-controls",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": false,
+        "passed": 6,
+        "failed": 1,
+        "skipped": 5,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "message": "Switcher picks Desktop, then Control Center opens",
+            "durationMs": 0,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "durationMs": 1870,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 1110
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 1111,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 3,
+            "kind": "echo",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "message": "Tap Apps to open Unified Switcher (triggers known 100% CPU product bug)",
+            "durationMs": 0,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 4,
+            "kind": "tap",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.429, 0.962)",
+            "status": "pass",
+            "durationMs": 318,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 5,
+            "kind": "tool",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 560
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Done"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 561,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 136
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "Windows"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 137,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 7,
+            "kind": "echo",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "message": "Pick Desktop card and return to stream controls",
+            "durationMs": 0,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 8,
+            "kind": "tap",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.5, 0.6)",
+            "status": "pass",
+            "durationMs": 10716,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 9,
+            "kind": "tool",
+            "e2eTest": "switcher-and-controls",
+            "status": "fail",
+            "tool": "await-ui-element",
+            "reason": "await-ui-element condition not judged (unreadable): last tree fetch failed: tree fetch did not complete within the 5000ms wait budget",
+            "result": {
+              "success": false,
+              "elapsed": 5002,
+              "note": "last tree fetch failed: tree fetch did not complete within the 5000ms wait budget",
+              "cause": "unreadable"
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Controls",
+                "identifier": "slider.horizontal.3"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 5003,
+            "artifacts": {
+              "screen": "/tmp/argent-ipad-r3/switcher-and-controls/step-7-screen.png"
+            },
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 10,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "message": "Open Control Center and scroll to Disconnect from Mac mini",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 11,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.668, 0.962)",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 12,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 13,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 14,
+            "kind": "swipe",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "up",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 15,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          }
+        ],
+        "startedAt": 1795488304741,
+        "durationMs": 20059
+      }
+    }
+  ]
+}

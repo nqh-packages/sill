@@ -1,0 +1,12 @@
+ipad-r1-argent exit=1 wall=53.243s load={ 11.87 41.15 70.50 }
+ipad-r2-argent exit=1 wall=44.386s load={ 11.58 21.06 42.55 }
+ipad-r3-argent exit=1 wall=42.442s load={ 11.24 20.95 30.15 }
+ipad-r1-e2e exit=3 wall=124.423s load={ 10.46 19.50 29.15 }
+ipad-r2-e2e exit=3 wall=115.714s load={ 8.41 15.88 26.39 }
+ipad-r3-e2e exit=3 wall=112.945s load={ 11.86 13.99 24.21 }
+phone-r1-argent exit=0 wall=24.921s load={ 15.62 88.52 140.19 }
+phone-r1-e2e exit=1 wall=53.117s load={ 11.38 74.11 131.28 }
+phone-r2-argent exit=0 wall=18.880s load={ 11.74 56.19 117.65 }
+phone-r2-e2e exit=1 wall=50.946s load={ 11.93 44.30 106.25 }
+phone-r3-argent exit=0 wall=19.102s load={ 11.37 32.24 87.71 }
+phone-r3-e2e exit=1 wall=51.663s load={ 10.49 30.68 85.86 }

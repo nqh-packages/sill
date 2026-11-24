@@ -1,0 +1,47 @@
+
+ RUN  e2e v0.24.0 /Users/nqh/.t3/worktrees/sill/t3-27617332-ab8f6eba20dde6d2/Tests/e2e
+      run 01a20b97-90c4-7124-b128-0bedb7305f0a · targets: phone
+
+ℹ booting arena-c2 iPhone (1 of 1)
+ℹ arena-c2 iPhone: boot 4.6s, iOS runner 9.2s, open com.uxheavy.sill 4.7s
+ ✓ mobile engine for target "phone" prepared 18.43s
+   × |phone| tests/control-center.e2e.ts > Control Center shows Quality as Auto from a Mac that offers it 13.50s
+     → expect.toBeVisible failed
+ ❯ |phone| tests/control-center.e2e.ts (1 test | 1 failed) 13.50s
+   ✓ |phone| tests/phone-workspace.e2e.ts > the iPhone dock: the orb, the Control Deck, Control Center and the Mac menus 19.42s
+ ✓ |phone| tests/phone-workspace.e2e.ts (1 test) 19.42s
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |phone| tests/control-center.e2e.ts > Control Center shows Quality as Auto from a Mac that offers it
+ASSERTION_FAILED: expect.toBeVisible failed
+locator: getByRole("button", name: "Quality, Auto")
+expected: visible
+observed: no node (match count 0)
+ ❯ tests/control-center.e2e.ts:9:3
+      7|   await expect(screen.getByText('Streaming')).toBeVisible({ timeout: …
+      8|   await screen.scrollUntilVisible(screen.getByText('Quality').first()…
+      9|   await expect(screen.getByRole('button', { name: 'Quality, Auto' }))…
+       |   ^
+     10|   await app.screenshot('01-quality-auto');
+     11| });
+ ❯ at com.uxheavy.sill / Mac mini
+ ❯ trace .e2e/bench-phone-r1/results/control-center-control-center-shows-quality-as-64127e141f9fd917/trace.md
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 1 passed (2)
+   Start at  04:27:10
+   Duration  33.71s
+     Traces  .e2e/bench-phone-r1/results/ (1 page, trace.md in each test's directory)
+Screenshots  .e2e/bench-phone-r1/results/phone-workspace-the-iphone-dock-the-orb-the-b2c0b85e8d27d3ee/attempt-1/screenshots/001-01-phone-pencilkit-bottom.png
+             .e2e/bench-phone-r1/results/phone-workspace-the-iphone-dock-the-orb-the-b2c0b85e8d27d3ee/attempt-1/screenshots/002-03-phone-control-deck.png
+             .e2e/bench-phone-r1/results/phone-workspace-the-iphone-dock-the-orb-the-b2c0b85e8d27d3ee/attempt-1/screenshots/003-04-phone-control-center.png
+             .e2e/bench-phone-r1/results/phone-workspace-the-iphone-dock-the-orb-the-b2c0b85e8d27d3ee/attempt-1/screenshots/004-05-phone-mac-menus.png
+
+     Failed  × |phone| tests/control-center.e2e.ts:9 > Control Center shows Quality as Auto from a Mac that offers it
+               ASSERTION_FAILED: expect.toBeVisible failed
+               trace .e2e/bench-phone-r1/results/control-center-control-center-shows-quality-as-64127e141f9fd917/trace.md
+

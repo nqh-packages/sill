@@ -1,0 +1,51 @@
+
+ RUN  e2e v0.24.0 /Users/nqh/.t3/worktrees/sill/t3-27617332-ab8f6eba20dde6d2/Tests/e2e
+      run 01a20b73-9f4f-7e4f-90b8-9031476d151e · targets: ipad
+
+ℹ booting arena-c2 iPad (1 of 1)
+ℹ arena-c2 iPad: boot 3.6s, iOS runner 5.6s, open com.uxheavy.sill 4.9s
+ ✓ mobile engine for target "ipad" prepared 14.13s
+   ✓ |ipad| tests/connect-screen.e2e.ts > the connect screen opens and closes Add a Mac 8.98s
+ ✓ |ipad| tests/connect-screen.e2e.ts (1 test) 8.98s
+   ✓ |ipad| tests/pad-pencilkit-chrome.e2e.ts > the iPad dock: text size, a drag to the trailing edge, the corner orb, the trackpad 15.36s
+ ✓ |ipad| tests/pad-pencilkit-chrome.e2e.ts (1 test) 15.36s
+   ✓ |ipad| tests/smoke.e2e.ts > the iPad chrome launches with its controls 5.40s
+ ✓ |ipad| tests/smoke.e2e.ts (1 test) 5.40s
+   × |ipad| tests/switcher-and-controls.e2e.ts > the switcher picks the Desktop, then Control Center opens 40.41s
+     → operation timed out: getByText("Desktop").first()
+ ❯ |ipad| tests/switcher-and-controls.e2e.ts (1 test | 1 failed) 40.41s
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |ipad| tests/switcher-and-controls.e2e.ts > the switcher picks the Desktop, then Control Center opens
+ACTION_FAILED: operation timed out: getByText("Desktop").first()
+ ❯ trace .e2e/bench-ipad-r2/results/switcher-and-controls-the-switcher-picks-the-desktop-82aeb7a69da331d9/trace.md
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Run Errors 1 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ ERROR  infrastructure error CLEANUP_TIMEOUT (cleanup)
+disposing the engine timed out
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 3 passed (4)
+     Errors  1 error
+   Start at  03:47:50
+   Duration  100.98s (1m 41s)
+     Traces  .e2e/bench-ipad-r2/results/ (1 page, trace.md in each test's directory)
+Screenshots  .e2e/bench-ipad-r2/results/connect-screen-the-connect-screen-opens-and-0e975002147a5f58/attempt-1/screenshots/001-01-connect-methods.png
+             .e2e/bench-ipad-r2/results/connect-screen-the-connect-screen-opens-and-0e975002147a5f58/attempt-1/screenshots/002-02-add-a-mac-sheet.png
+             .e2e/bench-ipad-r2/results/pad-pencilkit-chrome-the-ipad-dock-text-size-a-drag-96682699abc9dd45/attempt-1/screenshots/001-01-pad-bottom-docked.png
+             .e2e/bench-ipad-r2/results/pad-pencilkit-chrome-the-ipad-dock-text-size-a-drag-96682699abc9dd45/attempt-1/screenshots/002-02-pad-trailing-aa-open.png
+             .e2e/bench-ipad-r2/results/pad-pencilkit-chrome-the-ipad-dock-text-size-a-drag-96682699abc9dd45/attempt-1/screenshots/003-03-pad-corner-orb.png
+             .e2e/bench-ipad-r2/results/pad-pencilkit-chrome-the-ipad-dock-text-size-a-drag-96682699abc9dd45/attempt-1/screenshots/004-05-pad-floating-trackpad.png
+             .e2e/bench-ipad-r2/results/smoke-the-ipad-chrome-launches-with-3f462a96fafe21d5/attempt-1/screenshots/001-smoke-pad-bottom.png
+             .e2e/bench-ipad-r2/results/switcher-and-controls-the-switcher-picks-the-desktop-82aeb7a69da331d9/attempt-1/screenshots/001-01-switcher-open.png
+
+     Failed  × |ipad| tests/switcher-and-controls.e2e.ts:5 > the switcher picks the Desktop, then Control Center opens
+               ACTION_FAILED: operation timed out: getByText("Desktop").first()
+               trace .e2e/bench-ipad-r2/results/switcher-and-controls-the-switcher-picks-the-desktop-82aeb7a69da331d9/trace.md
+

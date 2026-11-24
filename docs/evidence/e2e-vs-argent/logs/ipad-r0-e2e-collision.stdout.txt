@@ -1,0 +1,75 @@
+
+ RUN  e2e v0.24.0 /Users/nqh/.t3/worktrees/sill/t3-27617332-ab8f6eba20dde6d2/Tests/e2e
+      run 01a20b69-bd43-7fba-aade-e50e21296e28 · targets: ipad
+
+ℹ booting arena-c2 iPad (1 of 1)
+ℹ arena-c2 iPad: boot 4.4s, iOS runner 14.7s, open com.uxheavy.sill 14.1s
+ ✓ mobile engine for target "ipad" prepared 33.21s
+   × |ipad| tests/connect-screen.e2e.ts > the connect screen opens and closes Add a Mac 7.01s
+     → snapshot failed: No active session "e2e-ipad-0". Run agent-device open <…
+ ❯ |ipad| tests/connect-screen.e2e.ts (1 test | 1 failed) 7.01s
+   × |ipad| tests/pad-pencilkit-chrome.e2e.ts > the iPad dock: text size, a drag to the trailing edge, the corner orb, the trackpad 10.97s
+     → open com.uxheavy.sill failed: Session "e2e-ipad-0" is already bound to a…
+ ❯ |ipad| tests/pad-pencilkit-chrome.e2e.ts (1 test | 1 failed) 10.97s
+   × |ipad| tests/smoke.e2e.ts > the iPad chrome launches with its controls 10.43s
+     → open com.uxheavy.sill failed: Session "e2e-ipad-0" is already bound to a…
+ ❯ |ipad| tests/smoke.e2e.ts (1 test | 1 failed) 10.43s
+   × |ipad| tests/switcher-and-controls.e2e.ts > the switcher picks the Desktop, then Control Center opens 46.05s
+     → operation timed out
+ ❯ |ipad| tests/switcher-and-controls.e2e.ts (1 test | 1 failed) 46.05s
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  |ipad| tests/connect-screen.e2e.ts > the connect screen opens and closes Add a Mac
+APP_NOT_OPEN: snapshot failed: No active session "e2e-ipad-0". Run agent-device open <app> --session e2e-ipad-0 first, or omit --session to run against a device selector. Hint: Run agent-device session list to see the sessions this daemon holds. A daemon that was replaced or restarted starts without its predecessor's sessions.
+ ❯ trace .e2e/bench-ipad-r1/results/connect-screen-the-connect-screen-opens-and-0e975002147a5f58/trace.md
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  |ipad| tests/pad-pencilkit-chrome.e2e.ts > the iPad dock: text size, a drag to the trailing edge, the corner orb, the trackpad
+ENGINE_FAILURE: open com.uxheavy.sill failed: Session "e2e-ipad-0" is already bound to apple device "arena-c1 iPad" (370BC9C2-73BD-4046-8593-C27A776338F0), but this request selected --device=arena-c2 iPad. Hint: To use the selected device, open it with a different --session name. Only if session "e2e-ipad-0" is yours: rerun with --session e2e-ipad-0 without device selectors, or run agent-device close --session e2e-ipad-0.
+ ❯ at com.uxheavy.sill
+ ❯ trace .e2e/bench-ipad-r1/results/pad-pencilkit-chrome-the-ipad-dock-text-size-a-drag-96682699abc9dd45/trace.md
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  |ipad| tests/smoke.e2e.ts > the iPad chrome launches with its controls
+ENGINE_FAILURE: open com.uxheavy.sill failed: Session "e2e-ipad-0" is already bound to apple device "arena-c1 iPad" (370BC9C2-73BD-4046-8593-C27A776338F0), but this request selected --device=arena-c2 iPad. Hint: To use the selected device, open it with a different --session name. Only if session "e2e-ipad-0" is yours: rerun with --session e2e-ipad-0 without device selectors, or run agent-device close --session e2e-ipad-0.
+ ❯ at com.uxheavy.sill
+ ❯ trace .e2e/bench-ipad-r1/results/smoke-the-ipad-chrome-launches-with-3f462a96fafe21d5/trace.md
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  |ipad| tests/switcher-and-controls.e2e.ts > the switcher picks the Desktop, then Control Center opens
+ACTION_FAILED: operation timed out
+ ❯ trace .e2e/bench-ipad-r1/results/switcher-and-controls-the-switcher-picks-the-desktop-82aeb7a69da331d9/trace.md
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯ Run Errors 1 ⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+ ERROR  infrastructure error CLEANUP_TIMEOUT (cleanup)
+disposing the engine timed out
+
+
+ Test Files  4 failed | 0 passed (4)
+      Tests  4 failed | 0 passed (4)
+     Errors  1 error
+   Start at  03:37:22
+   Duration  107.16s (1m 47s)
+     Traces  .e2e/bench-ipad-r1/results/ (4 pages, trace.md in each test's directory)
+
+     Failed  × |ipad| tests/connect-screen.e2e.ts:5 > the connect screen opens and closes Add a Mac
+               APP_NOT_OPEN: snapshot failed: No active session "e2e-ipad-0". Run agent-device open <app> --session e2e-ipad-0 first, or omit --session to run against a device selector. Hint: Run agent-device session list to see the sessions this daemon holds. A daemon that was replaced or restarted starts without its predecessor's sessions.
+               trace .e2e/bench-ipad-r1/results/connect-screen-the-connect-screen-opens-and-0e975002147a5f58/trace.md
+             × |ipad| tests/pad-pencilkit-chrome.e2e.ts:5 > the iPad dock: text size, a drag to the trailing edge, the corner orb, the trackpad
+               ENGINE_FAILURE: open com.uxheavy.sill failed: Session "e2e-ipad-0" is already bound to apple device "arena-c1 iPad" (370BC9C2-73BD-4046-8593-C27A776338F0), but this request selected --device=arena-c2 iPad. Hint: To use the selected device, open it with a different --session name. Only if session "e2e-ipad-0" is yours: rerun with --session e2e-ipad-0 without device selectors, or run agent-device close --session e2e-ipad-0.
+               trace .e2e/bench-ipad-r1/results/pad-pencilkit-chrome-the-ipad-dock-text-size-a-drag-96682699abc9dd45/trace.md
+             × |ipad| tests/smoke.e2e.ts:5 > the iPad chrome launches with its controls
+               ENGINE_FAILURE: open com.uxheavy.sill failed: Session "e2e-ipad-0" is already bound to apple device "arena-c1 iPad" (370BC9C2-73BD-4046-8593-C27A776338F0), but this request selected --device=arena-c2 iPad. Hint: To use the selected device, open it with a different --session name. Only if session "e2e-ipad-0" is yours: rerun with --session e2e-ipad-0 without device selectors, or run agent-device close --session e2e-ipad-0.
+               trace .e2e/bench-ipad-r1/results/smoke-the-ipad-chrome-launches-with-3f462a96fafe21d5/trace.md
+             × |ipad| tests/switcher-and-controls.e2e.ts:5 > the switcher picks the Desktop, then Control Center opens
+               ACTION_FAILED: operation timed out
+               trace .e2e/bench-ipad-r1/results/switcher-and-controls-the-switcher-picks-the-desktop-82aeb7a69da331d9/trace.md
+

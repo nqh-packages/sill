@@ -41,3 +41,12 @@ test passes but the switcher's. **Product bug:** on the iPad, `Apps` opens the s
 focused and Sill spins at 100 % CPU in `UISheetPresentationController`'s keyboard layout (reproduced at
 a795274c, before the corner change, so not it; `-SillDrawer`'s open without focus is fine). At Dynamic
 Type XXXL the Control Center's "Picture in Picture" tile truncates to "Picture in…".
+
+**e2e vs argent, an arena (2026-11-24).** Huy: "install argent globally, have /arena bench them both". argent
+0.34.0 is installed globally (its skills in the global skills repo). Two candidates benchmarked both on the six
+tests (Claude Sonnet 5.5; Gemini 4 Neon, which stopped on a quota with its iPhone rows unfilled); a Gemini judge
+and the orchestrator picked the Gemini report: docs/evidence/e2e-vs-argent/BENCH.md, with its "Synthesis". argent
+runs the suite about 2.6× faster but its simulator runner sees only UIKit views, so on Sill every tap is a
+coordinate: e2e stays. Found on the way: `control-center` failed 3 of 3 for both candidates because the sheet
+expands and scrolls past the row; the test now taps the grabber (3 of 3 pass). The e2e config names each
+session after its simulator, so two agents no longer collide on `e2e-ipad-0`.

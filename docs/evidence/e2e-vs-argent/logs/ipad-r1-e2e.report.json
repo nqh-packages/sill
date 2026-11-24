@@ -1,0 +1,2473 @@
+{
+  "schemaVersion": "report-1",
+  "run": {
+    "id": "01a20b71-abd5-7de9-9964-465980938cff",
+    "specVersion": "0.1",
+    "runner": {
+      "name": "e2e",
+      "version": "0.24.0"
+    },
+    "status": "error",
+    "exitCode": 3,
+    "startedAt": "2026-11-24T02:45:50.528Z",
+    "finishedAt": "2026-11-24T02:47:32.358Z",
+    "project": {
+      "id": "sill-e2e",
+      "configDigest": "9f2d3d59868e9b6f2df526b06b60ecd1d116cdfa7538592f148736c241ed9c7d"
+    },
+    "environment": {
+      "ci": false,
+      "trustNoticeShown": false,
+      "os": "darwin 27.3.0",
+      "arch": "arm64",
+      "runtime": "node v26.13.1"
+    },
+    "vcs": {
+      "commit": "7b97adfb45d471e997889ed12401d90409abe843",
+      "branch": "test/e2e-vs-argent-bench",
+      "dirty": false
+    },
+    "targets": [
+      {
+        "id": "ipad",
+        "index": 0,
+        "platform": "ios",
+        "environment": "test",
+        "engine": {
+          "name": "mobile",
+          "version": "0.12.8",
+          "spiVersion": 1
+        },
+        "capabilities": [
+          "actions",
+          "artifacts",
+          "device",
+          "keyboard",
+          "location",
+          "observation",
+          "pointer"
+        ],
+        "artifactCapabilities": [
+          "screenshot",
+          "video"
+        ],
+        "stateCapability": false
+      },
+      {
+        "id": "phone",
+        "index": 1,
+        "platform": "ios",
+        "environment": "test",
+        "engine": {
+          "name": "mobile",
+          "version": "0.12.8",
+          "spiVersion": 1
+        },
+        "capabilities": [
+          "actions",
+          "artifacts",
+          "device",
+          "keyboard",
+          "location",
+          "observation",
+          "pointer"
+        ],
+        "artifactCapabilities": [
+          "screenshot",
+          "video"
+        ],
+        "stateCapability": false
+      }
+    ],
+    "serialGroups": [],
+    "results": [
+      {
+        "id": "0e975002147a5f58cb11f1b9fb63423bf224e3a3fcad4ac81148e66604dcd1dd",
+        "testId": "tests/connect-screen.e2e.ts::the%20connect%20screen%20opens%20and%20closes%20Add%20a%20Mac",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "the connect screen opens and closes Add a Mac"
+        ],
+        "file": "tests/connect-screen.e2e.ts",
+        "source": {
+          "file": "tests/connect-screen.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "ipad"
+        ],
+        "selected": true,
+        "status": "passed",
+        "attempts": [
+          {
+            "id": "01a20b72-026c-7a6a-8311-75a1a091b99d",
+            "index": 0,
+            "status": "passed",
+            "startedAt": "2026-11-24T02:45:50.828Z",
+            "durationMs": 9202,
+            "artifacts": [
+              {
+                "id": "01a20b72-026c-7a6a-8311-75a1a091b99d:artifact:0",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b72-026c-7a6a-8311-75a1a091b99d:3"
+                },
+                "path": "connect-screen-the-connect-screen-opens-and-0e975002147a5f58/attempt-1/screenshots/001-01-connect-methods.png",
+                "size": 57155,
+                "sha256": "54185dc3d2d320f18f0baf95c2c640284bbcabe34b5a19fa487d6e882eee9996"
+              },
+              {
+                "id": "01a20b72-026c-7a6a-8311-75a1a091b99d:artifact:1",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b72-026c-7a6a-8311-75a1a091b99d:6"
+                },
+                "path": "connect-screen-the-connect-screen-opens-and-0e975002147a5f58/attempt-1/screenshots/002-02-add-a-mac-sheet.png",
+                "size": 77261,
+                "sha256": "d2999a8d662a94d4d6f8faf2d83032b244b6773ebd4decf431660587e460a94f"
+              }
+            ],
+            "secondaryErrors": [],
+            "cleanup": "complete",
+            "environment": {
+              "platform": "ios",
+              "device": "arena-c2 iPad"
+            },
+            "steps": [
+              {
+                "id": "01a20b72-026c-7a6a-8311-75a1a091b99d:0",
+                "index": 0,
+                "kind": "resource",
+                "api": "device.openApp",
+                "label": "com.uxheavy.sill",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:45:52.730Z",
+                "durationMs": 2730,
+                "events": [],
+                "artifacts": [],
+                "source": {
+                  "file": "tests/launch.ts",
+                  "line": 7,
+                  "column": 16
+                }
+              },
+              {
+                "id": "01a20b72-026c-7a6a-8311-75a1a091b99d:1",
+                "index": 1,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Add a Mac\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:45:55.460Z",
+                "durationMs": 358,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:45:55.461Z",
+                    "durationMs": 358,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Sill",
+                  "nodes": 40,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/connect-screen.e2e.ts",
+                  "line": 7,
+                  "column": 47
+                }
+              },
+              {
+                "id": "01a20b72-026c-7a6a-8311-75a1a091b99d:2",
+                "index": 2,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Reconnect automatically\").first()",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:45:55.820Z",
+                "durationMs": 83,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:45:55.820Z",
+                    "durationMs": 83,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Sill",
+                  "nodes": 40,
+                  "since": 1,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/connect-screen.e2e.ts",
+                  "line": 8,
+                  "column": 69
+                }
+              },
+              {
+                "id": "01a20b72-026c-7a6a-8311-75a1a091b99d:3",
+                "index": 3,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "01-connect-methods",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:45:55.903Z",
+                "durationMs": 1843,
+                "events": [],
+                "artifacts": [
+                  "01a20b72-026c-7a6a-8311-75a1a091b99d:artifact:0"
+                ],
+                "source": {
+                  "file": "tests/connect-screen.e2e.ts",
+                  "line": 9,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a20b72-026c-7a6a-8311-75a1a091b99d:4",
+                "index": 4,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Add a Mac\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:45:57.748Z",
+                "durationMs": 730,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:45:57.748Z",
+                    "durationMs": 730,
+                    "status": "passed",
+                    "detail": "tap button \"Add a Mac\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Sill",
+                  "nodes": 40,
+                  "since": 2,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/connect-screen.e2e.ts",
+                  "line": 10,
+                  "column": 39
+                }
+              },
+              {
+                "id": "01a20b72-026c-7a6a-8311-75a1a091b99d:5",
+                "index": 5,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Cancel\").first()",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:45:58.478Z",
+                "durationMs": 148,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:45:58.478Z",
+                    "durationMs": 148,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Add a Mac",
+                  "nodes": 16,
+                  "since": 4,
+                  "changes": [
+                    "added other \"dismiss popup\" testid=\"PopoverDismissRegion\"",
+                    "added navigation testid=\"Add a Mac\"",
+                    "added button \"Cancel\"",
+                    "added text \"Add a Mac\"",
+                    "added text \"Pair once, and Sill reaches your Mac from anywhere, through your VPN or the internet.\"",
+                    "added text \"On your Mac, choose Pair iPhone or iPad… in the Sill menu, then point this iPad at the code.\"",
+                    "added other \"Camera. Point it at the code on your Mac.\"",
+                    "added image \"Scan Qr Code\" testid=\"qrcode.viewfinder\"",
+                    "added button \"Enter Code Instead\"",
+                    "added button \"Cancel\"",
+                    "removed navigation testid=\"Sill\"",
+                    "removed button \"Add a Mac\" testid=\"plus\""
+                  ],
+                  "more": 32
+                },
+                "source": {
+                  "file": "tests/connect-screen.e2e.ts",
+                  "line": 11,
+                  "column": 52
+                }
+              },
+              {
+                "id": "01a20b72-026c-7a6a-8311-75a1a091b99d:6",
+                "index": 6,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "02-add-a-mac-sheet",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:45:58.626Z",
+                "durationMs": 739,
+                "events": [],
+                "artifacts": [
+                  "01a20b72-026c-7a6a-8311-75a1a091b99d:artifact:1"
+                ],
+                "source": {
+                  "file": "tests/connect-screen.e2e.ts",
+                  "line": 12,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a20b72-026c-7a6a-8311-75a1a091b99d:7",
+                "index": 7,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Cancel\").first()",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:45:59.365Z",
+                "durationMs": 566,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:45:59.365Z",
+                    "durationMs": 566,
+                    "status": "passed",
+                    "detail": "tap button \"Cancel\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Add a Mac",
+                  "nodes": 16,
+                  "since": 5,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/connect-screen.e2e.ts",
+                  "line": 13,
+                  "column": 44
+                }
+              },
+              {
+                "id": "01a20b72-026c-7a6a-8311-75a1a091b99d:8",
+                "index": 8,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Reconnect automatically\").first()",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:45:59.932Z",
+                "durationMs": 98,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:45:59.932Z",
+                    "durationMs": 98,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Sill",
+                  "nodes": 40,
+                  "since": 7,
+                  "changes": [
+                    "added navigation testid=\"Sill\"",
+                    "added button \"Add a Mac\" testid=\"plus\"",
+                    "added text \"Sill\"",
+                    "added text \"Looking for Macs on this network and nearby\"",
+                    "added button \"Mac Studio, Wired\"",
+                    "added image \"Mac\" testid=\"display\"",
+                    "added text \"Mac Studio\"",
+                    "added text \"Wired\"",
+                    "added button \"Mac mini, Wi‑Fi\"",
+                    "added image \"Mac\" testid=\"display\"",
+                    "added text \"Mac mini\"",
+                    "added text \"Wi‑Fi\""
+                  ],
+                  "more": 32
+                },
+                "source": {
+                  "file": "tests/connect-screen.e2e.ts",
+                  "line": 14,
+                  "column": 69
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "2d5f54d9ae92a5839218562ddbb285b800126dad261c0a54f86b62b365dcb357",
+        "testId": "tests/control-center.e2e.ts::Control%20Center%20shows%20Quality%20as%20Auto%20from%20a%20Mac%20that%20offers%20it",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "Control Center shows Quality as Auto from a Mac that offers it"
+        ],
+        "file": "tests/control-center.e2e.ts",
+        "source": {
+          "file": "tests/control-center.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "0566f4682c46dab3b54005449536878254c8dcd7907e017dd2bda795dceed8e6",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-looking",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "gallery: connect-looking"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "8f138e48d6bb61e114c9b5b70668cd12d8449dced93c7fba8f5ef78aacb550d7",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-methods",
+        "kind": "test",
+        "declarationIndex": 1,
+        "titlePath": [
+          "gallery: connect-methods"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "e5c3493be821dbbdb4c3963579c8427fb288779e9562146287d81670efb831e4",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-denied",
+        "kind": "test",
+        "declarationIndex": 2,
+        "titlePath": [
+          "gallery: connect-denied"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "f939ae1aa8e893b4a303bd2b4d49a41dfaabb22cba52d89f06bdcf5ab30bb8a5",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-error-update",
+        "kind": "test",
+        "declarationIndex": 3,
+        "titlePath": [
+          "gallery: connect-error-update"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "582c7bba4c90f48b8073c7608a38085bb8c97878fb0fb8085fef7ffb575ab2ed",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-error-remotefail",
+        "kind": "test",
+        "declarationIndex": 4,
+        "titlePath": [
+          "gallery: connect-error-remotefail"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "e12207038b8ad031e5d860df729126a8214e88bc12f6050c290fcb190e20e1cd",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-chrome-bottom",
+        "kind": "test",
+        "declarationIndex": 5,
+        "titlePath": [
+          "gallery: pad-chrome-bottom"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "0a6ce73f112ddcaa96f1e6b55eaa3e9f2506396a25ba7ff4d664cc3ca4df6d29",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-chrome-trailing-aa",
+        "kind": "test",
+        "declarationIndex": 6,
+        "titlePath": [
+          "gallery: pad-chrome-trailing-aa"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "b527b875d7af822c3f46e9c4ec65ad4b3f5c6919f109f88c0d76493890ed6123",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-chrome-orb",
+        "kind": "test",
+        "declarationIndex": 7,
+        "titlePath": [
+          "gallery: pad-chrome-orb"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "5caac64e1af72095e8186b7203169d4d5066aa71279058d1c6702bd280210a2d",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-chrome-desktop-aa-disabled",
+        "kind": "test",
+        "declarationIndex": 8,
+        "titlePath": [
+          "gallery: pad-chrome-desktop-aa-disabled"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "4cefca4832adf2da014cd8c6df0dcf36d531cc04fb7b8ec192ab1bfdf0cfa2e1",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-chrome-empty-none",
+        "kind": "test",
+        "declarationIndex": 9,
+        "titlePath": [
+          "gallery: pad-chrome-empty-none"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "38ab0df87dac6c0fb837d7caa00cfc3df4e1f765a54f758ff5f5550454d5739a",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-fullscreen-hint",
+        "kind": "test",
+        "declarationIndex": 10,
+        "titlePath": [
+          "gallery: pad-fullscreen-hint"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "781d39271dfc4f4195cc353225bbc58f3561e37edc6641e3d9ef14293b817041",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20switcher-typical",
+        "kind": "test",
+        "declarationIndex": 11,
+        "titlePath": [
+          "gallery: switcher-typical"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "4731d40bb6b538118b75f01b177dd84c8c8865336ac0767ed24f8039a108c16b",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20controls-typical",
+        "kind": "test",
+        "declarationIndex": 12,
+        "titlePath": [
+          "gallery: controls-typical"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "dd0a934bc973834755aae93a748e0651f627ff0806a82841630b91c069eb5f35",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-methods-xl",
+        "kind": "test",
+        "declarationIndex": 13,
+        "titlePath": [
+          "gallery: connect-methods-xl"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad-xl"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "b98d3f100e3bd9ab83a6d4756f4e65a8f35b6789ce54295ef7c753a392ea7712",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20controls-typical-xl",
+        "kind": "test",
+        "declarationIndex": 14,
+        "titlePath": [
+          "gallery: controls-typical-xl"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad-xl"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "3ed1eb67cf7c1b88d50e83065881135309d9d0436d9a37d2796f4dc2e19a2f10",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20phone-pencilkit-bottom",
+        "kind": "test",
+        "declarationIndex": 15,
+        "titlePath": [
+          "gallery: phone-pencilkit-bottom"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "3df7fafc282391c1388d4ac69b91650a1fa1b13ff683b5335475215a848d8efc",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20phone-pencilkit-orb",
+        "kind": "test",
+        "declarationIndex": 16,
+        "titlePath": [
+          "gallery: phone-pencilkit-orb"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "49935fe7611da3251df2ff851037cae231298d5c7ae509568fc334e8d069fcc8",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20phone-control-deck",
+        "kind": "test",
+        "declarationIndex": 17,
+        "titlePath": [
+          "gallery: phone-control-deck"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "9915be1affe0b2c9075a5f6e5b3fefdaf1d0947c8c236bb66ba4946253b19d96",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20phone-switcher",
+        "kind": "test",
+        "declarationIndex": 18,
+        "titlePath": [
+          "gallery: phone-switcher"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "e9912ae40b4229dd499c70e775d08694e8e6e32e99cd4ee3a38181e462d5c131",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20phone-controls-auto",
+        "kind": "test",
+        "declarationIndex": 19,
+        "titlePath": [
+          "gallery: phone-controls-auto"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "96682699abc9dd45bcbc2b054de823f8c0f1e1bd8ec4071bcc8f165197e70b75",
+        "testId": "tests/pad-pencilkit-chrome.e2e.ts::the%20iPad%20dock%3A%20text%20size%2C%20a%20drag%20to%20the%20trailing%20edge%2C%20the%20corner%20orb%2C%20the%20trackpad",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "the iPad dock: text size, a drag to the trailing edge, the corner orb, the trackpad"
+        ],
+        "file": "tests/pad-pencilkit-chrome.e2e.ts",
+        "source": {
+          "file": "tests/pad-pencilkit-chrome.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "ipad"
+        ],
+        "selected": true,
+        "status": "passed",
+        "attempts": [
+          {
+            "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7",
+            "index": 0,
+            "status": "passed",
+            "startedAt": "2026-11-24T02:46:00.035Z",
+            "durationMs": 15316,
+            "artifacts": [
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:artifact:0",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:3"
+                },
+                "path": "pad-pencilkit-chrome-the-ipad-dock-text-size-a-drag-96682699abc9dd45/attempt-1/screenshots/001-01-pad-bottom-docked.png",
+                "size": 14555,
+                "sha256": "b5c651f91106bd713cc9d315354cdc9b5bf25c0946958ff150a6ef02f8e16f1b"
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:artifact:1",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:12"
+                },
+                "path": "pad-pencilkit-chrome-the-ipad-dock-text-size-a-drag-96682699abc9dd45/attempt-1/screenshots/002-02-pad-trailing-aa-open.png",
+                "size": 21820,
+                "sha256": "fbff2fb26f5a4f453599c728cc91a93f814fecdbc92dc8e60dad44d028662453"
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:artifact:2",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:16"
+                },
+                "path": "pad-pencilkit-chrome-the-ipad-dock-text-size-a-drag-96682699abc9dd45/attempt-1/screenshots/003-03-pad-corner-orb.png",
+                "size": 9321,
+                "sha256": "1c74d5691e4d7173ed33cb9dfd7608e00c9d905f1b0c5b55dfda680d07a40c1c"
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:artifact:3",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:21"
+                },
+                "path": "pad-pencilkit-chrome-the-ipad-dock-text-size-a-drag-96682699abc9dd45/attempt-1/screenshots/004-05-pad-floating-trackpad.png",
+                "size": 23551,
+                "sha256": "0fd3cb047b14974f4a85555ee6a5e0e13e5a7a7b8d783f01ed1d6cf24cf789bd"
+              }
+            ],
+            "secondaryErrors": [],
+            "cleanup": "complete",
+            "environment": {
+              "platform": "ios",
+              "device": "arena-c2 iPad"
+            },
+            "steps": [
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:0",
+                "index": 0,
+                "kind": "resource",
+                "api": "device.openApp",
+                "label": "com.uxheavy.sill",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:00.037Z",
+                "durationMs": 3376,
+                "events": [],
+                "artifacts": [],
+                "source": {
+                  "file": "tests/launch.ts",
+                  "line": 7,
+                  "column": 16
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:1",
+                "index": 1,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Apps\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:03.413Z",
+                "durationMs": 311,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:03.413Z",
+                    "durationMs": 311,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 7,
+                  "column": 42
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:2",
+                "index": 2,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Minimize controls\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:03.724Z",
+                "durationMs": 56,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:03.724Z",
+                    "durationMs": 56,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 1,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 8,
+                  "column": 55
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:3",
+                "index": 3,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "01-pad-bottom-docked",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:03.780Z",
+                "durationMs": 1639,
+                "events": [],
+                "artifacts": [
+                  "01a20b72-2663-7ddf-8fa8-fd138708c5f7:artifact:0"
+                ],
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 9,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:4",
+                "index": 4,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Text size\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:05.420Z",
+                "durationMs": 611,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:46:05.420Z",
+                    "durationMs": 611,
+                    "status": "passed",
+                    "detail": "tap button \"Text size\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 2,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 11,
+                  "column": 39
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:5",
+                "index": 5,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Off\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:06.031Z",
+                "durationMs": 56,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:06.031Z",
+                    "durationMs": 56,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 21,
+                  "since": 4,
+                  "changes": [
+                    "added button \"Off\"",
+                    "added button \"0.5 times\"",
+                    "added button \"0.75 times\"",
+                    "added button \"1 times\"",
+                    "added button \"1.25 times\"",
+                    "added button \"1.5 times\""
+                  ]
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 12,
+                  "column": 41
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:6",
+                "index": 6,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"1 times\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:06.088Z",
+                "durationMs": 1051,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:46:06.088Z",
+                    "durationMs": 1051,
+                    "status": "passed",
+                    "detail": "tap button \"1 times\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 21,
+                  "since": 5,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 13,
+                  "column": 37
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:7",
+                "index": 7,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Text size\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:07.139Z",
+                "durationMs": 627,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:46:07.139Z",
+                    "durationMs": 627,
+                    "status": "passed",
+                    "detail": "tap button \"Text size\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 21,
+                  "since": 6,
+                  "changes": [
+                    "added button \"Text size\" value=\"1 times\"",
+                    "removed button \"Text size\" value=\"Off\""
+                  ]
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 14,
+                  "column": 39
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:8",
+                "index": 8,
+                "kind": "screen",
+                "api": "screen.swipe",
+                "label": "(597.5, 1164) → (820, 600)",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:07.834Z",
+                "durationMs": 827,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "swipeTo",
+                    "startedAt": "2026-11-24T02:46:07.834Z",
+                    "durationMs": 826,
+                    "status": "passed",
+                    "detail": "swipeTo at (598, 1164)"
+                  }
+                ],
+                "artifacts": [],
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 17,
+                  "column": 16
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:9",
+                "index": 9,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Apps\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:08.661Z",
+                "durationMs": 66,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:08.661Z",
+                    "durationMs": 66,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 7,
+                  "changes": [
+                    "removed button \"Off\"",
+                    "removed button \"0.5 times\"",
+                    "removed button \"0.75 times\"",
+                    "removed button \"1 times\"",
+                    "removed button \"1.25 times\"",
+                    "removed button \"1.5 times\""
+                  ]
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 18,
+                  "column": 42
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:10",
+                "index": 10,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Text size\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:08.728Z",
+                "durationMs": 1078,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:46:08.728Z",
+                    "durationMs": 1078,
+                    "status": "passed",
+                    "detail": "tap button \"Text size\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 9,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 19,
+                  "column": 39
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:11",
+                "index": 11,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Off\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:09.806Z",
+                "durationMs": 69,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:09.806Z",
+                    "durationMs": 69,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 21,
+                  "since": 10,
+                  "changes": [
+                    "added button \"Off\"",
+                    "added button \"0.5 times\"",
+                    "added button \"0.75 times\"",
+                    "added button \"1 times\"",
+                    "added button \"1.25 times\"",
+                    "added button \"1.5 times\""
+                  ]
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 20,
+                  "column": 41
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:12",
+                "index": 12,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "02-pad-trailing-aa-open",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:09.875Z",
+                "durationMs": 644,
+                "events": [],
+                "artifacts": [
+                  "01a20b72-2663-7ddf-8fa8-fd138708c5f7:artifact:1"
+                ],
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 21,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:13",
+                "index": 13,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Text size\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:10.519Z",
+                "durationMs": 589,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:46:10.519Z",
+                    "durationMs": 588,
+                    "status": "passed",
+                    "detail": "tap button \"Text size\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 21,
+                  "since": 11,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 22,
+                  "column": 39
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:14",
+                "index": 14,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Minimize controls\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:11.108Z",
+                "durationMs": 590,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:46:11.108Z",
+                    "durationMs": 589,
+                    "status": "passed",
+                    "detail": "tap button \"Minimize controls\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 13,
+                  "changes": [
+                    "removed button \"Off\"",
+                    "removed button \"0.5 times\"",
+                    "removed button \"0.75 times\"",
+                    "removed button \"1 times\"",
+                    "removed button \"1.25 times\"",
+                    "removed button \"1.5 times\""
+                  ]
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 24,
+                  "column": 47
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:15",
+                "index": 15,
+                "kind": "assertion",
+                "api": "expect.toBeHidden",
+                "label": "getByText(\"Apps\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:11.698Z",
+                "durationMs": 51,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:11.698Z",
+                    "durationMs": 51,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 5,
+                  "since": 14,
+                  "changes": [
+                    "added button \"Controls\"",
+                    "removed button \"Desktop\"",
+                    "removed button \"stream.py\"",
+                    "removed button \"Packing list\"",
+                    "removed button \"Apps\" testid=\"square.grid.2x2\"",
+                    "removed button \"Code menus\"",
+                    "removed image \"File Menu With A Selection Highlight\" testid=\"filemenu.and.selection\"",
+                    "removed button \"Text size\" value=\"1 times\"",
+                    "removed button \"Keyboard\" testid=\"keyboard\"",
+                    "removed button \"Trackpad\" testid=\"rectangle.and.hand.point.up.left\"",
+                    "removed button \"Controls\" testid=\"slider.horizontal.3\"",
+                    "removed button \"Minimize controls\" testid=\"arrow.down.right.and.arrow.up.left\""
+                  ]
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 25,
+                  "column": 42
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:16",
+                "index": 16,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "03-pad-corner-orb",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:11.749Z",
+                "durationMs": 630,
+                "events": [],
+                "artifacts": [
+                  "01a20b72-2663-7ddf-8fa8-fd138708c5f7:artifact:2"
+                ],
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 26,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:17",
+                "index": 17,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Controls\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:12.379Z",
+                "durationMs": 527,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:46:12.379Z",
+                    "durationMs": 527,
+                    "status": "passed",
+                    "detail": "tap button \"Controls\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 5,
+                  "since": 15,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 27,
+                  "column": 38
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:18",
+                "index": 18,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Apps\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:12.907Z",
+                "durationMs": 71,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:12.907Z",
+                    "durationMs": 71,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 17,
+                  "changes": [
+                    "added button \"Desktop\"",
+                    "added button \"stream.py\"",
+                    "added button \"Packing list\"",
+                    "added button \"Apps\" testid=\"square.grid.2x2\"",
+                    "added button \"Code menus\"",
+                    "added image \"File Menu With A Selection Highlight\" testid=\"filemenu.and.selection\"",
+                    "added button \"Text size\" value=\"1 times\"",
+                    "added button \"Keyboard\" testid=\"keyboard\"",
+                    "added button \"Trackpad\" testid=\"rectangle.and.hand.point.up.left\"",
+                    "added button \"Controls\" testid=\"slider.horizontal.3\"",
+                    "added button \"Minimize controls\" testid=\"arrow.down.right.and.arrow.up.left\"",
+                    "removed button \"Controls\""
+                  ]
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 28,
+                  "column": 42
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:19",
+                "index": 19,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Trackpad\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:12.978Z",
+                "durationMs": 1017,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:46:12.978Z",
+                    "durationMs": 1017,
+                    "status": "passed",
+                    "detail": "tap button \"Trackpad\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 18,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 30,
+                  "column": 38
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:20",
+                "index": 20,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Move the trackpad\").first()",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:13.995Z",
+                "durationMs": 67,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:13.995Z",
+                    "durationMs": 67,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 18,
+                  "since": 19,
+                  "changes": [
+                    "added image \"Move the trackpad\" testid=\"line.3.horizontal\"",
+                    "added text \"Move the trackpad\"",
+                    "added button \"Close the trackpad\" testid=\"xmark\""
+                  ]
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 31,
+                  "column": 63
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:21",
+                "index": 21,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "05-pad-floating-trackpad",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:14.062Z",
+                "durationMs": 627,
+                "events": [],
+                "artifacts": [
+                  "01a20b72-2663-7ddf-8fa8-fd138708c5f7:artifact:3"
+                ],
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 32,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:22",
+                "index": 22,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Close the trackpad\").first()",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:14.689Z",
+                "durationMs": 582,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:46:14.689Z",
+                    "durationMs": 582,
+                    "status": "passed",
+                    "detail": "tap button \"Close the trackpad\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 18,
+                  "since": 20,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 33,
+                  "column": 56
+                }
+              },
+              {
+                "id": "01a20b72-2663-7ddf-8fa8-fd138708c5f7:23",
+                "index": 23,
+                "kind": "assertion",
+                "api": "expect.toBeHidden",
+                "label": "getByText(\"Move the trackpad\").first()",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:15.272Z",
+                "durationMs": 78,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:15.272Z",
+                    "durationMs": 78,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 22,
+                  "changes": [
+                    "removed image \"Move the trackpad\" testid=\"line.3.horizontal\"",
+                    "removed text \"Move the trackpad\"",
+                    "removed button \"Close the trackpad\" testid=\"xmark\""
+                  ]
+                },
+                "source": {
+                  "file": "tests/pad-pencilkit-chrome.e2e.ts",
+                  "line": 34,
+                  "column": 63
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "1ba111206724e16aac0398fb655fa84f78cde6bdc64006846a3dfb81f2038acf",
+        "testId": "tests/phone-workspace.e2e.ts::the%20iPhone%20dock%3A%20the%20orb%2C%20the%20Control%20Deck%2C%20Control%20Center%20and%20the%20Mac%20menus",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "the iPhone dock: the orb, the Control Deck, Control Center and the Mac menus"
+        ],
+        "file": "tests/phone-workspace.e2e.ts",
+        "source": {
+          "file": "tests/phone-workspace.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "3f462a96fafe21d5ff3e2165a67f794efe5dc99e15c359ddc73cb06e5f665069",
+        "testId": "tests/smoke.e2e.ts::the%20iPad%20chrome%20launches%20with%20its%20controls",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "the iPad chrome launches with its controls"
+        ],
+        "file": "tests/smoke.e2e.ts",
+        "source": {
+          "file": "tests/smoke.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "ipad"
+        ],
+        "selected": true,
+        "status": "passed",
+        "attempts": [
+          {
+            "id": "01a20b72-623a-7566-aa84-1ea1aac73280",
+            "index": 0,
+            "status": "passed",
+            "startedAt": "2026-11-24T02:46:15.354Z",
+            "durationMs": 5388,
+            "artifacts": [
+              {
+                "id": "01a20b72-623a-7566-aa84-1ea1aac73280:artifact:0",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b72-623a-7566-aa84-1ea1aac73280:7"
+                },
+                "path": "smoke-the-ipad-chrome-launches-with-3f462a96fafe21d5/attempt-1/screenshots/001-smoke-pad-bottom.png",
+                "size": 14555,
+                "sha256": "b5c651f91106bd713cc9d315354cdc9b5bf25c0946958ff150a6ef02f8e16f1b"
+              }
+            ],
+            "secondaryErrors": [],
+            "cleanup": "complete",
+            "environment": {
+              "platform": "ios",
+              "device": "arena-c2 iPad"
+            },
+            "steps": [
+              {
+                "id": "01a20b72-623a-7566-aa84-1ea1aac73280:0",
+                "index": 0,
+                "kind": "resource",
+                "api": "device.openApp",
+                "label": "com.uxheavy.sill",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:15.358Z",
+                "durationMs": 3185,
+                "events": [],
+                "artifacts": [],
+                "source": {
+                  "file": "tests/launch.ts",
+                  "line": 7,
+                  "column": 16
+                }
+              },
+              {
+                "id": "01a20b72-623a-7566-aa84-1ea1aac73280:1",
+                "index": 1,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Apps\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:18.543Z",
+                "durationMs": 317,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:18.543Z",
+                    "durationMs": 317,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/smoke.e2e.ts",
+                  "line": 8,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b72-623a-7566-aa84-1ea1aac73280:2",
+                "index": 2,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Text size\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:18.860Z",
+                "durationMs": 50,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:18.860Z",
+                    "durationMs": 50,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 1,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/smoke.e2e.ts",
+                  "line": 8,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b72-623a-7566-aa84-1ea1aac73280:3",
+                "index": 3,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Keyboard\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:18.910Z",
+                "durationMs": 53,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:18.910Z",
+                    "durationMs": 53,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 2,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/smoke.e2e.ts",
+                  "line": 8,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b72-623a-7566-aa84-1ea1aac73280:4",
+                "index": 4,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Trackpad\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:18.963Z",
+                "durationMs": 53,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:18.963Z",
+                    "durationMs": 53,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 3,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/smoke.e2e.ts",
+                  "line": 8,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b72-623a-7566-aa84-1ea1aac73280:5",
+                "index": 5,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Controls\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:19.016Z",
+                "durationMs": 60,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:19.016Z",
+                    "durationMs": 60,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 4,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/smoke.e2e.ts",
+                  "line": 8,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b72-623a-7566-aa84-1ea1aac73280:6",
+                "index": 6,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Minimize controls\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:19.076Z",
+                "durationMs": 51,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:19.076Z",
+                    "durationMs": 51,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "since": 5,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/smoke.e2e.ts",
+                  "line": 8,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b72-623a-7566-aa84-1ea1aac73280:7",
+                "index": 7,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "smoke-pad-bottom",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:19.127Z",
+                "durationMs": 1613,
+                "events": [],
+                "artifacts": [
+                  "01a20b72-623a-7566-aa84-1ea1aac73280:artifact:0"
+                ],
+                "source": {
+                  "file": "tests/smoke.e2e.ts",
+                  "line": 10,
+                  "column": 13
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "82aeb7a69da331d98d017bf9b14e87b521d2fbadc93ab7550720e23b54887a54",
+        "testId": "tests/switcher-and-controls.e2e.ts::the%20switcher%20picks%20the%20Desktop%2C%20then%20Control%20Center%20opens",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "the switcher picks the Desktop, then Control Center opens"
+        ],
+        "file": "tests/switcher-and-controls.e2e.ts",
+        "source": {
+          "file": "tests/switcher-and-controls.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "ipad",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "ipad"
+        ],
+        "selected": true,
+        "status": "failed",
+        "attempts": [
+          {
+            "id": "01a20b72-7749-78e1-8515-d106ca5d2c10",
+            "index": 0,
+            "status": "failed",
+            "startedAt": "2026-11-24T02:46:20.745Z",
+            "durationMs": 41072,
+            "artifacts": [
+              {
+                "id": "01a20b72-7749-78e1-8515-d106ca5d2c10:artifact:0",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b72-7749-78e1-8515-d106ca5d2c10:4"
+                },
+                "path": "switcher-and-controls-the-switcher-picks-the-desktop-82aeb7a69da331d9/attempt-1/screenshots/001-01-switcher-open.png",
+                "size": 50699,
+                "sha256": "4c357896d9ba44f57b900498fce63c4351c57779999c20869e35d156ba25b33e"
+              }
+            ],
+            "error": {
+              "category": "test",
+              "code": "ACTION_FAILED",
+              "message": "operation timed out: getByText(\"Desktop\").first()",
+              "retryable": false,
+              "phase": "body"
+            },
+            "secondaryErrors": [],
+            "cleanup": "complete",
+            "environment": {
+              "platform": "ios",
+              "device": "arena-c2 iPad"
+            },
+            "steps": [
+              {
+                "id": "01a20b72-7749-78e1-8515-d106ca5d2c10:0",
+                "index": 0,
+                "kind": "resource",
+                "api": "device.openApp",
+                "label": "com.uxheavy.sill",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:20.745Z",
+                "durationMs": 3224,
+                "events": [],
+                "artifacts": [],
+                "source": {
+                  "file": "tests/launch.ts",
+                  "line": 7,
+                  "column": 16
+                }
+              },
+              {
+                "id": "01a20b72-7749-78e1-8515-d106ca5d2c10:1",
+                "index": 1,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Apps\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:23.969Z",
+                "durationMs": 1089,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T02:46:23.969Z",
+                    "durationMs": 1089,
+                    "status": "passed",
+                    "detail": "tap button \"Apps\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 15,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/switcher-and-controls.e2e.ts",
+                  "line": 7,
+                  "column": 34
+                }
+              },
+              {
+                "id": "01a20b72-7749-78e1-8515-d106ca5d2c10:2",
+                "index": 2,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Done\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:25.058Z",
+                "durationMs": 398,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:25.058Z",
+                    "durationMs": 398,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Mac mini",
+                  "nodes": 35,
+                  "since": 1,
+                  "changes": [
+                    "added other \"dismiss popup\" testid=\"PopoverDismissRegion\"",
+                    "added button \"Sheet Grabber\" value=\"Half screen\"",
+                    "added navigation testid=\"Mac mini\"",
+                    "added text \"Mac mini\"",
+                    "added button \"Done\"",
+                    "added textbox \"Search windows & Mac apps\"",
+                    "added image \"Search\" testid=\"magnifyingglass\"",
+                    "added scroll-view",
+                    "added button \"Show the full Mac desktop\"",
+                    "added image \"Mac\" testid=\"display\"",
+                    "added text \"Desktop\"",
+                    "added text \"Windows\""
+                  ],
+                  "more": 34
+                },
+                "source": {
+                  "file": "tests/switcher-and-controls.e2e.ts",
+                  "line": 8,
+                  "column": 42
+                }
+              },
+              {
+                "id": "01a20b72-7749-78e1-8515-d106ca5d2c10:3",
+                "index": 3,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Windows\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:25.456Z",
+                "durationMs": 154,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T02:46:25.456Z",
+                    "durationMs": 154,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Mac mini",
+                  "nodes": 35,
+                  "since": 2,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/switcher-and-controls.e2e.ts",
+                  "line": 9,
+                  "column": 45
+                }
+              },
+              {
+                "id": "01a20b72-7749-78e1-8515-d106ca5d2c10:4",
+                "index": 4,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "01-switcher-open",
+                "status": "passed",
+                "startedAt": "2026-11-24T02:46:25.611Z",
+                "durationMs": 1199,
+                "events": [],
+                "artifacts": [
+                  "01a20b72-7749-78e1-8515-d106ca5d2c10:artifact:0"
+                ],
+                "source": {
+                  "file": "tests/switcher-and-controls.e2e.ts",
+                  "line": 10,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a20b72-7749-78e1-8515-d106ca5d2c10:5",
+                "index": 5,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Desktop\").first()",
+                "status": "failed",
+                "startedAt": "2026-11-24T02:46:26.810Z",
+                "durationMs": 30004,
+                "events": [],
+                "artifacts": [],
+                "source": {
+                  "file": "tests/switcher-and-controls.e2e.ts",
+                  "line": 12,
+                  "column": 45
+                },
+                "error": {
+                  "category": "test",
+                  "code": "ACTION_FAILED",
+                  "message": "operation timed out: getByText(\"Desktop\").first()",
+                  "retryable": false
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "errors": [
+      {
+        "category": "infrastructure",
+        "code": "CLEANUP_TIMEOUT",
+        "message": "disposing the engine timed out",
+        "retryable": false,
+        "phase": "cleanup"
+      }
+    ],
+    "summary": {
+      "discovered": 26,
+      "selected": 4,
+      "executed": 4,
+      "passed": 3,
+      "failed": 1,
+      "interrupted": 0,
+      "flaky": 0,
+      "skipped": 0
+    },
+    "limits": {
+      "maxAgentContextBytes": 16384,
+      "maxLedgerBytes": 8192,
+      "maxObservationBytes": 262144,
+      "maxEventsPerStep": 1000,
+      "maxModelTokensPerCall": 64000
+    },
+    "usage": {
+      "discoveredResults": 26,
+      "maxAgentContextBytes": 0,
+      "maxLedgerBytes": 0,
+      "maxObservationBytes": 0,
+      "artifactBytes": 268917,
+      "downloads": 0,
+      "events": 34,
+      "modelTokens": 0,
+      "maxModelCallsInStep": 0,
+      "maxActionStepsInStep": 0
+    }
+  }
+}

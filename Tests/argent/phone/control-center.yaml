@@ -1,0 +1,31 @@
+version: 1
+requires:
+  platform: ios
+steps:
+  - echo: Control Center shows Quality as Auto from a Mac that offers it
+  - launch:
+      ios:
+        app: com.uxheavy.sill
+        args: ["-SillLayout", "402x874", "-SillIdiom", "phone", "-SillSettings", "1", "-SillSettingsCase", "auto"]
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { text: Streaming }
+      timeoutMs: 10000
+  - await: { idle: true }
+  - echo: Expand Control Center sheet and scroll to Quality row (avoiding Text size slider at y=0.80..0.91)
+  - swipe:
+      from: { x: 0.500, y: 0.650 }
+      to: { x: 0.500, y: 0.150 }
+      duration: 400
+      momentum: false
+  - swipe:
+      from: { x: 0.500, y: 0.650 }
+      to: { x: 0.500, y: 0.250 }
+      duration: 400
+      momentum: false
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: "Quality, Auto" }
+      timeoutMs: 5000

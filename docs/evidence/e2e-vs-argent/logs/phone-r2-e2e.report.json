@@ -1,0 +1,1935 @@
+{
+  "schemaVersion": "report-1",
+  "run": {
+    "id": "01a20b9a-aa9d-7488-bdb2-28a84eaa5fc0",
+    "specVersion": "0.1",
+    "runner": {
+      "name": "e2e",
+      "version": "0.24.0"
+    },
+    "status": "failed",
+    "exitCode": 1,
+    "startedAt": "2026-11-24T03:30:25.795Z",
+    "finishedAt": "2026-11-24T03:31:05.681Z",
+    "project": {
+      "id": "sill-e2e",
+      "configDigest": "9f2d3d59868e9b6f2df526b06b60ecd1d116cdfa7538592f148736c241ed9c7d"
+    },
+    "environment": {
+      "ci": false,
+      "trustNoticeShown": false,
+      "os": "darwin 27.3.0",
+      "arch": "arm64",
+      "runtime": "node v26.13.1"
+    },
+    "vcs": {
+      "commit": "7b97adfb45d471e997889ed12401d90409abe843",
+      "branch": "test/e2e-vs-argent-bench",
+      "dirty": false
+    },
+    "targets": [
+      {
+        "id": "ipad",
+        "index": 0,
+        "platform": "ios",
+        "environment": "test",
+        "engine": {
+          "name": "mobile",
+          "version": "0.12.8",
+          "spiVersion": 1
+        },
+        "capabilities": [
+          "actions",
+          "artifacts",
+          "device",
+          "keyboard",
+          "location",
+          "observation",
+          "pointer"
+        ],
+        "artifactCapabilities": [
+          "screenshot",
+          "video"
+        ],
+        "stateCapability": false
+      },
+      {
+        "id": "phone",
+        "index": 1,
+        "platform": "ios",
+        "environment": "test",
+        "engine": {
+          "name": "mobile",
+          "version": "0.12.8",
+          "spiVersion": 1
+        },
+        "capabilities": [
+          "actions",
+          "artifacts",
+          "device",
+          "keyboard",
+          "location",
+          "observation",
+          "pointer"
+        ],
+        "artifactCapabilities": [
+          "screenshot",
+          "video"
+        ],
+        "stateCapability": false
+      }
+    ],
+    "serialGroups": [],
+    "results": [
+      {
+        "id": "2557b8c67d59e1b8146cab870b60ae5db3cb7189dede38338c04803344faf0d7",
+        "testId": "tests/connect-screen.e2e.ts::the%20connect%20screen%20opens%20and%20closes%20Add%20a%20Mac",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "the connect screen opens and closes Add a Mac"
+        ],
+        "file": "tests/connect-screen.e2e.ts",
+        "source": {
+          "file": "tests/connect-screen.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "64127e141f9fd9174dd5bb650d12a41b28c84f5d8e69c22148fc992504d8cb06",
+        "testId": "tests/control-center.e2e.ts::Control%20Center%20shows%20Quality%20as%20Auto%20from%20a%20Mac%20that%20offers%20it",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "Control Center shows Quality as Auto from a Mac that offers it"
+        ],
+        "file": "tests/control-center.e2e.ts",
+        "source": {
+          "file": "tests/control-center.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "phone"
+        ],
+        "selected": true,
+        "status": "failed",
+        "attempts": [
+          {
+            "id": "01a20b9a-d4b7-72c2-8385-3b6d13f4ee03",
+            "index": 0,
+            "status": "failed",
+            "startedAt": "2026-11-24T03:30:26.103Z",
+            "durationMs": 14585,
+            "artifacts": [
+              {
+                "id": "01a20b9a-d4b7-72c2-8385-3b6d13f4ee03:artifact:0",
+                "kind": "log",
+                "mediaType": "text/plain",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "attempt"
+                },
+                "path": "control-center-control-center-shows-quality-as-64127e141f9fd917/attempt-1/screen-at-failure.txt",
+                "size": 2430,
+                "sha256": "0fdfe001fa4e9dba87d531cce9a87619954c53393fc0d376ce749d51d53eeb60"
+              },
+              {
+                "id": "01a20b9a-d4b7-72c2-8385-3b6d13f4ee03:artifact:1",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "attempt"
+                },
+                "path": "control-center-control-center-shows-quality-as-64127e141f9fd917/attempt-1/screenshots/001-failure.png",
+                "size": 72748,
+                "sha256": "c1f24c937ad52775da7e89bd3b5fd46e93cbd7e5b236a104fd5a47a7eca4529b"
+              }
+            ],
+            "error": {
+              "category": "test",
+              "code": "ASSERTION_FAILED",
+              "message": "expect.toBeVisible failed\nlocator: getByRole(\"button\", name: \"Quality, Auto\")\nexpected: visible\nobserved: no node (match count 0)",
+              "retryable": false,
+              "phase": "body",
+              "details": {
+                "locator": "getByRole(\"button\", name: \"Quality, Auto\")",
+                "expected": "visible",
+                "observed": "no node",
+                "matches": 0
+              },
+              "source": {
+                "file": "tests/control-center.e2e.ts",
+                "line": 9,
+                "column": 3
+              }
+            },
+            "secondaryErrors": [],
+            "cleanup": "complete",
+            "environment": {
+              "platform": "ios",
+              "device": "arena-c2 iPhone"
+            },
+            "failure": {
+              "url": "com.uxheavy.sill / Mac mini",
+              "viewport": {
+                "width": 402,
+                "height": 874
+              },
+              "nodes": 48,
+              "screen": "01a20b9a-d4b7-72c2-8385-3b6d13f4ee03:artifact:0",
+              "screenshot": "01a20b9a-d4b7-72c2-8385-3b6d13f4ee03:artifact:1"
+            },
+            "steps": [
+              {
+                "id": "01a20b9a-d4b7-72c2-8385-3b6d13f4ee03:0",
+                "index": 0,
+                "kind": "resource",
+                "api": "device.openApp",
+                "label": "com.uxheavy.sill",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:28.024Z",
+                "durationMs": 3472,
+                "events": [],
+                "artifacts": [],
+                "source": {
+                  "file": "tests/launch.ts",
+                  "line": 7,
+                  "column": 16
+                }
+              },
+              {
+                "id": "01a20b9a-d4b7-72c2-8385-3b6d13f4ee03:1",
+                "index": 1,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Streaming\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:31.497Z",
+                "durationMs": 458,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:30:31.498Z",
+                    "durationMs": 457,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Mac mini",
+                  "nodes": 34,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/control-center.e2e.ts",
+                  "line": 7,
+                  "column": 47
+                }
+              },
+              {
+                "id": "01a20b9a-d4b7-72c2-8385-3b6d13f4ee03:2",
+                "index": 2,
+                "kind": "screen",
+                "api": "screen.scrollUntilVisible",
+                "label": "getByText(\"Quality\").first()",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:31.957Z",
+                "durationMs": 1197,
+                "events": [],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Mac mini",
+                  "nodes": 65,
+                  "since": 1,
+                  "changes": [
+                    "added button \"Sheet Grabber\" value=\"Expanded\"",
+                    "added button \"Quality, Auto\"",
+                    "added text \"Auto\"",
+                    "added text \"Quality\"",
+                    "added tablist",
+                    "added tab \"Retina\" [selected]",
+                    "added tab \"Standard\"",
+                    "added listitem",
+                    "added tablist",
+                    "added tab \"60 fps\"",
+                    "added tab \"120 fps\" [selected]",
+                    "added listitem"
+                  ],
+                  "more": 57
+                },
+                "source": {
+                  "file": "tests/control-center.e2e.ts",
+                  "line": 8,
+                  "column": 16
+                }
+              },
+              {
+                "id": "01a20b9a-d4b7-72c2-8385-3b6d13f4ee03:3",
+                "index": 3,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByRole(\"button\", name: \"Quality, Auto\")",
+                "status": "failed",
+                "startedAt": "2026-11-24T03:30:33.155Z",
+                "durationMs": 5032,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:30:33.155Z",
+                    "durationMs": 5032,
+                    "status": "failed",
+                    "count": 24,
+                    "detail": "no node (0 matches) x24"
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Mac mini",
+                  "nodes": 48,
+                  "since": 2,
+                  "changes": [
+                    "added text \"Turns a finger’s drag and the trackpad’s two-finger scroll around.\"",
+                    "added text \"Three fingers on the trackpad or over the stream.\"",
+                    "added text \"Hides Sill’s controls, so only the picture shows. Swipe in from the left edge to bring them back.\"",
+                    "added button \"Take the Tour\"",
+                    "added text \"A short tour of Sill’s controls on this iPhone.\"",
+                    "added button \"Disconnect from Mac mini\"",
+                    "added other \"Vertical scroll bar, 3 pages\" value=\"100%\"",
+                    "added other \"Vertical scroll bar, 3 pages\" value=\"100%\"",
+                    "removed listitem",
+                    "removed button \"Quality, Auto\"",
+                    "removed text \"Auto\"",
+                    "removed text \"Quality\""
+                  ],
+                  "more": 21
+                },
+                "source": {
+                  "file": "tests/control-center.e2e.ts",
+                  "line": 9,
+                  "column": 71
+                },
+                "error": {
+                  "category": "test",
+                  "code": "ASSERTION_FAILED",
+                  "message": "expect.toBeVisible failed\nlocator: getByRole(\"button\", name: \"Quality, Auto\")\nexpected: visible\nobserved: no node (match count 0)",
+                  "retryable": false,
+                  "details": {
+                    "locator": "getByRole(\"button\", name: \"Quality, Auto\")",
+                    "expected": "visible",
+                    "observed": "no node",
+                    "matches": 0
+                  },
+                  "source": {
+                    "file": "tests/control-center.e2e.ts",
+                    "line": 9,
+                    "column": 3
+                  }
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "1808922be2125668d6e2fd637bf8b1174e153d75979d8dc20eb9ea14e3484fbc",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-looking",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "gallery: connect-looking"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "7b303fe22d3512db26f1e1a63a6dcbbf43ea4e70d8ebbcbd50f4bf7beb76566d",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-methods",
+        "kind": "test",
+        "declarationIndex": 1,
+        "titlePath": [
+          "gallery: connect-methods"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "6d513cf3f14e8fea0d547792ac71b57dff10cade993923fb6bd968dd31ad0be5",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-denied",
+        "kind": "test",
+        "declarationIndex": 2,
+        "titlePath": [
+          "gallery: connect-denied"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "2fbd8fd59867a60612bfc634056e65376ea5e6ede120aaa5018cf5b81069c1dc",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-error-update",
+        "kind": "test",
+        "declarationIndex": 3,
+        "titlePath": [
+          "gallery: connect-error-update"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "487bd3afc21dd2577be39805d4524394d1718a255e2e96d0f657a2390426666a",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-error-remotefail",
+        "kind": "test",
+        "declarationIndex": 4,
+        "titlePath": [
+          "gallery: connect-error-remotefail"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "459224c20af062871a52c0b1acefb0653a80c1261aec17e36b5a5312390ca00f",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-chrome-bottom",
+        "kind": "test",
+        "declarationIndex": 5,
+        "titlePath": [
+          "gallery: pad-chrome-bottom"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "4bf0c48b67bd3a3b94b4759aaedbaea92e5ca99d631e83627cc16431aefbd31d",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-chrome-trailing-aa",
+        "kind": "test",
+        "declarationIndex": 6,
+        "titlePath": [
+          "gallery: pad-chrome-trailing-aa"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "c2f3eb53f26b4127173f0619a4ff2e8f9c8a4f6240120f1b3f7e610b476ce240",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-chrome-orb",
+        "kind": "test",
+        "declarationIndex": 7,
+        "titlePath": [
+          "gallery: pad-chrome-orb"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "f3c550114ca944bdb0252e455fe04802c7602f9672673677c3900b27e04e5ccc",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-chrome-desktop-aa-disabled",
+        "kind": "test",
+        "declarationIndex": 8,
+        "titlePath": [
+          "gallery: pad-chrome-desktop-aa-disabled"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "1b9dfdebdc7fdfa243bf31aed7795711147831819e34d0f98dd384dfaea0000d",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-chrome-empty-none",
+        "kind": "test",
+        "declarationIndex": 9,
+        "titlePath": [
+          "gallery: pad-chrome-empty-none"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "edb35c4320ed8dbd50e199e9fcf64e409f3c727b0bd57799cf11de6e3e543896",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20pad-fullscreen-hint",
+        "kind": "test",
+        "declarationIndex": 10,
+        "titlePath": [
+          "gallery: pad-fullscreen-hint"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "80e070daf0bfc580f6ae0f3e8c74a0cb463d4f2b037349b7496dbc7139a18fad",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20switcher-typical",
+        "kind": "test",
+        "declarationIndex": 11,
+        "titlePath": [
+          "gallery: switcher-typical"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "3494cfe0f2cd828831c81ff354611cc4f45c4cdc0a4318bb33c8fdc4cababf6d",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20controls-typical",
+        "kind": "test",
+        "declarationIndex": 12,
+        "titlePath": [
+          "gallery: controls-typical"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "39d1a6cd102808aa6b233d5a1cd00125135e5353f99ee7bedeca8183c7ab1a21",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20connect-methods-xl",
+        "kind": "test",
+        "declarationIndex": 13,
+        "titlePath": [
+          "gallery: connect-methods-xl"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad-xl"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "198624fd21e954e0f3322caa66b9677017473edf9ce10097556744c38be77f95",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20controls-typical-xl",
+        "kind": "test",
+        "declarationIndex": 14,
+        "titlePath": [
+          "gallery: controls-typical-xl"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-ipad-xl"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "f532efe083e7686e6aa36eddc1f5d8bfe79370b9bc543125e6c8172848f7a0ab",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20phone-pencilkit-bottom",
+        "kind": "test",
+        "declarationIndex": 15,
+        "titlePath": [
+          "gallery: phone-pencilkit-bottom"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "58e7b5233b7b190ccf156efe1a0ce8a454f96108e4f463d02d37a5a0c16f388e",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20phone-pencilkit-orb",
+        "kind": "test",
+        "declarationIndex": 16,
+        "titlePath": [
+          "gallery: phone-pencilkit-orb"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "efedadb82b048d4be9df2f8baa9c7a0e6673d3740d4a69d9d398b7a55fa1f65a",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20phone-control-deck",
+        "kind": "test",
+        "declarationIndex": 17,
+        "titlePath": [
+          "gallery: phone-control-deck"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "cf85b687a98eacfc0858a867a823a453cdc43e13d70cc1c9ba9b8298c7c013a1",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20phone-switcher",
+        "kind": "test",
+        "declarationIndex": 18,
+        "titlePath": [
+          "gallery: phone-switcher"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "4822846ba9bf3d0c70aea04fdbb264c2d796f8353c726c0d999e7a3ec58f2399",
+        "testId": "tests/gallery.e2e.ts::gallery%3A%20phone-controls-auto",
+        "kind": "test",
+        "declarationIndex": 19,
+        "titlePath": [
+          "gallery: phone-controls-auto"
+        ],
+        "file": "tests/gallery.e2e.ts",
+        "source": {
+          "file": "tests/gallery.e2e.ts",
+          "line": 72,
+          "column": 3
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "gallery-phone"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "2db605ea0f371bb9486257986312b92e4de51cb984afbbd68d96bc314bdd3ef5",
+        "testId": "tests/pad-pencilkit-chrome.e2e.ts::the%20iPad%20dock%3A%20text%20size%2C%20a%20drag%20to%20the%20trailing%20edge%2C%20the%20corner%20orb%2C%20the%20trackpad",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "the iPad dock: text size, a drag to the trailing edge, the corner orb, the trackpad"
+        ],
+        "file": "tests/pad-pencilkit-chrome.e2e.ts",
+        "source": {
+          "file": "tests/pad-pencilkit-chrome.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "b2c0b85e8d27d3ee3ac9896ad3882c8490a8a519b4901984cb451ff0aac5cdc0",
+        "testId": "tests/phone-workspace.e2e.ts::the%20iPhone%20dock%3A%20the%20orb%2C%20the%20Control%20Deck%2C%20Control%20Center%20and%20the%20Mac%20menus",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "the iPhone dock: the orb, the Control Deck, Control Center and the Mac menus"
+        ],
+        "file": "tests/phone-workspace.e2e.ts",
+        "source": {
+          "file": "tests/phone-workspace.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "phone"
+        ],
+        "selected": true,
+        "status": "passed",
+        "attempts": [
+          {
+            "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9",
+            "index": 0,
+            "status": "passed",
+            "startedAt": "2026-11-24T03:30:40.974Z",
+            "durationMs": 24681,
+            "artifacts": [
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:artifact:0",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b9b-0ece-7b15-8339-2d48beae06d9:6"
+                },
+                "path": "phone-workspace-the-iphone-dock-the-orb-the-b2c0b85e8d27d3ee/attempt-1/screenshots/001-01-phone-pencilkit-bottom.png",
+                "size": 11864,
+                "sha256": "782b52cf52eb3216de083a4c59e5fa700173815cf0d10b921f8fc9af6c6237c5"
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:artifact:1",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b9b-0ece-7b15-8339-2d48beae06d9:13"
+                },
+                "path": "phone-workspace-the-iphone-dock-the-orb-the-b2c0b85e8d27d3ee/attempt-1/screenshots/002-03-phone-control-deck.png",
+                "size": 19026,
+                "sha256": "e8ee3731d3bbcc443cac05d849cc8a4adb34c7d50bd660f17bbe834e7964ec99"
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:artifact:2",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b9b-0ece-7b15-8339-2d48beae06d9:18"
+                },
+                "path": "phone-workspace-the-iphone-dock-the-orb-the-b2c0b85e8d27d3ee/attempt-1/screenshots/003-04-phone-control-center.png",
+                "size": 30995,
+                "sha256": "82ec096b70af600196544f4b6f02a1b738729bac770fe47abfb4fefadc983315"
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:artifact:3",
+                "kind": "screenshot",
+                "mediaType": "image/png",
+                "redaction": "complete",
+                "producer": {
+                  "kind": "step",
+                  "stepId": "01a20b9b-0ece-7b15-8339-2d48beae06d9:21"
+                },
+                "path": "phone-workspace-the-iphone-dock-the-orb-the-b2c0b85e8d27d3ee/attempt-1/screenshots/004-05-phone-mac-menus.png",
+                "size": 26948,
+                "sha256": "3a1f8bca4e53e483d26b1b685c4cf1acc309e3153b47f5d0e3c45a5632e62b15"
+              }
+            ],
+            "secondaryErrors": [],
+            "cleanup": "complete",
+            "environment": {
+              "platform": "ios",
+              "device": "arena-c2 iPhone"
+            },
+            "steps": [
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:0",
+                "index": 0,
+                "kind": "resource",
+                "api": "device.openApp",
+                "label": "com.uxheavy.sill",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:44.586Z",
+                "durationMs": 4544,
+                "events": [],
+                "artifacts": [],
+                "source": {
+                  "file": "tests/launch.ts",
+                  "line": 7,
+                  "column": 16
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:1",
+                "index": 1,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Apps\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:49.131Z",
+                "durationMs": 320,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:30:49.131Z",
+                    "durationMs": 320,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 9,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 8,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:2",
+                "index": 2,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Keyboard\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:49.452Z",
+                "durationMs": 46,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:30:49.452Z",
+                    "durationMs": 46,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 9,
+                  "since": 1,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 8,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:3",
+                "index": 3,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Trackpad\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:49.498Z",
+                "durationMs": 47,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:30:49.498Z",
+                    "durationMs": 47,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 9,
+                  "since": 2,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 8,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:4",
+                "index": 4,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Controls\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:49.545Z",
+                "durationMs": 49,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:30:49.545Z",
+                    "durationMs": 49,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 9,
+                  "since": 3,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 8,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:5",
+                "index": 5,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Minimize controls\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:49.595Z",
+                "durationMs": 46,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:30:49.595Z",
+                    "durationMs": 46,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 9,
+                  "since": 4,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 8,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:6",
+                "index": 6,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "01-phone-pencilkit-bottom",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:49.642Z",
+                "durationMs": 8414,
+                "events": [],
+                "artifacts": [
+                  "01a20b9b-0ece-7b15-8339-2d48beae06d9:artifact:0"
+                ],
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 10,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:7",
+                "index": 7,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Minimize controls\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:58.056Z",
+                "durationMs": 466,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T03:30:58.056Z",
+                    "durationMs": 465,
+                    "status": "passed",
+                    "detail": "tap button \"Minimize controls\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 9,
+                  "since": 5,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 12,
+                  "column": 47
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:8",
+                "index": 8,
+                "kind": "assertion",
+                "api": "expect.toBeHidden",
+                "label": "getByText(\"Apps\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:58.522Z",
+                "durationMs": 42,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:30:58.522Z",
+                    "durationMs": 42,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 5,
+                  "since": 7,
+                  "changes": [
+                    "added button \"Controls\"",
+                    "removed button \"Apps\"",
+                    "removed button \"Keyboard\" testid=\"keyboard\"",
+                    "removed button \"Trackpad\" testid=\"rectangle.and.hand.point.up.left\"",
+                    "removed button \"Controls\" testid=\"slider.horizontal.3\"",
+                    "removed button \"Minimize controls\" testid=\"arrow.down.right.and.arrow.up.left\""
+                  ]
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 13,
+                  "column": 42
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:9",
+                "index": 9,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Controls\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:58.564Z",
+                "durationMs": 873,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T03:30:58.564Z",
+                    "durationMs": 873,
+                    "status": "passed",
+                    "detail": "tap button \"Controls\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 5,
+                  "since": 8,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 14,
+                  "column": 38
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:10",
+                "index": 10,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Apps\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:59.437Z",
+                "durationMs": 49,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:30:59.437Z",
+                    "durationMs": 49,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 9,
+                  "since": 9,
+                  "changes": [
+                    "added button \"Apps\"",
+                    "added button \"Keyboard\" testid=\"keyboard\"",
+                    "added button \"Trackpad\" testid=\"rectangle.and.hand.point.up.left\"",
+                    "added button \"Controls\" testid=\"slider.horizontal.3\"",
+                    "added button \"Minimize controls\" testid=\"arrow.down.right.and.arrow.up.left\"",
+                    "removed button \"Controls\""
+                  ]
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 15,
+                  "column": 42
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:11",
+                "index": 11,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Trackpad\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:30:59.487Z",
+                "durationMs": 909,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T03:30:59.487Z",
+                    "durationMs": 909,
+                    "status": "passed",
+                    "detail": "tap button \"Trackpad\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 9,
+                  "since": 10,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 17,
+                  "column": 38
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:12",
+                "index": 12,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Stow trackpad\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:00.397Z",
+                "durationMs": 76,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:31:00.397Z",
+                    "durationMs": 76,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 22,
+                  "since": 11,
+                  "changes": [
+                    "added button \"Escape\"",
+                    "added button \"Tab\"",
+                    "added button \"Control, hold for the next key\"",
+                    "added image \"Control\" testid=\"control\"",
+                    "added button \"Option, hold for the next key\"",
+                    "added image \"Option\" testid=\"option\"",
+                    "added button \"Command, hold for the next key\"",
+                    "added image \"Command\" testid=\"command\"",
+                    "added button \"Shift, hold for the next key\"",
+                    "added image \"Shift\" testid=\"shift\"",
+                    "added button \"Arrow joystick\"",
+                    "added image \"Go Up\" testid=\"chevron.up\""
+                  ],
+                  "more": 11
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 18,
+                  "column": 51
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:13",
+                "index": 13,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "03-phone-control-deck",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:00.473Z",
+                "durationMs": 686,
+                "events": [],
+                "artifacts": [
+                  "01a20b9b-0ece-7b15-8339-2d48beae06d9:artifact:1"
+                ],
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 19,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:14",
+                "index": 14,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Stow trackpad\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:01.159Z",
+                "durationMs": 452,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T03:31:01.159Z",
+                    "durationMs": 452,
+                    "status": "passed",
+                    "detail": "tap button \"Stow trackpad\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 22,
+                  "since": 12,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 20,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:15",
+                "index": 15,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Minimize controls\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:01.612Z",
+                "durationMs": 70,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:31:01.612Z",
+                    "durationMs": 69,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 9,
+                  "since": 14,
+                  "changes": [
+                    "added button \"Apps\"",
+                    "added button \"Keyboard\" testid=\"keyboard\"",
+                    "added button \"Trackpad\" testid=\"rectangle.and.hand.point.up.left\"",
+                    "added button \"Controls\" testid=\"slider.horizontal.3\"",
+                    "added button \"Minimize controls\" testid=\"arrow.down.right.and.arrow.up.left\"",
+                    "removed button \"Escape\"",
+                    "removed button \"Tab\"",
+                    "removed button \"Control, hold for the next key\"",
+                    "removed image \"Control\" testid=\"control\"",
+                    "removed button \"Option, hold for the next key\"",
+                    "removed image \"Option\" testid=\"option\"",
+                    "removed button \"Command, hold for the next key\""
+                  ],
+                  "more": 11
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 21,
+                  "column": 55
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:16",
+                "index": 16,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Controls\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:01.682Z",
+                "durationMs": 854,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T03:31:01.682Z",
+                    "durationMs": 854,
+                    "status": "passed",
+                    "detail": "tap button \"Controls\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 9,
+                  "since": 15,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 23,
+                  "column": 38
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:17",
+                "index": 17,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Full Screen\").first()",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:02.536Z",
+                "durationMs": 429,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:31:02.536Z",
+                    "durationMs": 429,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Mac mini",
+                  "nodes": 34,
+                  "since": 16,
+                  "changes": [
+                    "added other \"dismiss popup\" testid=\"PopoverDismissRegion\"",
+                    "added button \"Sheet Grabber\" value=\"Half screen\"",
+                    "added navigation testid=\"Mac mini\"",
+                    "added text \"Mac mini\"",
+                    "added other \"Mac mini\" value=\"Streaming 2880 by 1800, 60 frames per second, 15 megabits per second, connected over Wi-Fi\"",
+                    "added text \"Mac mini\"",
+                    "added text \"2880×1800 · 60 fps · 15 Mbps · Wi‑Fi\" text=\"2880×1800 · 60 fps · 15 Mbps · Wi‑Fi\"",
+                    "added button \"Done\"",
+                    "added collection-view",
+                    "added listitem",
+                    "added button \"Full Screen\"",
+                    "added image \"Enter Full Screen\" testid=\"arrow.up.left.and.arrow.down.right\""
+                  ],
+                  "more": 27
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 24,
+                  "column": 57
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:18",
+                "index": 18,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "04-phone-control-center",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:02.966Z",
+                "durationMs": 677,
+                "events": [],
+                "artifacts": [
+                  "01a20b9b-0ece-7b15-8339-2d48beae06d9:artifact:2"
+                ],
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 25,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:19",
+                "index": 19,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Menus\").first()",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:03.643Z",
+                "durationMs": 517,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T03:31:03.643Z",
+                    "durationMs": 517,
+                    "status": "passed",
+                    "detail": "tap text \"Menus\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Mac mini",
+                  "nodes": 34,
+                  "since": 17,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 26,
+                  "column": 43
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:20",
+                "index": 20,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"File\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:04.161Z",
+                "durationMs": 114,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:31:04.161Z",
+                    "durationMs": 114,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Code",
+                  "nodes": 50,
+                  "since": 19,
+                  "changes": [
+                    "added navigation testid=\"Code\"",
+                    "added button \"Controls\"",
+                    "added text \"Code\"",
+                    "added button \"Code\"",
+                    "added image \"Selected\" testid=\"checkmark\" [selected]",
+                    "added text \"Code\"",
+                    "added image \"Forward\" testid=\"chevron.right\"",
+                    "added button \"File\"",
+                    "added image \"Selected\" testid=\"checkmark\" [selected]",
+                    "added text \"File\"",
+                    "added image \"Forward\" testid=\"chevron.right\"",
+                    "added listitem"
+                  ],
+                  "more": 54
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 27,
+                  "column": 42
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:21",
+                "index": 21,
+                "kind": "app",
+                "api": "app.screenshot",
+                "label": "05-phone-mac-menus",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:04.276Z",
+                "durationMs": 713,
+                "events": [],
+                "artifacts": [
+                  "01a20b9b-0ece-7b15-8339-2d48beae06d9:artifact:3"
+                ],
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 28,
+                  "column": 13
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:22",
+                "index": 22,
+                "kind": "locator",
+                "api": "locator.tap",
+                "label": "getByText(\"Done\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:04.990Z",
+                "durationMs": 575,
+                "events": [
+                  {
+                    "kind": "engine",
+                    "name": "tap",
+                    "startedAt": "2026-11-24T03:31:04.990Z",
+                    "durationMs": 575,
+                    "status": "passed",
+                    "detail": "tap button \"Done\""
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill / Code",
+                  "nodes": 50,
+                  "since": 20,
+                  "changes": []
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 29,
+                  "column": 34
+                }
+              },
+              {
+                "id": "01a20b9b-0ece-7b15-8339-2d48beae06d9:23",
+                "index": 23,
+                "kind": "assertion",
+                "api": "expect.toBeVisible",
+                "label": "getByText(\"Apps\")",
+                "status": "passed",
+                "startedAt": "2026-11-24T03:31:05.566Z",
+                "durationMs": 89,
+                "events": [
+                  {
+                    "kind": "poll",
+                    "name": "expect",
+                    "startedAt": "2026-11-24T03:31:05.566Z",
+                    "durationMs": 89,
+                    "status": "passed",
+                    "count": 1
+                  }
+                ],
+                "artifacts": [],
+                "screen": {
+                  "location": "com.uxheavy.sill",
+                  "nodes": 9,
+                  "since": 22,
+                  "changes": [
+                    "added textbox",
+                    "added button \"Mac mini’s picture. Sill’s controls are hidden.\"",
+                    "added button \"Apps\"",
+                    "added button \"Keyboard\" testid=\"keyboard\"",
+                    "added button \"Trackpad\" testid=\"rectangle.and.hand.point.up.left\"",
+                    "added button \"Controls\" testid=\"slider.horizontal.3\"",
+                    "added button \"Minimize controls\" testid=\"arrow.down.right.and.arrow.up.left\"",
+                    "removed other \"dismiss popup\" testid=\"PopoverDismissRegion\"",
+                    "removed button \"Sheet Grabber\" value=\"Half screen\"",
+                    "removed navigation testid=\"Code\"",
+                    "removed button \"Controls\"",
+                    "removed text \"Code\""
+                  ],
+                  "more": 43
+                },
+                "source": {
+                  "file": "tests/phone-workspace.e2e.ts",
+                  "line": 30,
+                  "column": 42
+                }
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "9acfd6a7ac91610749a2200390859cb2cee4b159f032d3b4694742244b96dbda",
+        "testId": "tests/smoke.e2e.ts::the%20iPad%20chrome%20launches%20with%20its%20controls",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "the iPad chrome launches with its controls"
+        ],
+        "file": "tests/smoke.e2e.ts",
+        "source": {
+          "file": "tests/smoke.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      },
+      {
+        "id": "319c60bbc78cd869a102e4de66c77a7907754db852f4e4d3264f8ad4aa0f818d",
+        "testId": "tests/switcher-and-controls.e2e.ts::the%20switcher%20picks%20the%20Desktop%2C%20then%20Control%20Center%20opens",
+        "kind": "test",
+        "declarationIndex": 0,
+        "titlePath": [
+          "the switcher picks the Desktop, then Control Center opens"
+        ],
+        "file": "tests/switcher-and-controls.e2e.ts",
+        "source": {
+          "file": "tests/switcher-and-controls.e2e.ts",
+          "line": 5,
+          "column": 1
+        },
+        "targetId": "phone",
+        "platform": "ios",
+        "agent": "default",
+        "repeat": 0,
+        "tags": [
+          "ipad"
+        ],
+        "selected": false,
+        "status": "skipped",
+        "skip": {
+          "cause": "filtered",
+          "reason": "tag filter did not match"
+        },
+        "attempts": []
+      }
+    ],
+    "errors": [],
+    "summary": {
+      "discovered": 26,
+      "selected": 2,
+      "executed": 2,
+      "passed": 1,
+      "failed": 1,
+      "interrupted": 0,
+      "flaky": 0,
+      "skipped": 0
+    },
+    "limits": {
+      "maxAgentContextBytes": 16384,
+      "maxLedgerBytes": 8192,
+      "maxObservationBytes": 262144,
+      "maxEventsPerStep": 1000,
+      "maxModelTokensPerCall": 64000
+    },
+    "usage": {
+      "discoveredResults": 26,
+      "maxAgentContextBytes": 0,
+      "maxLedgerBytes": 0,
+      "maxObservationBytes": 0,
+      "artifactBytes": 164011,
+      "downloads": 0,
+      "events": 21,
+      "modelTokens": 0,
+      "maxModelCallsInStep": 0,
+      "maxActionStepsInStep": 0
+    }
+  }
+}

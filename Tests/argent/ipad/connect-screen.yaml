@@ -1,0 +1,35 @@
+version: 1
+requires:
+  platform: ios
+steps:
+  - echo: Connect screen opens and closes Add a Mac
+  - launch:
+      ios:
+        app: com.uxheavy.sill
+        args: ["-SillLayout", "834x1194", "-SillConnectCase", "methods"]
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Add a Mac, identifier: plus }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { text: Reconnect automatically }
+      timeoutMs: 5000
+  - await: { idle: true }
+  - echo: Tap Add a Mac toolbar button
+  - tap: { x: 0.962, y: 0.033 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Cancel }
+      timeoutMs: 5000
+  - await: { idle: true }
+  - echo: Tap Cancel in Add a Mac sheet
+  - tap: { x: 0.216, y: 0.254 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { text: Reconnect automatically }
+      timeoutMs: 5000

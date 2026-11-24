@@ -1,0 +1,76 @@
+version: 1
+requires:
+  platform: ios
+steps:
+  - echo: iPad dock - text size, drag to trailing edge, corner orb, floating trackpad
+  - launch:
+      ios:
+        app: com.uxheavy.sill
+        args: ["-SillLayout", "834x1194"]
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Apps, identifier: square.grid.2x2 }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Minimize controls }
+      timeoutMs: 5000
+
+  - echo: Tap Text size on bottom dock and pick 1 times
+  - tap: { x: 0.525, y: 0.962 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Off }
+      timeoutMs: 5000
+  - tap: { x: 0.525, y: 0.919 }
+  - tap: { x: 0.525, y: 0.962 }
+
+  - echo: Drag dock from Minimize controls to trailing edge (820, 600 pt -> 0.983, 0.496)
+  - swipe:
+      from: { x: 0.716, y: 0.962 }
+      to: { x: 0.983, y: 0.496 }
+      duration: 500
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Apps, identifier: square.grid.2x2 }
+      timeoutMs: 5000
+  - echo: Open and close Text size on trailing vertical rail
+  - tap: { x: 0.957, y: 0.526 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Off }
+      timeoutMs: 5000
+  - tap: { x: 0.957, y: 0.526 }
+
+  - echo: Minimize to corner orb and expand back
+  - tap: { x: 0.957, y: 0.658 }
+  - tool: await-ui-element
+    args:
+      condition: hidden
+      selector: { role: AXButton, text: Apps, identifier: square.grid.2x2 }
+      timeoutMs: 5000
+  - tap: { x: 0.957, y: 0.962 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Apps, identifier: square.grid.2x2 }
+      timeoutMs: 5000
+
+  - echo: Open and close floating trackpad
+  - tap: { x: 0.957, y: 0.592 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { text: Move the trackpad }
+      timeoutMs: 5000
+  - tap: { x: 0.882, y: 0.656 }
+  - tool: await-ui-element
+    args:
+      condition: hidden
+      selector: { text: Move the trackpad }
+      timeoutMs: 5000

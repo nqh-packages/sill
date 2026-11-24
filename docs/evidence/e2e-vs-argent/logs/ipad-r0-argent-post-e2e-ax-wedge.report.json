@@ -1,0 +1,1284 @@
+{
+  "ok": false,
+  "total": 4,
+  "passed": 0,
+  "failed": 4,
+  "skipped": 0,
+  "durationMs": 30167,
+  "e2eTests": [
+    {
+      "path": "connect-screen.yaml",
+      "status": "fail",
+      "report": {
+        "e2eTest": "connect-screen",
+        "flow": "connect-screen",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": false,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 7,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "message": "Connect screen opens and closes Add a Mac",
+            "durationMs": 0,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "durationMs": 2530,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "connect-screen",
+            "status": "fail",
+            "tool": "await-ui-element",
+            "reason": "await-ui-element condition not judged (unreadable): no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+            "result": {
+              "success": false,
+              "elapsed": 5001,
+              "note": "no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+              "cause": "unreadable"
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Add a Mac",
+                "identifier": "plus"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 5002,
+            "artifacts": {
+              "screen": "/tmp/argent-ipad-r3/connect-screen/step-2-screen.png"
+            },
+            "flow": "connect-screen"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 4,
+            "kind": "idle",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 5,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "message": "Tap Add a Mac toolbar button",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 6,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "target": "(0.962, 0.033)",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 7,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 8,
+            "kind": "idle",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 9,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "message": "Tap Cancel in Add a Mac sheet",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 10,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "target": "(0.216, 0.254)",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 11,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "flow": "connect-screen"
+          }
+        ],
+        "startedAt": 1795488029105,
+        "durationMs": 8188
+      }
+    },
+    {
+      "path": "pad-pencilkit-chrome.yaml",
+      "status": "fail",
+      "report": {
+        "e2eTest": "pad-pencilkit-chrome",
+        "flow": "pad-pencilkit-chrome",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": false,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 18,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "iPad dock - text size, drag to trailing edge, corner orb, floating trackpad",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "durationMs": 2005,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "fail",
+            "tool": "await-ui-element",
+            "reason": "await-ui-element condition not judged (unreadable): no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+            "result": {
+              "success": false,
+              "elapsed": 5004,
+              "note": "no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+              "cause": "unreadable"
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 5005,
+            "artifacts": {
+              "screen": "/tmp/argent-ipad-r3/pad-pencilkit-chrome/step-2-screen.png"
+            },
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 4,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "message": "Tap Text size on bottom dock and pick 1 times",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 5,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.962)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 7,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.919)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 8,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.962)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 9,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "message": "Drag dock from Minimize controls to trailing edge (820, 600 pt -> 0.983, 0.496)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 10,
+            "kind": "swipe",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "to (0.983, 0.496) from (0.716, 0.962)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 11,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 12,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "message": "Open and close Text size on trailing vertical rail",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 13,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.526)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 14,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 15,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.526)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 16,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "message": "Minimize to corner orb and expand back",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 17,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.658)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 18,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 19,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.962)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 20,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 21,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "message": "Open and close floating trackpad",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 22,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.592)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 23,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 24,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.882, 0.656)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 25,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          }
+        ],
+        "startedAt": 1795488037316,
+        "durationMs": 7410
+      }
+    },
+    {
+      "path": "smoke.yaml",
+      "status": "fail",
+      "report": {
+        "e2eTest": "smoke",
+        "flow": "smoke",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": false,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 5,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "message": "iPad chrome launches with its controls",
+            "durationMs": 0,
+            "flow": "smoke"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "durationMs": 1885,
+            "flow": "smoke"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "fail",
+            "tool": "await-ui-element",
+            "reason": "await-ui-element condition not judged (unreadable): no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+            "result": {
+              "success": false,
+              "elapsed": 5004,
+              "note": "no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+              "cause": "unreadable"
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 5004,
+            "artifacts": {
+              "screen": "/tmp/argent-ipad-r3/smoke/step-2-screen.png"
+            },
+            "flow": "smoke"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "smoke",
+            "flow": "smoke"
+          },
+          {
+            "index": 4,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "smoke",
+            "flow": "smoke"
+          },
+          {
+            "index": 5,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "smoke",
+            "flow": "smoke"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "smoke",
+            "flow": "smoke"
+          },
+          {
+            "index": 7,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "smoke",
+            "flow": "smoke"
+          }
+        ],
+        "startedAt": 1795488044736,
+        "durationMs": 7257
+      }
+    },
+    {
+      "path": "switcher-and-controls.yaml",
+      "status": "fail",
+      "report": {
+        "e2eTest": "switcher-and-controls",
+        "flow": "switcher-and-controls",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": false,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 10,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "message": "Switcher picks Desktop, then Control Center opens",
+            "durationMs": 1,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "durationMs": 1863,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "switcher-and-controls",
+            "status": "fail",
+            "tool": "await-ui-element",
+            "reason": "await-ui-element condition not judged (unreadable): no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+            "result": {
+              "success": false,
+              "elapsed": 5003,
+              "note": "no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+              "cause": "unreadable"
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 5005,
+            "artifacts": {
+              "screen": "/tmp/argent-ipad-r3/switcher-and-controls/step-2-screen.png"
+            },
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 3,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "message": "Tap Apps to open Unified Switcher (triggers known 100% CPU product bug)",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 4,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.429, 0.962)",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 5,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 7,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "message": "Pick Desktop card and return to stream controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 8,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.5, 0.6)",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 9,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 10,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "message": "Open Control Center and scroll to Disconnect from Mac mini",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 11,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.668, 0.962)",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 12,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 13,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 14,
+            "kind": "swipe",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "up",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 15,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          }
+        ],
+        "startedAt": 1795488052004,
+        "durationMs": 7230
+      }
+    }
+  ],
+  "flows": [
+    {
+      "path": "connect-screen.yaml",
+      "status": "fail",
+      "report": {
+        "e2eTest": "connect-screen",
+        "flow": "connect-screen",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": false,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 7,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "message": "Connect screen opens and closes Add a Mac",
+            "durationMs": 0,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "connect-screen",
+            "status": "pass",
+            "durationMs": 2530,
+            "flow": "connect-screen"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "connect-screen",
+            "status": "fail",
+            "tool": "await-ui-element",
+            "reason": "await-ui-element condition not judged (unreadable): no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+            "result": {
+              "success": false,
+              "elapsed": 5001,
+              "note": "no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+              "cause": "unreadable"
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Add a Mac",
+                "identifier": "plus"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 5002,
+            "artifacts": {
+              "screen": "/tmp/argent-ipad-r3/connect-screen/step-2-screen.png"
+            },
+            "flow": "connect-screen"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 4,
+            "kind": "idle",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 5,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "message": "Tap Add a Mac toolbar button",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 6,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "target": "(0.962, 0.033)",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 7,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 8,
+            "kind": "idle",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 9,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "message": "Tap Cancel in Add a Mac sheet",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 10,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "target": "(0.216, 0.254)",
+            "flow": "connect-screen"
+          },
+          {
+            "index": 11,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "connect-screen",
+            "flow": "connect-screen"
+          }
+        ],
+        "startedAt": 1795488029105,
+        "durationMs": 8188
+      }
+    },
+    {
+      "path": "pad-pencilkit-chrome.yaml",
+      "status": "fail",
+      "report": {
+        "e2eTest": "pad-pencilkit-chrome",
+        "flow": "pad-pencilkit-chrome",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": false,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 18,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "message": "iPad dock - text size, drag to trailing edge, corner orb, floating trackpad",
+            "durationMs": 0,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "pass",
+            "durationMs": 2005,
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "pad-pencilkit-chrome",
+            "status": "fail",
+            "tool": "await-ui-element",
+            "reason": "await-ui-element condition not judged (unreadable): no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+            "result": {
+              "success": false,
+              "elapsed": 5004,
+              "note": "no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+              "cause": "unreadable"
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 5005,
+            "artifacts": {
+              "screen": "/tmp/argent-ipad-r3/pad-pencilkit-chrome/step-2-screen.png"
+            },
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 4,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "message": "Tap Text size on bottom dock and pick 1 times",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 5,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.962)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 7,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.919)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 8,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.525, 0.962)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 9,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "message": "Drag dock from Minimize controls to trailing edge (820, 600 pt -> 0.983, 0.496)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 10,
+            "kind": "swipe",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "to (0.983, 0.496) from (0.716, 0.962)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 11,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 12,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "message": "Open and close Text size on trailing vertical rail",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 13,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.526)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 14,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 15,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.526)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 16,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "message": "Minimize to corner orb and expand back",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 17,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.658)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 18,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 19,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.962)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 20,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 21,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "message": "Open and close floating trackpad",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 22,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.957, 0.592)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 23,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 24,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "target": "(0.882, 0.656)",
+            "flow": "pad-pencilkit-chrome"
+          },
+          {
+            "index": 25,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "pad-pencilkit-chrome",
+            "flow": "pad-pencilkit-chrome"
+          }
+        ],
+        "startedAt": 1795488037316,
+        "durationMs": 7410
+      }
+    },
+    {
+      "path": "smoke.yaml",
+      "status": "fail",
+      "report": {
+        "e2eTest": "smoke",
+        "flow": "smoke",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": false,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 5,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "message": "iPad chrome launches with its controls",
+            "durationMs": 0,
+            "flow": "smoke"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "smoke",
+            "status": "pass",
+            "durationMs": 1885,
+            "flow": "smoke"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "smoke",
+            "status": "fail",
+            "tool": "await-ui-element",
+            "reason": "await-ui-element condition not judged (unreadable): no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+            "result": {
+              "success": false,
+              "elapsed": 5004,
+              "note": "no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+              "cause": "unreadable"
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 5004,
+            "artifacts": {
+              "screen": "/tmp/argent-ipad-r3/smoke/step-2-screen.png"
+            },
+            "flow": "smoke"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "smoke",
+            "flow": "smoke"
+          },
+          {
+            "index": 4,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "smoke",
+            "flow": "smoke"
+          },
+          {
+            "index": 5,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "smoke",
+            "flow": "smoke"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "smoke",
+            "flow": "smoke"
+          },
+          {
+            "index": 7,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "smoke",
+            "flow": "smoke"
+          }
+        ],
+        "startedAt": 1795488044736,
+        "durationMs": 7257
+      }
+    },
+    {
+      "path": "switcher-and-controls.yaml",
+      "status": "fail",
+      "report": {
+        "e2eTest": "switcher-and-controls",
+        "flow": "switcher-and-controls",
+        "device": "D8F0AADC-F39D-43DE-918F-FFAF7647328B",
+        "executionPrerequisite": "",
+        "ok": false,
+        "passed": 1,
+        "failed": 1,
+        "skipped": 10,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "message": "Switcher picks Desktop, then Control Center opens",
+            "durationMs": 1,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "switcher-and-controls",
+            "status": "pass",
+            "durationMs": 1863,
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "switcher-and-controls",
+            "status": "fail",
+            "tool": "await-ui-element",
+            "reason": "await-ui-element condition not judged (unreadable): no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+            "result": {
+              "success": false,
+              "elapsed": 5003,
+              "note": "no element matched the selector before timeout (The accessibility read returned no elements, and this simulator was not booted through argent, so the pre-boot accessibility settings were never applied. Unless the screen is genuinely blank, call boot-device with force=true to reboot it with those settings — this restarts the simulator)",
+              "cause": "unreadable"
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps",
+                "identifier": "square.grid.2x2"
+              },
+              "timeoutMs": 5000,
+              "udid": "D8F0AADC-F39D-43DE-918F-FFAF7647328B"
+            },
+            "durationMs": 5005,
+            "artifacts": {
+              "screen": "/tmp/argent-ipad-r3/switcher-and-controls/step-2-screen.png"
+            },
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 3,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "message": "Tap Apps to open Unified Switcher (triggers known 100% CPU product bug)",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 4,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.429, 0.962)",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 5,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 7,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "message": "Pick Desktop card and return to stream controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 8,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.5, 0.6)",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 9,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 10,
+            "kind": "echo",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "message": "Open Control Center and scroll to Disconnect from Mac mini",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 11,
+            "kind": "tap",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "(0.668, 0.962)",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 12,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 13,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 14,
+            "kind": "swipe",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "target": "up",
+            "flow": "switcher-and-controls"
+          },
+          {
+            "index": 15,
+            "kind": "tool",
+            "status": "skip",
+            "e2eTest": "switcher-and-controls",
+            "flow": "switcher-and-controls"
+          }
+        ],
+        "startedAt": 1795488052004,
+        "durationMs": 7230
+      }
+    }
+  ]
+}

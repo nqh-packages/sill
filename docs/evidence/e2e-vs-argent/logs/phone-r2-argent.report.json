@@ -1,0 +1,1058 @@
+{
+  "ok": true,
+  "total": 2,
+  "passed": 2,
+  "failed": 0,
+  "skipped": 0,
+  "durationMs": 18683,
+  "e2eTests": [
+    {
+      "path": "control-center.yaml",
+      "status": "pass",
+      "report": {
+        "e2eTest": "control-center",
+        "flow": "control-center",
+        "device": "005A082C-C2F8-4CE5-97A9-531473353CA6",
+        "executionPrerequisite": "",
+        "ok": true,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "message": "Control Center shows Quality as Auto from a Mac that offers it",
+            "durationMs": 0,
+            "flow": "control-center"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "durationMs": 1865,
+            "flow": "control-center"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 2349
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "Streaming"
+              },
+              "timeoutMs": 10000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 2355,
+            "flow": "control-center"
+          },
+          {
+            "index": 3,
+            "kind": "idle",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "durationMs": 1032,
+            "flow": "control-center"
+          },
+          {
+            "index": 4,
+            "kind": "echo",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "message": "Expand Control Center sheet and scroll to Quality row (avoiding Text size slider at y=0.80..0.91)",
+            "durationMs": 0,
+            "flow": "control-center"
+          },
+          {
+            "index": 5,
+            "kind": "swipe",
+            "e2eTest": "control-center",
+            "target": "to (0.5, 0.15) from (0.5, 0.65)",
+            "status": "pass",
+            "durationMs": 1313,
+            "flow": "control-center"
+          },
+          {
+            "index": 6,
+            "kind": "swipe",
+            "e2eTest": "control-center",
+            "target": "to (0.5, 0.25) from (0.5, 0.65)",
+            "status": "pass",
+            "durationMs": 1082,
+            "flow": "control-center"
+          },
+          {
+            "index": 7,
+            "kind": "tool",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 256
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Quality, Auto"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 257,
+            "flow": "control-center"
+          }
+        ],
+        "startedAt": 1795490913088,
+        "durationMs": 8381
+      }
+    },
+    {
+      "path": "phone-workspace.yaml",
+      "status": "pass",
+      "report": {
+        "e2eTest": "phone-workspace",
+        "flow": "phone-workspace",
+        "device": "005A082C-C2F8-4CE5-97A9-531473353CA6",
+        "executionPrerequisite": "",
+        "ok": true,
+        "passed": 22,
+        "failed": 0,
+        "skipped": 0,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "message": "iPhone dock - orb, Control Deck, Control Center, Mac menus",
+            "durationMs": 0,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "durationMs": 1910,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 1091
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 1091,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 30
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Keyboard",
+                "identifier": "keyboard"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 30,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 4,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 30
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Trackpad",
+                "identifier": "rectangle.and.hand.point.up.left"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 31,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 5,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 24
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Controls",
+                "identifier": "slider.horizontal.3"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 25,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 24
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Minimize controls",
+                "identifier": "arrow.down.right.and.arrow.up.left"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 25,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 7,
+            "kind": "echo",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "message": "Minimize to corner orb and expand back",
+            "durationMs": 0,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 8,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.727, 0.957)",
+            "status": "pass",
+            "durationMs": 317,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 9,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 461
+            },
+            "args": {
+              "condition": "hidden",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 463,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 10,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.911, 0.957)",
+            "status": "pass",
+            "durationMs": 315,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 11,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 40
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 41,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 12,
+            "kind": "echo",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "message": "Open and stow Control Deck",
+            "durationMs": 0,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 13,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.528, 0.957)",
+            "status": "pass",
+            "durationMs": 318,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 14,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 171
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Stow trackpad"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 172,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 15,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.92, 0.604)",
+            "status": "pass",
+            "durationMs": 836,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 16,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 56
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Minimize controls"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 56,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 17,
+            "kind": "echo",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "message": "Open Control Center, drill into Mac menus, and dismiss",
+            "durationMs": 0,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 18,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.628, 0.957)",
+            "status": "pass",
+            "durationMs": 841,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 19,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 662
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Full Screen"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 662,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 20,
+            "kind": "idle",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "durationMs": 921,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 21,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.722, 0.743)",
+            "status": "pass",
+            "durationMs": 337,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 22,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 245
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "File"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 245,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 23,
+            "kind": "idle",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "durationMs": 677,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 24,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.854, 0.517)",
+            "status": "pass",
+            "durationMs": 334,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 25,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 220
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 221,
+            "flow": "phone-workspace"
+          }
+        ],
+        "startedAt": 1795490921486,
+        "durationMs": 10250
+      }
+    }
+  ],
+  "flows": [
+    {
+      "path": "control-center.yaml",
+      "status": "pass",
+      "report": {
+        "e2eTest": "control-center",
+        "flow": "control-center",
+        "device": "005A082C-C2F8-4CE5-97A9-531473353CA6",
+        "executionPrerequisite": "",
+        "ok": true,
+        "passed": 6,
+        "failed": 0,
+        "skipped": 0,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "message": "Control Center shows Quality as Auto from a Mac that offers it",
+            "durationMs": 0,
+            "flow": "control-center"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "durationMs": 1865,
+            "flow": "control-center"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 2349
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "Streaming"
+              },
+              "timeoutMs": 10000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 2355,
+            "flow": "control-center"
+          },
+          {
+            "index": 3,
+            "kind": "idle",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "durationMs": 1032,
+            "flow": "control-center"
+          },
+          {
+            "index": 4,
+            "kind": "echo",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "message": "Expand Control Center sheet and scroll to Quality row (avoiding Text size slider at y=0.80..0.91)",
+            "durationMs": 0,
+            "flow": "control-center"
+          },
+          {
+            "index": 5,
+            "kind": "swipe",
+            "e2eTest": "control-center",
+            "target": "to (0.5, 0.15) from (0.5, 0.65)",
+            "status": "pass",
+            "durationMs": 1313,
+            "flow": "control-center"
+          },
+          {
+            "index": 6,
+            "kind": "swipe",
+            "e2eTest": "control-center",
+            "target": "to (0.5, 0.25) from (0.5, 0.65)",
+            "status": "pass",
+            "durationMs": 1082,
+            "flow": "control-center"
+          },
+          {
+            "index": 7,
+            "kind": "tool",
+            "e2eTest": "control-center",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 256
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Quality, Auto"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 257,
+            "flow": "control-center"
+          }
+        ],
+        "startedAt": 1795490913088,
+        "durationMs": 8381
+      }
+    },
+    {
+      "path": "phone-workspace.yaml",
+      "status": "pass",
+      "report": {
+        "e2eTest": "phone-workspace",
+        "flow": "phone-workspace",
+        "device": "005A082C-C2F8-4CE5-97A9-531473353CA6",
+        "executionPrerequisite": "",
+        "ok": true,
+        "passed": 22,
+        "failed": 0,
+        "skipped": 0,
+        "errored": 0,
+        "steps": [
+          {
+            "index": 0,
+            "kind": "echo",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "message": "iPhone dock - orb, Control Deck, Control Center, Mac menus",
+            "durationMs": 0,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 1,
+            "kind": "launch",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "durationMs": 1910,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 2,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 1091
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 1091,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 3,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 30
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Keyboard",
+                "identifier": "keyboard"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 30,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 4,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 30
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Trackpad",
+                "identifier": "rectangle.and.hand.point.up.left"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 31,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 5,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 24
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Controls",
+                "identifier": "slider.horizontal.3"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 25,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 6,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 24
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Minimize controls",
+                "identifier": "arrow.down.right.and.arrow.up.left"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 25,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 7,
+            "kind": "echo",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "message": "Minimize to corner orb and expand back",
+            "durationMs": 0,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 8,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.727, 0.957)",
+            "status": "pass",
+            "durationMs": 317,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 9,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 461
+            },
+            "args": {
+              "condition": "hidden",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 463,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 10,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.911, 0.957)",
+            "status": "pass",
+            "durationMs": 315,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 11,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 40
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 41,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 12,
+            "kind": "echo",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "message": "Open and stow Control Deck",
+            "durationMs": 0,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 13,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.528, 0.957)",
+            "status": "pass",
+            "durationMs": 318,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 14,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 171
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Stow trackpad"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 172,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 15,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.92, 0.604)",
+            "status": "pass",
+            "durationMs": 836,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 16,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 56
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Minimize controls"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 56,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 17,
+            "kind": "echo",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "message": "Open Control Center, drill into Mac menus, and dismiss",
+            "durationMs": 0,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 18,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.628, 0.957)",
+            "status": "pass",
+            "durationMs": 841,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 19,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 662
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Full Screen"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 662,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 20,
+            "kind": "idle",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "durationMs": 921,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 21,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.722, 0.743)",
+            "status": "pass",
+            "durationMs": 337,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 22,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 245
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "text": "File"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 245,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 23,
+            "kind": "idle",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "durationMs": 677,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 24,
+            "kind": "tap",
+            "e2eTest": "phone-workspace",
+            "target": "(0.854, 0.517)",
+            "status": "pass",
+            "durationMs": 334,
+            "flow": "phone-workspace"
+          },
+          {
+            "index": 25,
+            "kind": "tool",
+            "e2eTest": "phone-workspace",
+            "status": "pass",
+            "tool": "await-ui-element",
+            "result": {
+              "success": true,
+              "elapsed": 220
+            },
+            "args": {
+              "condition": "visible",
+              "selector": {
+                "role": "AXButton",
+                "text": "Apps"
+              },
+              "timeoutMs": 5000,
+              "udid": "005A082C-C2F8-4CE5-97A9-531473353CA6"
+            },
+            "durationMs": 221,
+            "flow": "phone-workspace"
+          }
+        ],
+        "startedAt": 1795490921486,
+        "durationMs": 10250
+      }
+    }
+  ]
+}

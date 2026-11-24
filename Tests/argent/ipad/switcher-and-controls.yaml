@@ -1,0 +1,51 @@
+version: 1
+requires:
+  platform: ios
+steps:
+  - echo: Switcher picks Desktop, then Control Center opens
+  - launch:
+      ios:
+        app: com.uxheavy.sill
+        args: ["-SillLayout", "834x1194"]
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Apps, identifier: square.grid.2x2 }
+      timeoutMs: 5000
+  - echo: Tap Apps to open Unified Switcher (triggers known 100% CPU product bug)
+  - tap: { x: 0.429, y: 0.962 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Done }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { text: Windows }
+      timeoutMs: 5000
+  - echo: Pick Desktop card and return to stream controls
+  - tap: { x: 0.500, y: 0.600 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Controls, identifier: slider.horizontal.3 }
+      timeoutMs: 5000
+  - echo: Open Control Center and scroll to Disconnect from Mac mini
+  - tap: { x: 0.668, y: 0.962 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { text: Streaming }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { text: This iPad }
+      timeoutMs: 5000
+  - swipe: { direction: up, momentum: false }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { text: Disconnect from Mac mini }
+      timeoutMs: 5000

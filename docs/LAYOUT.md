@@ -1196,6 +1196,9 @@ Below, "this file" means CLAUDE.md, and "Build and run below" means docs/BUILD-A
   `tests/gallery.e2e.ts` the state gallery's rows (`Scripts/render-states.sh`). It taps, so it runs on
   simulators of the agent's own, never the agents' photo pair (verify-sill, "Launch"). Replaced
   `.maestro/` on 2026-11-24 (Maestro is not used).
+- `Tests/argent/` — the same tests as argent 0.34.0 YAML (`ipad/`, `phone/`; `argent e2e run Tests/argent/phone --device <UDID>`),
+  kept as the benchmark's port, not a verify lane: argent's simulator runner cannot see SwiftUI controls, so
+  its taps are coordinates (docs/evidence/e2e-vs-argent/BENCH.md).
 - `Scripts/harness-photos/` — the DEBUG harness photographed on the agents' shared simulators,
   never one an agent makes for itself: `Scripts/agent-simulators.sh create` makes them once ("Sill
   agents Duo", iPhone Duo on iOS 27.1, and "Sill agents iPad", iPad Pro 13-inch (M5) on iOS 27.0,

@@ -1,0 +1,84 @@
+version: 1
+requires:
+  platform: ios
+steps:
+  - echo: iPhone dock - orb, Control Deck, Control Center, Mac menus
+  - launch:
+      ios:
+        app: com.uxheavy.sill
+        args: ["-SillLayout", "402x874", "-SillIdiom", "phone"]
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Apps }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Keyboard, identifier: keyboard }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Trackpad, identifier: rectangle.and.hand.point.up.left }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Controls, identifier: slider.horizontal.3 }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Minimize controls, identifier: arrow.down.right.and.arrow.up.left }
+      timeoutMs: 5000
+
+  - echo: Minimize to corner orb and expand back
+  - tap: { x: 0.727, y: 0.957 }
+  - tool: await-ui-element
+    args:
+      condition: hidden
+      selector: { role: AXButton, text: Apps }
+      timeoutMs: 5000
+  - tap: { x: 0.911, y: 0.957 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Apps }
+      timeoutMs: 5000
+
+  - echo: Open and stow Control Deck
+  - tap: { x: 0.528, y: 0.957 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Stow trackpad }
+      timeoutMs: 5000
+  - tap: { x: 0.920, y: 0.604 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Minimize controls }
+      timeoutMs: 5000
+
+  - echo: Open Control Center, drill into Mac menus, and dismiss
+  - tap: { x: 0.628, y: 0.957 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Full Screen }
+      timeoutMs: 5000
+  - await: { idle: true }
+  - tap: { x: 0.722, y: 0.743 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { text: File }
+      timeoutMs: 5000
+  - await: { idle: true }
+  - tap: { x: 0.854, y: 0.517 }
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Apps }
+      timeoutMs: 5000

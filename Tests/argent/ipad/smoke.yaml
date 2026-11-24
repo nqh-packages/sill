@@ -1,0 +1,39 @@
+version: 1
+requires:
+  platform: ios
+steps:
+  - echo: iPad chrome launches with its controls
+  - launch:
+      ios:
+        app: com.uxheavy.sill
+        args: ["-SillLayout", "834x1194"]
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Apps, identifier: square.grid.2x2 }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Text size }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Keyboard, identifier: keyboard }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Trackpad, identifier: rectangle.and.hand.point.up.left }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Controls, identifier: slider.horizontal.3 }
+      timeoutMs: 5000
+  - tool: await-ui-element
+    args:
+      condition: visible
+      selector: { role: AXButton, text: Minimize controls, identifier: arrow.down.right.and.arrow.up.left }
+      timeoutMs: 5000

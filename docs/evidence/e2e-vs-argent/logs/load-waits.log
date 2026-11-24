@@ -1,0 +1,675 @@
+[03:07:44] WAIT ipad-r1-e2e load={ 23.02 59.51 88.17 } (>12.0), sleeping 15s
+[03:08:00] WAIT ipad-r1-e2e load={ 37.87 61.09 88.23 } (>12.0), sleeping 15s
+[03:08:15] WAIT ipad-r1-e2e load={ 34.74 59.25 87.10 } (>12.0), sleeping 15s
+[03:08:30] WAIT ipad-r1-e2e load={ 31.62 57.36 85.94 } (>12.0), sleeping 15s
+[03:08:45] WAIT ipad-r1-e2e load={ 28.85 55.48 84.77 } (>12.0), sleeping 15s
+[03:09:00] WAIT ipad-r1-e2e load={ 49.71 58.66 85.39 } (>12.0), sleeping 15s
+[03:09:15] WAIT ipad-r1-e2e load={ 98.16 68.94 88.59 } (>12.0), sleeping 15s
+[03:09:30] WAIT ipad-r1-e2e load={ 215.46 95.97 97.87 } (>12.0), sleeping 15s
+[03:09:45] WAIT ipad-r1-e2e load={ 230.45 105.11 101.09 } (>12.0), sleeping 15s
+[03:10:00] WAIT ipad-r1-e2e load={ 204.14 105.44 101.28 } (>12.0), sleeping 15s
+[03:10:15] WAIT ipad-r1-e2e load={ 184.31 105.89 101.51 } (>12.0), sleeping 15s
+[03:10:30] WAIT ipad-r1-e2e load={ 155.92 103.40 100.69 } (>12.0), sleeping 15s
+[03:10:45] WAIT ipad-r1-e2e load={ 140.98 102.71 100.50 } (>12.0), sleeping 15s
+[03:11:00] WAIT ipad-r1-e2e load={ 123.24 100.63 99.79 } (>12.0), sleeping 15s
+[03:11:15] WAIT ipad-r1-e2e load={ 103.39 97.35 98.64 } (>12.0), sleeping 15s
+[03:11:30] WAIT ipad-r1-e2e load={ 85.33 93.64 97.29 } (>12.0), sleeping 15s
+[03:11:45] WAIT ipad-r1-e2e load={ 70.84 90.03 95.94 } (>12.0), sleeping 15s
+[03:12:00] WAIT ipad-r1-e2e load={ 60.95 86.94 94.73 } (>12.0), sleeping 15s
+[03:12:15] WAIT ipad-r1-e2e load={ 55.76 84.48 93.72 } (>12.0), sleeping 15s
+[03:12:30] WAIT ipad-r1-e2e load={ 48.31 81.42 92.47 } (>12.0), sleeping 15s
+[03:12:45] WAIT ipad-r1-e2e load={ 44.65 78.97 91.40 } (>12.0), sleeping 15s
+[03:13:00] WAIT ipad-r1-e2e load={ 39.97 76.25 90.21 } (>12.0), sleeping 15s
+[03:13:16] WAIT ipad-r1-e2e load={ 40.51 73.90 89.03 } (>12.0), sleeping 15s
+[03:13:31] WAIT ipad-r1-e2e load={ 46.74 73.67 88.69 } (>12.0), sleeping 15s
+[03:13:46] WAIT ipad-r1-e2e load={ 48.11 72.64 88.06 } (>12.0), sleeping 15s
+[03:14:01] WAIT ipad-r1-e2e load={ 46.75 71.15 87.26 } (>12.0), sleeping 15s
+[03:14:16] WAIT ipad-r1-e2e load={ 44.65 69.49 86.38 } (>12.0), sleeping 15s
+[03:14:31] WAIT ipad-r1-e2e load={ 39.91 67.23 85.28 } (>12.0), sleeping 15s
+[03:14:46] WAIT ipad-r1-e2e load={ 33.34 64.46 83.98 } (>12.0), sleeping 15s
+[03:15:01] WAIT ipad-r1-e2e load={ 29.13 62.00 82.76 } (>12.0), sleeping 15s
+[03:15:16] WAIT ipad-r1-e2e load={ 24.34 59.32 81.44 } (>12.0), sleeping 15s
+[03:15:31] WAIT ipad-r1-e2e load={ 22.21 57.15 80.28 } (>12.0), sleeping 15s
+[03:15:46] WAIT ipad-r1-e2e load={ 24.76 55.99 79.46 } (>12.0), sleeping 15s
+[03:16:01] WAIT ipad-r1-e2e load={ 23.05 54.09 78.37 } (>12.0), sleeping 15s
+[03:16:16] WAIT ipad-r1-e2e load={ 22.06 52.35 77.32 } (>12.0), sleeping 15s
+[03:16:31] WAIT ipad-r1-e2e load={ 19.77 50.35 76.17 } (>12.0), sleeping 15s
+[03:16:46] WAIT ipad-r1-e2e load={ 17.47 48.34 75.00 } (>12.0), sleeping 15s
+[03:17:01] WAIT ipad-r1-e2e load={ 15.86 46.47 73.87 } (>12.0), sleeping 15s
+[03:17:17] WAIT ipad-r1-e2e load={ 14.55 44.67 72.75 } (>12.0), sleeping 15s
+[03:17:32] WAIT ipad-r1-e2e load={ 13.18 42.89 71.62 } (>12.0), sleeping 15s
+[03:17:47] START ipad-r1-e2e load={ 11.87 41.15 70.50 }
+[03:17:50] START ipad-r1-argent load={ 11.87 41.15 70.50 }
+[03:19:11] WAIT ipad-r1-e2e load={ 31.32 43.55 68.99 } (>12.0), sleeping 15s
+[03:19:26] WAIT ipad-r1-e2e load={ 25.73 41.71 67.89 } (>12.0), sleeping 15s
+[03:19:41] WAIT ipad-r1-e2e load={ 21.21 39.93 66.80 } (>12.0), sleeping 15s
+[03:19:56] WAIT ipad-r1-e2e load={ 18.40 38.38 65.77 } (>12.0), sleeping 15s
+[03:20:11] WAIT ipad-r1-e2e load={ 15.96 36.53 64.47 } (>12.0), sleeping 15s
+[03:20:26] WAIT ipad-r1-e2e load={ 37.94 40.35 65.34 } (>12.0), sleeping 15s
+[03:20:41] WAIT ipad-r1-e2e load={ 37.70 40.21 64.86 } (>12.0), sleeping 15s
+[03:20:56] WAIT ipad-r1-e2e load={ 41.65 40.90 64.67 } (>12.0), sleeping 15s
+[03:21:11] WAIT ipad-r1-e2e load={ 39.93 40.56 64.13 } (>12.0), sleeping 15s
+[03:21:26] WAIT ipad-r1-e2e load={ 33.87 39.18 63.23 } (>12.0), sleeping 15s
+[03:21:41] WAIT ipad-r1-e2e load={ 29.01 37.86 62.34 } (>12.0), sleeping 15s
+[03:21:56] WAIT ipad-r1-e2e load={ 24.72 36.48 61.42 } (>12.0), sleeping 15s
+[03:22:11] WAIT ipad-r1-e2e load={ 21.01 35.08 60.48 } (>12.0), sleeping 15s
+[03:22:26] WAIT ipad-r1-e2e load={ 18.58 33.85 59.60 } (>12.0), sleeping 15s
+[03:22:41] WAIT ipad-r1-e2e load={ 19.19 33.29 58.95 } (>12.0), sleeping 15s
+[03:22:56] WAIT ipad-r1-e2e load={ 17.14 32.16 58.10 } (>12.0), sleeping 15s
+[03:23:11] WAIT ipad-r1-e2e load={ 14.32 30.80 57.16 } (>12.0), sleeping 15s
+[03:23:26] WAIT ipad-r1-e2e load={ 13.16 29.74 56.32 } (>12.0), sleeping 15s
+[03:23:41] WAIT ipad-r1-e2e load={ 17.72 29.87 55.90 } (>12.0), sleeping 15s
+[03:23:56] WAIT ipad-r1-e2e load={ 34.96 33.25 56.66 } (>12.0), sleeping 15s
+[03:24:11] WAIT ipad-r1-e2e load={ 34.30 33.20 56.23 } (>12.0), sleeping 15s
+[03:24:26] WAIT ipad-r1-e2e load={ 30.32 32.40 55.54 } (>12.0), sleeping 15s
+[03:24:41] WAIT ipad-r1-e2e load={ 25.12 31.15 54.70 } (>12.0), sleeping 15s
+[03:24:57] WAIT ipad-r1-e2e load={ 35.70 33.10 54.97 } (>12.0), sleeping 15s
+[03:25:12] WAIT ipad-r1-e2e load={ 45.64 35.48 55.44 } (>12.0), sleeping 15s
+[03:25:27] WAIT ipad-r1-e2e load={ 40.50 34.86 54.87 } (>12.0), sleeping 15s
+[03:25:38] WAIT ipad-r1-e2e load={ 35.28 33.92 54.31 } (>12.0), sleeping 5s
+[03:25:43] WAIT ipad-r1-e2e load={ 32.85 33.44 54.02 } (>12.0), sleeping 5s
+[03:25:48] WAIT ipad-r1-e2e load={ 30.78 33.00 53.74 } (>12.0), sleeping 5s
+[03:25:53] WAIT ipad-r1-e2e load={ 29.04 32.61 53.48 } (>12.0), sleeping 5s
+[03:25:58] WAIT ipad-r1-e2e load={ 27.27 32.18 53.21 } (>12.0), sleeping 5s
+[03:26:03] WAIT ipad-r1-e2e load={ 26.45 31.93 52.99 } (>12.0), sleeping 5s
+[03:26:08] WAIT ipad-r1-e2e load={ 24.81 31.50 52.72 } (>12.0), sleeping 5s
+[03:26:13] WAIT ipad-r1-e2e load={ 23.06 31.02 52.43 } (>12.0), sleeping 5s
+[03:26:18] WAIT ipad-r1-e2e load={ 23.14 30.91 52.26 } (>12.0), sleeping 5s
+[03:26:23] WAIT ipad-r1-e2e load={ 21.85 30.51 52.00 } (>12.0), sleeping 5s
+[03:26:28] WAIT ipad-r1-e2e load={ 20.66 30.12 51.73 } (>12.0), sleeping 5s
+[03:26:33] WAIT ipad-r1-e2e load={ 19.32 29.69 51.45 } (>12.0), sleeping 5s
+[03:26:38] WAIT ipad-r1-e2e load={ 18.10 29.26 51.17 } (>12.0), sleeping 5s
+[03:26:43] WAIT ipad-r1-e2e load={ 17.77 29.01 50.96 } (>12.0), sleeping 5s
+[03:26:48] WAIT ipad-r1-e2e load={ 18.43 28.96 50.81 } (>12.0), sleeping 5s
+[03:26:53] WAIT ipad-r1-e2e load={ 18.07 28.71 50.59 } (>12.0), sleeping 5s
+[03:26:58] WAIT ipad-r1-e2e load={ 17.11 28.33 50.33 } (>12.0), sleeping 5s
+[03:27:03] WAIT ipad-r1-e2e load={ 16.38 27.99 50.08 } (>12.0), sleeping 5s
+[03:27:08] WAIT ipad-r1-e2e load={ 15.38 27.59 49.81 } (>12.0), sleeping 5s
+[03:27:13] WAIT ipad-r1-e2e load={ 15.19 27.35 49.60 } (>12.0), sleeping 5s
+[03:27:18] WAIT ipad-r1-e2e load={ 14.78 27.06 49.36 } (>12.0), sleeping 5s
+[03:27:23] WAIT ipad-r1-e2e load={ 14.39 26.78 49.13 } (>12.0), sleeping 5s
+[03:27:29] WAIT ipad-r1-e2e load={ 13.56 26.40 48.87 } (>12.0), sleeping 5s
+[03:27:34] WAIT ipad-r1-e2e load={ 13.44 26.16 48.65 } (>12.0), sleeping 5s
+[03:27:39] WAIT ipad-r1-e2e load={ 13.08 25.88 48.42 } (>12.0), sleeping 5s
+[03:27:44] WAIT ipad-r1-e2e load={ 14.92 26.04 48.35 } (>12.0), sleeping 5s
+[03:27:49] WAIT ipad-r1-e2e load={ 14.28 25.73 48.10 } (>12.0), sleeping 5s
+[03:27:54] WAIT ipad-r1-e2e load={ 13.54 25.38 47.85 } (>12.0), sleeping 5s
+[03:27:59] WAIT ipad-r1-e2e load={ 13.41 25.16 47.64 } (>12.0), sleeping 5s
+[03:28:04] WAIT ipad-r1-e2e load={ 12.98 24.88 47.41 } (>12.0), sleeping 5s
+[03:28:09] WAIT ipad-r1-e2e load={ 12.34 24.55 47.16 } (>12.0), sleeping 5s
+[03:28:14] WAIT ipad-r1-e2e load={ 13.27 24.54 47.02 } (>12.0), sleeping 5s
+[03:28:19] WAIT ipad-r1-e2e load={ 16.70 25.06 47.08 } (>12.0), sleeping 5s
+[03:28:24] WAIT ipad-r1-e2e load={ 22.57 26.14 47.33 } (>12.0), sleeping 5s
+[03:28:29] WAIT ipad-r1-e2e load={ 23.16 26.20 47.23 } (>12.0), sleeping 5s
+[03:28:34] WAIT ipad-r1-e2e load={ 23.39 26.20 47.10 } (>12.0), sleeping 5s
+[03:28:39] WAIT ipad-r1-e2e load={ 22.00 25.86 46.86 } (>12.0), sleeping 5s
+[03:28:44] WAIT ipad-r1-e2e load={ 20.95 25.58 46.64 } (>12.0), sleeping 5s
+[03:28:49] WAIT ipad-r1-e2e load={ 19.92 25.29 46.41 } (>12.0), sleeping 5s
+[03:28:54] WAIT ipad-r1-e2e load={ 20.56 25.33 46.30 } (>12.0), sleeping 5s
+[03:28:59] WAIT ipad-r1-e2e load={ 19.56 25.05 46.08 } (>12.0), sleeping 5s
+[03:29:04] WAIT ipad-r1-e2e load={ 18.95 24.83 45.88 } (>12.0), sleeping 5s
+[03:29:09] WAIT ipad-r1-e2e load={ 17.91 24.52 45.65 } (>12.0), sleeping 5s
+[03:29:14] WAIT ipad-r1-e2e load={ 16.88 24.19 45.41 } (>12.0), sleeping 5s
+[03:29:19] WAIT ipad-r1-e2e load={ 16.09 23.91 45.18 } (>12.0), sleeping 5s
+[03:29:24] WAIT ipad-r1-e2e load={ 15.28 23.61 44.95 } (>12.0), sleeping 5s
+[03:29:29] WAIT ipad-r1-e2e load={ 14.38 23.28 44.71 } (>12.0), sleeping 5s
+[03:29:34] WAIT ipad-r1-e2e load={ 14.27 23.11 44.53 } (>12.0), sleeping 5s
+[03:29:39] WAIT ipad-r1-e2e load={ 14.25 22.96 44.35 } (>12.0), sleeping 5s
+[03:29:44] WAIT ipad-r1-e2e load={ 13.74 22.71 44.13 } (>12.0), sleeping 5s
+[03:29:49] WAIT ipad-r1-e2e load={ 13.36 22.48 43.93 } (>12.0), sleeping 5s
+[03:29:54] WAIT ipad-r1-e2e load={ 13.42 22.34 43.75 } (>12.0), sleeping 5s
+[03:29:59] WAIT ipad-r1-e2e load={ 13.78 22.27 43.60 } (>12.0), sleeping 5s
+[03:30:04] WAIT ipad-r1-e2e load={ 13.24 22.02 43.39 } (>12.0), sleeping 5s
+[03:30:09] WAIT ipad-r1-e2e load={ 12.58 21.73 43.16 } (>12.0), sleeping 5s
+[03:30:14] WAIT ipad-r1-e2e load={ 12.05 21.47 42.94 } (>12.0), sleeping 5s
+[03:30:20] START ipad-r1-e2e load={ 11.89 21.28 42.75 }
+[03:30:24] START ipad-r2-argent load={ 11.58 21.06 42.55 }
+[03:31:12] WAIT ipad-r2-e2e load={ 37.96 27.08 43.56 } (>12.0), sleeping 5s
+[03:31:17] WAIT ipad-r2-e2e load={ 37.00 27.06 43.46 } (>12.0), sleeping 5s
+[03:31:22] WAIT ipad-r2-e2e load={ 36.84 27.19 43.41 } (>12.0), sleeping 5s
+[03:31:27] WAIT ipad-r2-e2e load={ 35.89 27.15 43.30 } (>12.0), sleeping 5s
+[03:31:32] WAIT ipad-r2-e2e load={ 33.74 26.85 43.10 } (>12.0), sleeping 5s
+[03:31:37] WAIT ipad-r2-e2e load={ 31.20 26.44 42.86 } (>12.0), sleeping 5s
+[03:31:42] WAIT ipad-r1-e2e load={ 29.10 26.08 42.64 } (>12.0), sleeping 5s
+[03:31:47] WAIT ipad-r1-e2e load={ 27.49 25.80 42.44 } (>12.0), sleeping 5s
+[03:31:52] WAIT ipad-r1-e2e load={ 26.41 25.60 42.27 } (>12.0), sleeping 5s
+[03:31:57] WAIT ipad-r1-e2e load={ 24.61 25.24 42.05 } (>12.0), sleeping 5s
+[03:32:02] WAIT ipad-r1-e2e load={ 23.04 24.91 41.83 } (>12.0), sleeping 5s
+[03:32:07] WAIT ipad-r1-e2e load={ 22.32 24.73 41.67 } (>12.0), sleeping 5s
+[03:32:12] WAIT ipad-r1-e2e load={ 21.17 24.45 41.47 } (>12.0), sleeping 5s
+[03:32:17] WAIT ipad-r1-e2e load={ 20.20 24.19 41.28 } (>12.0), sleeping 5s
+[03:32:23] WAIT ipad-r1-e2e load={ 18.98 23.87 41.07 } (>12.0), sleeping 5s
+[03:32:28] WAIT ipad-r1-e2e load={ 18.42 23.67 40.90 } (>12.0), sleeping 5s
+[03:32:33] WAIT ipad-r1-e2e load={ 17.43 23.38 40.69 } (>12.0), sleeping 5s
+[03:32:38] WAIT ipad-r1-e2e load={ 16.59 23.11 40.49 } (>12.0), sleeping 5s
+[03:32:43] WAIT ipad-r1-e2e load={ 15.74 22.83 40.29 } (>12.0), sleeping 5s
+[03:32:48] WAIT ipad-r1-e2e load={ 14.88 22.53 40.08 } (>12.0), sleeping 5s
+[03:32:53] WAIT ipad-r1-e2e load={ 14.01 22.22 39.87 } (>12.0), sleeping 5s
+[03:32:58] WAIT ipad-r1-e2e load={ 14.01 22.08 39.72 } (>12.0), sleeping 5s
+[03:33:03] WAIT ipad-r1-e2e load={ 13.93 21.93 39.56 } (>12.0), sleeping 5s
+[03:33:08] WAIT ipad-r1-e2e load={ 13.05 21.62 39.35 } (>12.0), sleeping 5s
+[03:33:13] WAIT ipad-r1-e2e load={ 12.89 21.44 39.18 } (>12.0), sleeping 5s
+[03:33:18] WAIT ipad-r1-e2e load={ 16.82 22.12 39.32 } (>12.0), sleeping 5s
+[03:33:23] WAIT ipad-r1-e2e load={ 20.04 22.69 39.42 } (>12.0), sleeping 5s
+[03:33:28] WAIT ipad-r1-e2e load={ 21.56 22.96 39.42 } (>12.0), sleeping 5s
+[03:33:33] WAIT ipad-r1-e2e load={ 21.91 23.02 39.34 } (>12.0), sleeping 5s
+[03:33:38] WAIT ipad-r1-e2e load={ 22.40 23.10 39.27 } (>12.0), sleeping 5s
+[03:33:43] WAIT ipad-r1-e2e load={ 21.89 22.98 39.13 } (>12.0), sleeping 5s
+[03:33:48] WAIT ipad-r1-e2e load={ 21.49 22.88 39.00 } (>12.0), sleeping 5s
+[03:33:53] WAIT ipad-r1-e2e load={ 21.05 22.77 38.87 } (>12.0), sleeping 5s
+[03:33:58] WAIT ipad-r1-e2e load={ 20.81 22.69 38.75 } (>12.0), sleeping 5s
+[03:34:03] WAIT ipad-r1-e2e load={ 20.42 22.57 38.61 } (>12.0), sleeping 5s
+[03:34:08] WAIT ipad-r1-e2e load={ 19.27 22.30 38.42 } (>12.0), sleeping 5s
+[03:34:13] WAIT ipad-r1-e2e load={ 20.77 22.56 38.42 } (>12.0), sleeping 5s
+[03:34:18] WAIT ipad-r1-e2e load={ 28.23 24.08 38.86 } (>12.0), sleeping 5s
+[03:34:23] WAIT ipad-r1-e2e load={ 38.62 26.30 39.56 } (>12.0), sleeping 5s
+[03:34:28] WAIT ipad-r1-e2e load={ 41.06 27.01 39.73 } (>12.0), sleeping 5s
+[03:34:33] WAIT ipad-r1-e2e load={ 42.17 27.47 39.82 } (>12.0), sleeping 5s
+[03:34:39] WAIT ipad-r1-e2e load={ 44.00 28.10 39.97 } (>12.0), sleeping 5s
+[03:34:44] WAIT ipad-r1-e2e load={ 44.56 28.48 40.03 } (>12.0), sleeping 5s
+[03:34:49] WAIT ipad-r1-e2e load={ 42.11 28.23 39.88 } (>12.0), sleeping 5s
+[03:34:54] WAIT ipad-r1-e2e load={ 40.58 28.15 39.78 } (>12.0), sleeping 5s
+[03:34:59] WAIT ipad-r1-e2e load={ 38.05 27.83 39.60 } (>12.0), sleeping 5s
+[03:35:04] WAIT ipad-r1-e2e load={ 35.81 27.53 39.43 } (>12.0), sleeping 5s
+[03:35:09] WAIT ipad-r1-e2e load={ 33.66 27.23 39.25 } (>12.0), sleeping 5s
+[03:35:14] WAIT ipad-r1-e2e load={ 31.36 26.86 39.05 } (>12.0), sleeping 5s
+[03:35:17] WAIT ipad-r1-e2e load={ 29.41 26.53 38.86 } (>12.0, waited=0s), sleeping 5s
+[03:35:22] WAIT ipad-r1-e2e load={ 27.38 26.15 38.65 } (>12.0, waited=5s), sleeping 5s
+[03:35:27] WAIT ipad-r1-e2e load={ 26.15 25.92 38.50 } (>12.0, waited=10s), sleeping 5s
+[03:35:32] WAIT ipad-r1-e2e load={ 24.61 25.60 38.31 } (>12.0, waited=15s), sleeping 5s
+[03:35:37] WAIT ipad-r1-e2e load={ 22.96 25.24 38.11 } (>12.0, waited=20s), sleeping 5s
+[03:35:43] WAIT ipad-r1-e2e load={ 22.96 25.21 38.02 } (>12.0, waited=25s), sleeping 5s
+[03:35:48] WAIT ipad-r1-e2e load={ 21.69 24.90 37.84 } (>12.0, waited=30s), sleeping 5s
+[03:35:53] WAIT ipad-r1-e2e load={ 20.91 24.69 37.69 } (>12.0, waited=35s), sleeping 5s
+[03:35:58] WAIT ipad-r1-e2e load={ 19.56 24.35 37.49 } (>12.0, waited=40s), sleeping 5s
+[03:36:03] WAIT ipad-r1-e2e load={ 19.11 24.17 37.35 } (>12.0, waited=45s), sleeping 5s
+[03:36:08] WAIT ipad-r1-e2e load={ 18.14 23.89 37.18 } (>12.0, waited=50s), sleeping 5s
+[03:36:13] WAIT ipad-r1-e2e load={ 17.09 23.57 36.99 } (>12.0, waited=55s), sleeping 5s
+[03:36:18] WAIT ipad-r1-e2e load={ 15.88 23.22 36.78 } (>12.0, waited=60s), sleeping 5s
+[03:36:23] WAIT ipad-r1-e2e load={ 15.09 22.93 36.60 } (>12.0, waited=65s), sleeping 5s
+[03:36:28] WAIT ipad-r1-e2e load={ 14.12 22.60 36.40 } (>12.0, waited=70s), sleeping 5s
+[03:36:33] WAIT ipad-r1-e2e load={ 13.07 22.24 36.20 } (>12.0, waited=75s), sleeping 5s
+[03:36:38] WAIT ipad-r1-e2e load={ 12.74 22.02 36.04 } (>12.0, waited=80s), sleeping 5s
+[03:36:43] WAIT ipad-r1-e2e load={ 12.04 21.72 35.85 } (>12.0, waited=85s), sleeping 5s
+[03:36:48] START ipad-r1-e2e load={ 11.24 21.39 35.65 } (waited=90s thresh=12.0)
+[03:39:13] WAIT ipad-r3-argent load={ 27.89 26.05 35.41 } (>12.0, waited=0s), sleeping 5s
+[03:39:18] WAIT ipad-r3-argent load={ 26.06 25.70 35.23 } (>12.0, waited=5s), sleeping 5s
+[03:39:23] WAIT ipad-r3-argent load={ 24.53 25.39 35.07 } (>12.0, waited=10s), sleeping 5s
+[03:39:28] WAIT ipad-r3-argent load={ 22.89 25.03 34.88 } (>12.0, waited=15s), sleeping 5s
+[03:39:33] WAIT ipad-r3-argent load={ 21.54 24.71 34.71 } (>12.0, waited=20s), sleeping 5s
+[03:39:38] WAIT ipad-r3-argent load={ 21.33 24.62 34.62 } (>12.0, waited=25s), sleeping 5s
+[03:39:43] WAIT ipad-r3-argent load={ 19.62 24.21 34.42 } (>12.0, waited=30s), sleeping 5s
+[03:39:48] WAIT ipad-r3-argent load={ 18.29 23.86 34.23 } (>12.0, waited=35s), sleeping 5s
+[03:39:53] WAIT ipad-r3-argent load={ 17.31 23.56 34.07 } (>12.0, waited=40s), sleeping 5s
+[03:39:58] WAIT ipad-r3-argent load={ 16.24 23.23 33.89 } (>12.0, waited=45s), sleeping 5s
+[03:40:03] WAIT ipad-r3-argent load={ 15.74 23.01 33.75 } (>12.0, waited=50s), sleeping 5s
+[03:40:08] WAIT ipad-r3-argent load={ 14.72 22.68 33.57 } (>12.0, waited=55s), sleeping 5s
+[03:40:13] WAIT ipad-r3-argent load={ 14.02 22.40 33.41 } (>12.0, waited=60s), sleeping 5s
+[03:40:18] WAIT ipad-r3-argent load={ 13.06 22.07 33.23 } (>12.0, waited=65s), sleeping 5s
+[03:40:23] WAIT ipad-r3-argent load={ 12.17 21.73 33.04 } (>12.0, waited=70s), sleeping 5s
+[03:40:28] START ipad-r3-argent load={ 11.76 21.49 32.89 } (waited=75s thresh=12.0)
+[03:41:02] WAIT ipad-r2-e2e load={ 25.81 23.99 33.35 } (>12.0, waited=0s), sleeping 5s
+[03:41:07] WAIT ipad-r2-e2e load={ 25.51 23.96 33.28 } (>12.0, waited=5s), sleeping 5s
+[03:41:12] WAIT ipad-r2-e2e load={ 24.50 23.78 33.16 } (>12.0, waited=10s), sleeping 5s
+[03:41:17] WAIT ipad-r2-e2e load={ 23.26 23.53 33.02 } (>12.0, waited=15s), sleeping 5s
+[03:41:22] WAIT ipad-r2-e2e load={ 21.56 23.17 32.84 } (>12.0, waited=20s), sleeping 5s
+[03:41:27] WAIT ipad-r2-e2e load={ 20.15 22.85 32.67 } (>12.0, waited=25s), sleeping 5s
+[03:41:32] WAIT ipad-r2-e2e load={ 19.34 22.64 32.53 } (>12.0, waited=30s), sleeping 5s
+[03:41:37] WAIT ipad-r2-e2e load={ 23.80 23.51 32.78 } (>12.0, waited=35s), sleeping 5s
+[03:41:42] WAIT ipad-r2-e2e load={ 24.85 23.73 32.81 } (>12.0, waited=40s), sleeping 5s
+[03:41:48] WAIT ipad-r2-e2e load={ 25.03 23.79 32.77 } (>12.0, waited=45s), sleeping 5s
+[03:41:53] WAIT ipad-r2-e2e load={ 24.46 23.69 32.69 } (>12.0, waited=50s), sleeping 5s
+[03:41:58] WAIT ipad-r2-e2e load={ 24.51 23.71 32.64 } (>12.0, waited=55s), sleeping 5s
+[03:42:03] WAIT ipad-r2-e2e load={ 24.30 23.68 32.58 } (>12.0, waited=60s), sleeping 5s
+[03:42:08] WAIT ipad-r2-e2e load={ 23.00 23.42 32.43 } (>12.0, waited=65s), sleeping 5s
+[03:42:13] WAIT ipad-r2-e2e load={ 21.56 23.12 32.27 } (>12.0, waited=70s), sleeping 5s
+[03:42:56] WAIT ipad-r3-argent load={ 36.93 26.83 33.16 } (>12.0, waited=0s), sleeping 5s
+[03:43:01] WAIT ipad-r3-argent load={ 36.77 26.96 33.17 } (>12.0, waited=5s), sleeping 5s
+[03:43:06] WAIT ipad-r3-argent load={ 35.43 26.85 33.10 } (>12.0, waited=10s), sleeping 5s
+[03:43:11] WAIT ipad-r3-argent load={ 32.91 26.47 32.92 } (>12.0, waited=15s), sleeping 5s
+[03:43:16] WAIT ipad-r3-argent load={ 30.52 26.08 32.75 } (>12.0, waited=20s), sleeping 5s
+[03:43:21] WAIT ipad-r3-argent load={ 28.71 25.78 32.60 } (>12.0, waited=25s), sleeping 5s
+[03:43:26] WAIT ipad-r3-argent load={ 27.05 25.48 32.46 } (>12.0, waited=30s), sleeping 5s
+[03:43:31] WAIT ipad-r3-argent load={ 25.37 25.16 32.30 } (>12.0, waited=35s), sleeping 5s
+[03:43:36] WAIT ipad-r3-argent load={ 23.66 24.81 32.14 } (>12.0, waited=40s), sleeping 5s
+[03:43:41] WAIT ipad-r3-argent load={ 22.56 24.56 32.01 } (>12.0, waited=45s), sleeping 5s
+[03:43:47] WAIT ipad-r3-argent load={ 21.00 24.20 31.84 } (>12.0, waited=50s), sleeping 5s
+[03:43:52] WAIT ipad-r3-argent load={ 19.96 23.94 31.70 } (>12.0, waited=55s), sleeping 5s
+[03:43:57] WAIT ipad-r3-argent load={ 18.52 23.57 31.52 } (>12.0, waited=60s), sleeping 5s
+[03:44:02] WAIT ipad-r3-argent load={ 17.44 23.26 31.37 } (>12.0, waited=65s), sleeping 5s
+[03:44:07] WAIT ipad-r3-argent load={ 16.36 22.94 31.21 } (>12.0, waited=70s), sleeping 5s
+[03:44:12] WAIT ipad-r3-argent load={ 15.21 22.59 31.04 } (>12.0, waited=75s), sleeping 5s
+[03:44:17] WAIT ipad-r3-argent load={ 14.87 22.40 30.92 } (>12.0, waited=80s), sleeping 5s
+[03:44:22] WAIT ipad-r3-argent load={ 14.00 22.10 30.76 } (>12.0, waited=85s), sleeping 5s
+[03:44:27] WAIT ipad-r3-argent load={ 13.68 21.90 30.64 } (>12.0, waited=90s), sleeping 5s
+[03:44:32] WAIT ipad-r3-argent load={ 12.74 21.56 30.47 } (>12.0, waited=95s), sleeping 5s
+[03:44:37] WAIT ipad-r3-argent load={ 12.04 21.27 30.31 } (>12.0, waited=100s), sleeping 5s
+[03:44:42] START ipad-r3-argent load={ 11.24 20.95 30.15 } (waited=105s thresh=12.0)
+[03:45:28] START ipad-r1-e2e load={ 10.46 19.50 29.15 } (waited=0s thresh=12.0)
+[03:47:36] START ipad-r2-e2e load={ 8.41 15.88 26.39 } (waited=0s thresh=12.0)
+[03:49:35] START ipad-r3-e2e load={ 11.86 13.99 24.21 } (waited=0s thresh=12.0)
+[03:55:54] WAIT phone-r1-argent load={ 20.02 35.71 32.43 } (>12.0, waited=0s), sleeping 5s
+[03:55:59] WAIT phone-r1-argent load={ 19.06 35.25 32.29 } (>12.0, waited=5s), sleeping 5s
+[03:56:04] WAIT phone-r1-argent load={ 18.09 34.78 32.14 } (>12.0, waited=10s), sleeping 5s
+[03:56:09] WAIT phone-r1-argent load={ 19.84 34.86 32.19 } (>12.0, waited=15s), sleeping 5s
+[03:56:14] WAIT phone-r1-argent load={ 24.18 35.51 32.43 } (>12.0, waited=20s), sleeping 5s
+[03:56:19] WAIT phone-r1-argent load={ 23.45 35.17 32.33 } (>12.0, waited=25s), sleeping 5s
+[03:56:24] WAIT phone-r1-argent load={ 23.25 34.94 32.26 } (>12.0, waited=30s), sleeping 5s
+[03:56:29] WAIT phone-r1-argent load={ 24.67 35.04 32.31 } (>12.0, waited=35s), sleeping 5s
+[03:56:34] WAIT phone-r1-argent load={ 27.26 35.40 32.46 } (>12.0, waited=40s), sleeping 5s
+[03:56:39] WAIT phone-r1-argent load={ 25.56 34.91 32.30 } (>12.0, waited=45s), sleeping 5s
+[03:56:44] WAIT phone-r1-argent load={ 26.23 34.90 32.31 } (>12.0, waited=50s), sleeping 5s
+[03:56:49] WAIT phone-r1-argent load={ 25.49 34.60 32.22 } (>12.0, waited=55s), sleeping 5s
+[03:56:54] WAIT phone-r1-argent load={ 25.61 34.47 32.19 } (>12.0, waited=60s), sleeping 5s
+[03:56:59] WAIT phone-r1-argent load={ 23.88 33.97 32.03 } (>12.0, waited=65s), sleeping 5s
+[03:57:04] WAIT phone-r1-argent load={ 22.45 33.50 31.87 } (>12.0, waited=70s), sleeping 5s
+[03:57:09] WAIT phone-r1-argent load={ 23.05 33.44 31.86 } (>12.0, waited=75s), sleeping 5s
+[03:57:14] WAIT phone-r1-argent load={ 21.85 33.02 31.72 } (>12.0, waited=80s), sleeping 5s
+[03:57:19] WAIT phone-r1-argent load={ 20.66 32.59 31.58 } (>12.0, waited=85s), sleeping 5s
+[03:57:24] WAIT phone-r1-argent load={ 19.25 32.10 31.41 } (>12.0, waited=90s), sleeping 5s
+[03:57:29] WAIT phone-r1-argent load={ 17.94 31.61 31.24 } (>12.0, waited=95s), sleeping 5s
+[03:57:34] WAIT phone-r1-argent load={ 22.91 32.42 31.53 } (>12.0, waited=100s), sleeping 5s
+[03:57:39] WAIT phone-r1-argent load={ 21.32 31.93 31.36 } (>12.0, waited=105s), sleeping 5s
+[03:57:44] WAIT phone-r1-argent load={ 20.09 31.50 31.21 } (>12.0, waited=110s), sleeping 5s
+[03:57:49] WAIT phone-r1-argent load={ 18.64 31.01 31.04 } (>12.0, waited=115s), sleeping 5s
+[03:57:54] WAIT phone-r1-argent load={ 17.79 30.62 30.91 } (>12.0, waited=120s), sleeping 5s
+[03:58:00] WAIT phone-r1-argent load={ 19.57 30.78 30.96 } (>12.0, waited=125s), sleeping 5s
+[03:58:05] WAIT phone-r1-argent load={ 21.92 31.08 31.07 } (>12.0, waited=130s), sleeping 5s
+[03:58:10] WAIT phone-r1-argent load={ 21.53 30.85 30.98 } (>12.0, waited=135s), sleeping 5s
+[03:58:15] WAIT phone-r1-argent load={ 20.45 30.47 30.85 } (>12.0, waited=140s), sleeping 5s
+[03:58:20] WAIT phone-r1-argent load={ 19.13 30.03 30.69 } (>12.0, waited=145s), sleeping 5s
+[03:58:25] WAIT phone-r1-argent load={ 17.92 29.60 30.53 } (>16.0, waited=150s), sleeping 5s
+[03:58:30] WAIT phone-r1-argent load={ 20.33 29.90 30.64 } (>16.0, waited=155s), sleeping 5s
+[03:58:35] WAIT phone-r1-argent load={ 23.58 30.42 30.81 } (>16.0, waited=160s), sleeping 5s
+[03:58:40] WAIT phone-r1-argent load={ 21.93 29.96 30.65 } (>16.0, waited=165s), sleeping 5s
+[03:58:45] WAIT phone-r1-argent load={ 21.46 29.73 30.56 } (>16.0, waited=170s), sleeping 5s
+[03:58:50] WAIT phone-r1-argent load={ 24.71 30.27 30.75 } (>16.0, waited=175s), sleeping 5s
+[03:58:55] WAIT phone-r1-argent load={ 29.53 31.17 31.07 } (>16.0, waited=180s), sleeping 5s
+[03:59:00] WAIT phone-r1-argent load={ 27.65 30.76 30.92 } (>16.0, waited=185s), sleeping 5s
+[03:59:05] WAIT phone-r1-argent load={ 25.67 30.30 30.76 } (>16.0, waited=190s), sleeping 5s
+[03:59:10] WAIT phone-r1-argent load={ 23.86 29.84 30.59 } (>16.0, waited=195s), sleeping 5s
+[03:59:15] WAIT phone-r1-argent load={ 24.59 29.89 30.61 } (>16.0, waited=200s), sleeping 5s
+[03:59:20] WAIT phone-r1-argent load={ 23.10 29.50 30.46 } (>16.0, waited=205s), sleeping 5s
+[03:59:25] WAIT phone-r1-argent load={ 21.81 29.12 30.32 } (>16.0, waited=210s), sleeping 5s
+[03:59:30] WAIT phone-r1-argent load={ 23.03 29.25 30.36 } (>16.0, waited=215s), sleeping 5s
+[03:59:35] WAIT phone-r1-argent load={ 23.91 29.33 30.38 } (>16.0, waited=220s), sleeping 5s
+[03:59:40] WAIT phone-r1-argent load={ 28.48 30.19 30.68 } (>16.0, waited=225s), sleeping 5s
+[03:59:45] WAIT phone-r1-argent load={ 33.00 31.10 31.00 } (>16.0, waited=230s), sleeping 5s
+[03:59:50] WAIT phone-r1-argent load={ 30.92 30.70 30.86 } (>16.0, waited=235s), sleeping 5s
+[03:59:55] WAIT phone-r1-argent load={ 28.60 30.22 30.69 } (>16.0, waited=240s), sleeping 5s
+[04:00:00] WAIT phone-r1-argent load={ 29.04 30.29 30.71 } (>16.0, waited=245s), sleeping 5s
+[04:00:05] WAIT phone-r1-argent load={ 33.60 31.21 31.03 } (>16.0, waited=250s), sleeping 5s
+[04:00:11] WAIT phone-r1-argent load={ 44.28 33.46 31.83 } (>16.0, waited=255s), sleeping 5s
+[04:00:16] WAIT phone-r1-argent load={ 63.24 37.57 33.29 } (>16.0, waited=260s), sleeping 5s
+[04:00:21] WAIT phone-r1-argent load={ 70.82 39.57 34.02 } (>16.0, waited=265s), sleeping 5s
+[04:00:26] WAIT phone-r1-argent load={ 83.81 42.78 35.18 } (>16.0, waited=270s), sleeping 5s
+[04:00:31] WAIT phone-r1-argent load={ 88.79 44.50 35.83 } (>16.0, waited=275s), sleeping 5s
+[04:00:36] WAIT phone-r1-argent load={ 100.66 47.69 37.01 } (>16.0, waited=280s), sleeping 5s
+[04:00:41] WAIT phone-r1-argent load={ 119.58 52.50 38.77 } (>16.0, waited=285s), sleeping 5s
+[04:00:46] WAIT phone-r1-argent load={ 144.28 58.73 41.05 } (>16.0, waited=290s), sleeping 5s
+[04:00:51] WAIT phone-r1-argent load={ 162.68 63.96 43.00 } (>16.0, waited=295s), sleeping 5s
+[04:00:56] WAIT phone-r1-argent load={ 181.20 69.44 45.06 } (>16.0, waited=300s), sleeping 5s
+[04:01:01] WAIT phone-r1-argent load={ 196.64 74.50 46.98 } (>16.0, waited=305s), sleeping 5s
+[04:01:06] WAIT phone-r1-argent load={ 212.84 79.89 49.05 } (>16.0, waited=310s), sleeping 5s
+[04:01:11] WAIT phone-r1-argent load={ 230.31 85.71 51.28 } (>16.0, waited=315s), sleeping 5s
+[04:01:16] WAIT phone-r1-argent load={ 244.30 91.01 53.36 } (>16.0, waited=320s), sleeping 5s
+[04:01:21] WAIT phone-r1-argent load={ 257.33 96.26 55.43 } (>16.0, waited=325s), sleeping 5s
+[04:01:26] WAIT phone-r1-argent load={ 270.60 101.68 57.58 } (>16.0, waited=330s), sleeping 5s
+[04:01:31] WAIT phone-r1-argent load={ 287.36 107.96 60.06 } (>16.0, waited=335s), sleeping 5s
+[04:01:36] WAIT phone-r1-argent load={ 301.67 113.91 62.43 } (>16.0, waited=340s), sleeping 5s
+[04:01:42] WAIT phone-r1-argent load={ 314.99 119.79 64.81 } (>16.0, waited=345s), sleeping 5s
+[04:01:47] WAIT phone-r1-argent load={ 326.28 125.37 67.10 } (>16.0, waited=350s), sleeping 5s
+[04:01:52] WAIT phone-r1-argent load={ 341.61 135.24 71.28 } (>16.0, waited=355s), sleeping 5s
+[04:01:57] WAIT phone-r1-argent load={ 354.13 141.26 73.78 } (>16.0, waited=360s), sleeping 5s
+[04:02:02] WAIT phone-r1-argent load={ 369.66 148.01 76.56 } (>16.0, waited=365s), sleeping 5s
+[04:02:07] WAIT phone-r1-argent load={ 387.94 155.48 79.62 } (>16.0, waited=370s), sleeping 5s
+[04:02:12] WAIT phone-r1-argent load={ 408.85 163.68 82.95 } (>16.0, waited=375s), sleeping 5s
+[04:02:17] WAIT phone-r1-argent load={ 430.56 172.25 86.45 } (>16.0, waited=380s), sleeping 5s
+[04:02:22] WAIT phone-r1-argent load={ 450.62 180.69 89.94 } (>16.0, waited=385s), sleeping 5s
+[04:02:27] WAIT phone-r1-argent load={ 467.46 188.67 93.28 } (>16.0, waited=390s), sleeping 5s
+[04:02:32] WAIT phone-r1-argent load={ 482.40 196.39 96.57 } (>16.0, waited=395s), sleeping 5s
+[04:02:38] WAIT phone-r1-argent load={ 501.27 205.05 100.21 } (>16.0, waited=400s), sleeping 5s
+[04:02:43] WAIT phone-r1-argent load={ 521.98 214.27 104.07 } (>16.0, waited=405s), sleeping 5s
+[04:02:48] WAIT phone-r1-argent load={ 548.41 224.85 108.46 } (>16.0, waited=410s), sleeping 5s
+[04:02:53] WAIT phone-r1-argent load={ 576.73 236.09 113.10 } (>16.0, waited=415s), sleeping 5s
+[04:02:58] WAIT phone-r1-argent load={ 605.82 247.78 117.95 } (>16.0, waited=420s), sleeping 5s
+[04:03:03] WAIT phone-r1-argent load={ 630.09 258.76 122.58 } (>16.0, waited=425s), sleeping 5s
+[04:03:08] WAIT phone-r1-argent load={ 650.03 269.05 127.02 } (>16.0, waited=430s), sleeping 5s
+[04:03:13] WAIT phone-r1-argent load={ 671.00 279.73 131.61 } (>16.0, waited=435s), sleeping 5s
+[04:03:18] WAIT phone-r1-argent load={ 689.66 290.09 136.14 } (>16.0, waited=440s), sleeping 5s
+[04:03:23] WAIT phone-r1-argent load={ 710.67 301.08 140.92 } (>16.0, waited=445s), sleeping 5s
+[04:03:29] WAIT phone-r1-argent load={ 725.83 311.02 145.37 } (>16.0, waited=450s), sleeping 5s
+[04:03:34] WAIT phone-r1-argent load={ 737.13 320.25 149.60 } (>16.0, waited=455s), sleeping 5s
+[04:03:39] WAIT phone-r1-argent load={ 743.53 328.50 153.51 } (>16.0, waited=460s), sleeping 5s
+[04:03:44] WAIT phone-r1-argent load={ 749.17 336.56 157.38 } (>16.0, waited=465s), sleeping 5s
+[04:03:49] WAIT phone-r1-argent load={ 754.36 344.48 161.22 } (>16.0, waited=470s), sleeping 5s
+[04:03:54] WAIT phone-r1-argent load={ 761.70 352.81 165.23 } (>16.0, waited=475s), sleeping 5s
+[04:03:59] WAIT phone-r1-argent load={ 763.89 360.05 168.89 } (>16.0, waited=480s), sleeping 5s
+[04:04:04] WAIT phone-r1-argent load={ 770.30 368.09 172.85 } (>16.0, waited=485s), sleeping 5s
+[04:04:09] WAIT phone-r1-argent load={ 770.12 374.73 176.33 } (>16.0, waited=490s), sleeping 5s
+[04:04:14] WAIT phone-r1-argent load={ 774.19 382.13 180.11 } (>16.0, waited=495s), sleeping 5s
+[04:04:19] WAIT phone-r1-argent load={ 774.18 388.64 183.59 } (>16.0, waited=500s), sleeping 5s
+[04:04:24] WAIT phone-r1-argent load={ 771.44 394.47 186.85 } (>16.0, waited=505s), sleeping 5s
+[04:04:29] WAIT phone-r1-argent load={ 769.16 400.26 190.11 } (>16.0, waited=510s), sleeping 5s
+[04:04:34] WAIT phone-r1-argent load={ 767.71 406.08 193.39 } (>16.0, waited=515s), sleeping 5s
+[04:04:39] WAIT phone-r1-argent load={ 758.76 410.23 196.10 } (>16.0, waited=520s), sleeping 5s
+[04:04:44] WAIT phone-r1-argent load={ 736.60 411.42 197.78 } (>16.0, waited=525s), sleeping 5s
+[04:04:49] WAIT phone-r1-argent load={ 711.49 411.61 199.10 } (>16.0, waited=530s), sleeping 5s
+[04:04:54] WAIT phone-r1-argent load={ 685.50 411.20 200.20 } (>16.0, waited=535s), sleeping 5s
+[04:04:59] WAIT phone-r1-argent load={ 656.07 409.66 200.89 } (>16.0, waited=540s), sleeping 5s
+[04:05:04] WAIT phone-r1-argent load={ 632.04 408.77 201.80 } (>16.0, waited=545s), sleeping 5s
+[04:05:09] WAIT phone-r1-argent load={ 604.49 406.76 202.30 } (>16.0, waited=550s), sleeping 5s
+[04:05:14] WAIT phone-r1-argent load={ 581.23 405.22 202.96 } (>16.0, waited=555s), sleeping 5s
+[04:05:21] WAIT phone-r1-argent load={ 556.23 402.96 203.34 } (>12.0, waited=0s), sleeping 5s
+[04:05:26] WAIT phone-r1-argent load={ 532.83 400.65 203.70 } (>12.0, waited=5s), sleeping 5s
+[04:05:31] WAIT phone-r1-argent load={ 515.14 399.18 204.33 } (>12.0, waited=10s), sleeping 5s
+[04:05:36] WAIT phone-r1-argent load={ 492.39 396.39 204.49 } (>12.0, waited=15s), sleeping 5s
+[04:05:41] WAIT phone-r1-argent load={ 468.33 392.99 204.42 } (>12.0, waited=20s), sleeping 5s
+[04:05:46] WAIT phone-r1-argent load={ 447.01 389.82 204.40 } (>12.0, waited=25s), sleeping 5s
+[04:05:51] WAIT phone-r1-argent load={ 434.83 388.25 204.93 } (>12.0, waited=30s), sleeping 5s
+[04:05:56] WAIT phone-r1-argent load={ 415.95 385.11 204.90 } (>12.0, waited=35s), sleeping 5s
+[04:06:01] WAIT phone-r1-argent load={ 396.57 381.60 204.72 } (>12.0, waited=40s), sleeping 5s
+[04:06:06] WAIT phone-r1-argent load={ 380.59 378.54 204.67 } (>12.0, waited=45s), sleeping 5s
+[04:06:11] WAIT phone-r1-argent load={ 370.13 376.40 204.94 } (>12.0, waited=50s), sleeping 5s
+[04:06:16] WAIT phone-r1-argent load={ 363.56 374.93 205.42 } (>12.0, waited=55s), sleeping 5s
+[04:06:21] WAIT phone-r1-argent load={ 366.15 375.28 206.54 } (>12.0, waited=60s), sleeping 5s
+[04:06:26] WAIT phone-r1-argent load={ 352.85 372.37 206.50 } (>12.0, waited=65s), sleeping 5s
+[04:06:31] WAIT phone-r1-argent load={ 345.89 370.61 206.85 } (>12.0, waited=70s), sleeping 5s
+[04:06:36] WAIT phone-r1-argent load={ 340.86 369.15 207.29 } (>12.0, waited=75s), sleeping 5s
+[04:06:41] WAIT phone-r1-argent load={ 326.69 365.75 207.04 } (>12.0, waited=80s), sleeping 5s
+[04:06:47] WAIT phone-r1-argent load={ 314.07 362.48 206.82 } (>12.0, waited=85s), sleeping 5s
+[04:06:52] WAIT phone-r1-argent load={ 299.25 358.60 206.36 } (>12.0, waited=90s), sleeping 5s
+[04:06:57] WAIT phone-r1-argent load={ 284.81 354.63 205.85 } (>12.0, waited=95s), sleeping 5s
+[04:07:02] WAIT phone-r1-argent load={ 295.87 354.62 207.58 } (>12.0, waited=100s), sleeping 5s
+[04:07:07] WAIT phone-r1-argent load={ 315.66 357.75 209.55 } (>12.0, waited=105s), sleeping 5s
+[04:07:12] WAIT phone-r1-argent load={ 344.19 362.97 212.26 } (>12.0, waited=110s), sleeping 5s
+[04:07:17] WAIT phone-r1-argent load={ 367.40 367.47 214.73 } (>12.0, waited=115s), sleeping 5s
+[04:07:23] WAIT phone-r1-argent load={ 388.51 371.84 217.17 } (>12.0, waited=120s), sleeping 5s
+[04:07:28] WAIT phone-r1-argent load={ 411.93 376.97 219.88 } (>12.0, waited=125s), sleeping 5s
+[04:07:33] WAIT phone-r1-argent load={ 436.60 382.67 222.81 } (>12.0, waited=130s), sleeping 5s
+[04:07:38] WAIT phone-r1-argent load={ 458.01 388.00 225.63 } (>12.0, waited=135s), sleeping 5s
+[04:07:43] WAIT phone-r1-argent load={ 472.58 392.18 228.06 } (>12.0, waited=140s), sleeping 5s
+[04:07:48] WAIT phone-r1-argent load={ 480.70 395.20 230.09 } (>12.0, waited=145s), sleeping 5s
+[04:07:53] WAIT phone-r1-argent load={ 487.85 398.10 232.08 } (>12.0, waited=150s), sleeping 5s
+[04:07:58] WAIT phone-r1-argent load={ 494.43 400.96 234.06 } (>12.0, waited=155s), sleeping 5s
+[04:08:03] WAIT phone-r1-argent load={ 520.58 407.93 237.50 } (>12.0, waited=160s), sleeping 5s
+[04:08:10] WAIT phone-r1-argent load={ 544.88 414.84 240.93 } (>12.0, waited=165s), sleeping 5s
+[04:08:15] WAIT phone-r1-argent load={ 575.32 423.31 244.94 } (>12.0, waited=170s), sleeping 5s
+[04:08:20] WAIT phone-r1-argent load={ 563.04 423.29 245.98 } (>12.0, waited=175s), sleeping 5s
+[04:08:25] WAIT phone-r1-argent load={ 551.91 423.30 247.02 } (>12.0, waited=180s), sleeping 5s
+[04:08:30] WAIT phone-r1-argent load={ 542.71 423.52 248.13 } (>12.0, waited=185s), sleeping 5s
+[04:08:35] WAIT phone-r1-argent load={ 522.15 421.24 248.36 } (>12.0, waited=190s), sleeping 5s
+[04:08:40] WAIT phone-r1-argent load={ 499.31 418.18 248.29 } (>12.0, waited=195s), sleeping 5s
+[04:08:45] WAIT phone-r1-argent load={ 482.07 415.95 248.50 } (>12.0, waited=200s), sleeping 5s
+[04:08:50] WAIT phone-r1-argent load={ 458.84 412.24 248.17 } (>12.0, waited=205s), sleeping 5s
+[04:08:55] WAIT phone-r1-argent load={ 435.23 408.11 247.67 } (>12.0, waited=210s), sleeping 5s
+[04:09:00] WAIT phone-r1-argent load={ 421.92 405.80 247.80 } (>12.0, waited=215s), sleeping 5s
+[04:09:05] WAIT phone-r1-argent load={ 391.02 399.67 246.56 } (>12.0, waited=220s), sleeping 5s
+[04:09:11] WAIT phone-r1-argent load={ 368.59 394.87 245.76 } (>12.0, waited=225s), sleeping 5s
+[04:09:16] WAIT phone-r1-argent load={ 349.65 390.51 245.10 } (>12.0, waited=230s), sleeping 5s
+[04:09:21] WAIT phone-r1-argent load={ 327.97 385.34 244.12 } (>12.0, waited=235s), sleeping 5s
+[04:09:26] WAIT phone-r1-argent load={ 307.24 380.08 243.10 } (>12.0, waited=240s), sleeping 5s
+[04:09:31] WAIT phone-r1-argent load={ 287.04 374.69 241.99 } (>12.0, waited=245s), sleeping 5s
+[04:09:36] WAIT phone-r1-argent load={ 268.78 369.45 240.92 } (>12.0, waited=250s), sleeping 5s
+[04:09:41] WAIT phone-r1-argent load={ 251.02 364.09 239.78 } (>12.0, waited=255s), sleeping 5s
+[04:09:46] WAIT phone-r1-argent load={ 234.44 358.78 238.64 } (>12.0, waited=260s), sleeping 5s
+[04:09:51] WAIT phone-r1-argent load={ 218.55 353.42 237.45 } (>12.0, waited=265s), sleeping 5s
+[04:09:56] WAIT phone-r1-argent load={ 207.53 348.90 236.53 } (>12.0, waited=270s), sleeping 5s
+[04:10:01] WAIT phone-r1-argent load={ 195.48 344.05 235.48 } (>12.0, waited=275s), sleeping 5s
+[04:10:06] WAIT phone-r1-argent load={ 187.59 339.95 234.67 } (>12.0, waited=280s), sleeping 5s
+[04:10:11] WAIT phone-r1-argent load={ 176.81 335.18 233.60 } (>12.0, waited=285s), sleeping 5s
+[04:10:16] WAIT phone-r1-argent load={ 168.34 330.80 232.65 } (>12.0, waited=290s), sleeping 5s
+[04:10:21] WAIT phone-r1-argent load={ 159.90 326.35 231.66 } (>12.0, waited=295s), sleeping 5s
+[04:10:26] WAIT phone-r1-argent load={ 154.15 322.40 230.81 } (>12.0, waited=300s), sleeping 5s
+[04:10:31] WAIT phone-r1-argent load={ 149.25 318.59 230.01 } (>12.0, waited=305s), sleeping 5s
+[04:10:36] WAIT phone-r1-argent load={ 141.06 314.08 228.93 } (>12.0, waited=310s), sleeping 5s
+[04:10:41] WAIT phone-r1-argent load={ 132.97 309.53 227.83 } (>12.0, waited=315s), sleeping 5s
+[04:10:46] WAIT phone-r1-argent load={ 126.32 305.22 226.78 } (>12.0, waited=320s), sleeping 5s
+[04:10:51] WAIT phone-r1-argent load={ 120.69 301.08 225.78 } (>12.0, waited=325s), sleeping 5s
+[04:10:56] WAIT phone-r1-argent load={ 114.95 296.90 224.75 } (>12.0, waited=330s), sleeping 5s
+[04:11:01] WAIT phone-r1-argent load={ 110.95 293.05 223.81 } (>12.0, waited=335s), sleeping 5s
+[04:11:06] WAIT phone-r1-argent load={ 105.67 288.93 222.76 } (>12.0, waited=340s), sleeping 5s
+[04:11:12] WAIT phone-r1-argent load={ 100.09 284.73 221.67 } (>12.0, waited=345s), sleeping 5s
+[04:11:17] WAIT phone-r1-argent load={ 97.84 281.20 220.79 } (>12.0, waited=350s), sleeping 5s
+[04:11:22] WAIT phone-r1-argent load={ 92.89 277.13 219.71 } (>12.0, waited=355s), sleeping 5s
+[04:11:27] WAIT phone-r1-argent load={ 90.34 273.54 218.78 } (>12.0, waited=360s), sleeping 5s
+[04:11:32] WAIT phone-r1-argent load={ 82.62 265.85 216.69 } (>12.0, waited=365s), sleeping 5s
+[04:11:37] WAIT phone-r1-argent load={ 78.80 262.02 215.62 } (>12.0, waited=370s), sleeping 5s
+[04:11:42] WAIT phone-r1-argent load={ 76.74 258.55 214.67 } (>12.0, waited=375s), sleeping 5s
+[04:11:47] WAIT phone-r1-argent load={ 72.51 254.65 213.55 } (>12.0, waited=380s), sleeping 5s
+[04:11:52] WAIT phone-r1-argent load={ 71.03 251.32 212.62 } (>12.0, waited=385s), sleeping 5s
+[04:11:57] WAIT phone-r1-argent load={ 69.27 247.96 211.66 } (>12.0, waited=390s), sleeping 5s
+[04:12:02] WAIT phone-r1-argent load={ 67.40 244.61 210.69 } (>12.0, waited=395s), sleeping 5s
+[04:12:07] WAIT phone-r1-argent load={ 65.93 241.36 209.74 } (>12.0, waited=400s), sleeping 5s
+[04:12:12] WAIT phone-r1-argent load={ 67.54 238.78 209.02 } (>12.0, waited=405s), sleeping 5s
+[04:12:17] WAIT phone-r1-argent load={ 66.61 235.75 208.12 } (>12.0, waited=410s), sleeping 5s
+[04:12:22] WAIT phone-r1-argent load={ 65.36 232.68 207.20 } (>12.0, waited=415s), sleeping 5s
+[04:12:27] WAIT phone-r1-argent load={ 64.37 229.70 206.29 } (>16.0, waited=420s), sleeping 5s
+[04:12:32] WAIT phone-r1-argent load={ 64.10 226.89 205.44 } (>16.0, waited=425s), sleeping 5s
+[04:12:37] WAIT phone-r1-argent load={ 63.61 224.09 204.58 } (>16.0, waited=430s), sleeping 5s
+[04:12:42] WAIT phone-r1-argent load={ 62.52 221.20 203.67 } (>16.0, waited=435s), sleeping 5s
+[04:12:47] WAIT phone-r1-argent load={ 61.92 218.44 202.80 } (>16.0, waited=440s), sleeping 5s
+[04:12:52] WAIT phone-r1-argent load={ 59.12 215.26 201.77 } (>16.0, waited=445s), sleeping 5s
+[04:12:57] WAIT phone-r1-argent load={ 57.51 212.34 200.82 } (>16.0, waited=450s), sleeping 5s
+[04:13:03] WAIT phone-r1-argent load={ 55.31 209.31 199.81 } (>16.0, waited=455s), sleeping 5s
+[04:13:08] WAIT phone-r1-argent load={ 53.20 206.31 198.81 } (>16.0, waited=460s), sleeping 5s
+[04:13:13] WAIT phone-r1-argent load={ 50.14 203.14 197.74 } (>16.0, waited=465s), sleeping 5s
+[04:13:18] WAIT phone-r1-argent load={ 47.81 200.11 196.70 } (>16.0, waited=470s), sleeping 5s
+[04:13:23] WAIT phone-r1-argent load={ 44.86 196.98 195.61 } (>16.0, waited=475s), sleeping 5s
+[04:13:28] WAIT phone-r1-argent load={ 42.15 193.89 194.53 } (>16.0, waited=480s), sleeping 5s
+[04:13:33] WAIT phone-r1-argent load={ 39.33 190.78 193.43 } (>16.0, waited=485s), sleeping 5s
+[04:13:38] WAIT phone-r1-argent load={ 36.66 187.72 192.33 } (>16.0, waited=490s), sleeping 5s
+[04:13:43] WAIT phone-r1-argent load={ 34.61 184.78 191.27 } (>16.0, waited=495s), sleeping 5s
+[04:13:48] WAIT phone-r1-argent load={ 33.52 182.06 190.27 } (>16.0, waited=500s), sleeping 5s
+[04:13:53] WAIT phone-r1-argent load={ 32.44 179.37 189.27 } (>16.0, waited=505s), sleeping 5s
+[04:13:58] WAIT phone-r1-argent load={ 32.96 177.04 188.39 } (>16.0, waited=510s), sleeping 5s
+[04:14:03] WAIT phone-r1-argent load={ 33.85 174.83 187.55 } (>16.0, waited=515s), sleeping 5s
+[04:14:08] WAIT phone-r1-argent load={ 31.94 172.10 186.51 } (>16.0, waited=520s), sleeping 5s
+[04:14:13] WAIT phone-r1-argent load={ 29.78 169.32 185.44 } (>16.0, waited=525s), sleeping 5s
+[04:14:18] WAIT phone-r1-argent load={ 28.27 166.69 184.42 } (>16.0, waited=530s), sleeping 5s
+[04:14:23] WAIT phone-r1-argent load={ 27.29 164.19 183.43 } (>16.0, waited=535s), sleeping 5s
+[04:14:28] WAIT phone-r1-argent load={ 26.23 161.70 182.44 } (>16.0, waited=540s), sleeping 5s
+[04:14:33] WAIT phone-r1-argent load={ 28.93 160.01 181.72 } (>16.0, waited=545s), sleeping 5s
+[04:14:38] WAIT phone-r1-argent load={ 28.78 157.80 180.82 } (>16.0, waited=550s), sleeping 5s
+[04:14:43] WAIT phone-r1-argent load={ 27.35 155.36 179.82 } (>16.0, waited=555s), sleeping 5s
+[04:14:48] WAIT phone-r1-argent load={ 25.72 152.90 178.81 } (>16.0, waited=560s), sleeping 5s
+[04:14:53] WAIT phone-r1-argent load={ 25.26 150.69 177.88 } (>16.0, waited=565s), sleeping 5s
+[04:14:58] WAIT phone-r1-argent load={ 27.56 149.09 177.15 } (>16.0, waited=570s), sleeping 5s
+[04:15:03] WAIT phone-r1-argent load={ 28.00 147.16 176.31 } (>16.0, waited=575s), sleeping 5s
+[04:15:08] WAIT phone-r1-argent load={ 28.80 145.35 175.50 } (>16.0, waited=580s), sleeping 5s
+[04:15:14] WAIT phone-r1-argent load={ 30.26 143.71 174.74 } (>16.0, waited=585s), sleeping 5s
+[04:15:19] WAIT phone-r1-argent load={ 30.64 141.91 173.92 } (>16.0, waited=590s), sleeping 5s
+[04:15:24] WAIT phone-r1-argent load={ 29.62 139.85 173.01 } (>16.0, waited=595s), sleeping 5s
+[04:15:29] WAIT phone-r1-argent load={ 28.37 137.76 172.08 } (>16.0, waited=600s), sleeping 5s
+[04:15:34] WAIT phone-r1-argent load={ 28.98 136.07 171.28 } (>16.0, waited=605s), sleeping 5s
+[04:15:39] WAIT phone-r1-argent load={ 27.70 134.03 170.35 } (>16.0, waited=610s), sleeping 5s
+[04:15:44] WAIT phone-r1-argent load={ 26.93 132.10 169.46 } (>16.0, waited=615s), sleeping 5s
+[04:15:49] WAIT phone-r1-argent load={ 26.29 130.23 168.58 } (>16.0, waited=620s), sleeping 5s
+[04:15:54] WAIT phone-r1-argent load={ 26.03 128.45 167.72 } (>16.0, waited=625s), sleeping 5s
+[04:15:59] WAIT phone-r1-argent load={ 26.35 126.81 166.92 } (>16.0, waited=630s), sleeping 5s
+[04:16:04] WAIT phone-r1-argent load={ 29.04 125.70 166.29 } (>16.0, waited=635s), sleeping 5s
+[04:16:09] WAIT phone-r1-argent load={ 30.96 124.49 165.63 } (>16.0, waited=640s), sleeping 5s
+[04:16:14] WAIT phone-r1-argent load={ 41.37 125.10 165.60 } (>16.0, waited=645s), sleeping 5s
+[04:16:19] WAIT phone-r1-argent load={ 56.72 126.89 165.99 } (>16.0, waited=650s), sleeping 5s
+[04:16:24] WAIT phone-r1-argent load={ 83.57 131.29 167.32 } (>16.0, waited=655s), sleeping 5s
+[04:16:29] WAIT phone-r1-argent load={ 102.42 134.41 168.21 } (>16.0, waited=660s), sleeping 5s
+[04:16:34] WAIT phone-r1-argent load={ 114.00 136.28 168.67 } (>16.0, waited=665s), sleeping 5s
+[04:16:39] WAIT phone-r1-argent load={ 127.29 138.66 169.32 } (>16.0, waited=670s), sleeping 5s
+[04:16:45] WAIT phone-r1-argent load={ 141.04 141.32 170.08 } (>16.0, waited=675s), sleeping 5s
+[04:16:50] WAIT phone-r1-argent load={ 152.25 143.64 170.73 } (>16.0, waited=680s), sleeping 5s
+[04:16:55] WAIT phone-r1-argent load={ 167.36 146.92 171.73 } (>16.0, waited=685s), sleeping 5s
+[04:17:00] WAIT phone-r1-argent load={ 182.55 150.41 172.81 } (>16.0, waited=690s), sleeping 5s
+[04:17:05] WAIT phone-r1-argent load={ 197.80 154.10 173.99 } (>16.0, waited=695s), sleeping 5s
+[04:17:10] WAIT phone-r1-argent load={ 208.62 157.07 174.92 } (>16.0, waited=700s), sleeping 5s
+[04:17:15] WAIT phone-r1-argent load={ 217.38 159.74 175.75 } (>16.0, waited=705s), sleeping 5s
+[04:17:20] WAIT phone-r1-argent load={ 227.36 162.77 176.73 } (>16.0, waited=710s), sleeping 5s
+[04:17:25] WAIT phone-r1-argent load={ 233.74 165.16 177.49 } (>16.0, waited=715s), sleeping 5s
+[04:17:30] WAIT phone-r1-argent load={ 238.16 167.22 178.15 } (>16.0, waited=720s), sleeping 5s
+[04:17:35] WAIT phone-r1-argent load={ 239.99 168.77 178.63 } (>16.0, waited=725s), sleeping 5s
+[04:17:40] WAIT phone-r1-argent load={ 242.80 170.54 179.19 } (>16.0, waited=730s), sleeping 5s
+[04:17:45] WAIT phone-r1-argent load={ 249.62 173.15 180.07 } (>16.0, waited=735s), sleeping 5s
+[04:17:50] WAIT phone-r1-argent load={ 253.01 175.12 180.72 } (>16.0, waited=740s), sleeping 5s
+[04:17:55] WAIT phone-r1-argent load={ 254.45 176.72 181.25 } (>16.0, waited=745s), sleeping 5s
+[04:18:00] WAIT phone-r1-argent load={ 251.69 177.43 181.48 } (>16.0, waited=750s), sleeping 5s
+[04:18:05] WAIT phone-r1-argent load={ 247.31 177.76 181.57 } (>16.0, waited=755s), sleeping 5s
+[04:18:10] WAIT phone-r1-argent load={ 242.48 177.91 181.60 } (>16.0, waited=760s), sleeping 5s
+[04:18:15] WAIT phone-r1-argent load={ 235.72 177.58 181.46 } (>16.0, waited=765s), sleeping 5s
+[04:18:20] WAIT phone-r1-argent load={ 230.94 177.55 181.43 } (>16.0, waited=770s), sleeping 5s
+[04:18:25] WAIT phone-r1-argent load={ 223.17 176.83 181.15 } (>16.0, waited=775s), sleeping 5s
+[04:18:30] WAIT phone-r1-argent load={ 218.75 176.68 181.07 } (>16.0, waited=780s), sleeping 5s
+[04:18:35] WAIT phone-r1-argent load={ 211.57 175.89 180.77 } (>16.0, waited=785s), sleeping 5s
+[04:18:40] WAIT phone-r1-argent load={ 210.64 176.29 180.88 } (>16.0, waited=790s), sleeping 5s
+[04:18:45] WAIT phone-r1-argent load={ 208.35 176.39 180.89 } (>16.0, waited=795s), sleeping 5s
+[04:18:50] WAIT phone-r1-argent load={ 206.88 176.61 180.94 } (>16.0, waited=800s), sleeping 5s
+[04:18:55] WAIT phone-r1-argent load={ 205.37 176.80 180.98 } (>16.0, waited=805s), sleeping 5s
+[04:19:00] WAIT phone-r1-argent load={ 205.02 177.20 181.10 } (>16.0, waited=810s), sleeping 5s
+[04:19:05] WAIT phone-r1-argent load={ 203.41 177.33 181.12 } (>16.0, waited=815s), sleeping 5s
+[04:19:11] WAIT phone-r1-argent load={ 201.94 177.46 181.14 } (>16.0, waited=820s), sleeping 5s
+[04:19:16] WAIT phone-r1-argent load={ 200.98 177.67 181.20 } (>16.0, waited=825s), sleeping 5s
+[04:19:21] WAIT phone-r1-argent load={ 202.02 178.27 181.39 } (>16.0, waited=830s), sleeping 5s
+[04:19:26] WAIT phone-r1-argent load={ 201.54 178.56 181.47 } (>16.0, waited=835s), sleeping 5s
+[04:19:31] WAIT phone-r1-argent load={ 201.26 178.89 181.57 } (>16.0, waited=840s), sleeping 5s
+[04:19:36] WAIT phone-r1-argent load={ 202.04 179.42 181.74 } (>16.0, waited=845s), sleeping 5s
+[04:19:41] WAIT phone-r1-argent load={ 202.03 179.79 181.86 } (>16.0, waited=850s), sleeping 5s
+[04:19:46] WAIT phone-r1-argent load={ 195.62 178.83 181.51 } (>16.0, waited=855s), sleeping 5s
+[04:19:51] WAIT phone-r1-argent load={ 190.61 178.07 181.22 } (>16.0, waited=860s), sleeping 5s
+[04:19:56] WAIT phone-r1-argent load={ 185.04 177.13 180.87 } (>16.0, waited=865s), sleeping 5s
+[04:20:01] WAIT phone-r1-argent load={ 181.91 176.61 180.67 } (>16.0, waited=870s), sleeping 5s
+[04:20:06] WAIT phone-r1-argent load={ 177.35 175.75 180.34 } (>16.0, waited=875s), sleeping 5s
+[04:20:11] WAIT phone-r1-argent load={ 176.28 175.56 180.24 } (>16.0, waited=880s), sleeping 5s
+[04:20:16] WAIT phone-r1-argent load={ 172.18 174.72 179.92 } (>16.0, waited=885s), sleeping 5s
+[04:20:21] WAIT phone-r1-argent load={ 170.08 174.24 179.72 } (>16.0, waited=890s), sleeping 5s
+[04:20:26] WAIT phone-r1-argent load={ 173.44 174.87 179.91 } (>16.0, waited=895s), sleeping 5s
+[04:20:31] WAIT phone-r1-argent load={ 174.60 175.08 179.96 } (>16.0, waited=900s), sleeping 5s
+[04:20:36] WAIT phone-r1-argent load={ 177.84 175.75 180.16 } (>16.0, waited=905s), sleeping 5s
+[04:20:41] WAIT phone-r1-argent load={ 179.69 176.17 180.28 } (>16.0, waited=910s), sleeping 5s
+[04:20:46] WAIT phone-r1-argent load={ 181.56 176.61 180.42 } (>16.0, waited=915s), sleeping 5s
+[04:20:51] WAIT phone-r1-argent load={ 185.12 177.43 180.68 } (>16.0, waited=920s), sleeping 5s
+[04:20:56] WAIT phone-r1-argent load={ 187.19 177.99 180.86 } (>16.0, waited=925s), sleeping 5s
+[04:21:01] WAIT phone-r1-argent load={ 182.45 177.16 180.55 } (>16.0, waited=930s), sleeping 5s
+[04:21:06] WAIT phone-r1-argent load={ 178.73 176.47 180.29 } (>16.0, waited=935s), sleeping 5s
+[04:21:11] WAIT phone-r1-argent load={ 173.39 175.40 179.89 } (>16.0, waited=940s), sleeping 5s
+[04:21:16] WAIT phone-r1-argent load={ 168.71 174.40 179.51 } (>16.0, waited=945s), sleeping 5s
+[04:21:21] WAIT phone-r1-argent load={ 163.05 173.13 179.03 } (>16.0, waited=950s), sleeping 5s
+[04:21:26] WAIT phone-r1-argent load={ 157.44 171.80 178.53 } (>16.0, waited=955s), sleeping 5s
+[04:21:31] WAIT phone-r1-argent load={ 154.12 170.87 178.16 } (>16.0, waited=960s), sleeping 5s
+[04:21:36] WAIT phone-r1-argent load={ 151.71 170.10 177.84 } (>16.0, waited=965s), sleeping 5s
+[04:21:41] WAIT phone-r1-argent load={ 154.37 170.34 177.88 } (>16.0, waited=970s), sleeping 5s
+[04:21:46] WAIT phone-r1-argent load={ 148.34 168.83 177.30 } (>16.0, waited=975s), sleeping 5s
+[04:21:52] WAIT phone-r1-argent load={ 143.26 167.43 176.76 } (>16.0, waited=980s), sleeping 5s
+[04:21:57] WAIT phone-r1-argent load={ 136.52 165.63 176.07 } (>16.0, waited=985s), sleeping 5s
+[04:22:02] WAIT phone-r1-argent load={ 130.07 163.81 175.37 } (>16.0, waited=990s), sleeping 5s
+[04:22:07] WAIT phone-r1-argent load={ 134.07 164.08 175.40 } (>16.0, waited=995s), sleeping 5s
+[04:22:12] WAIT phone-r1-argent load={ 148.20 166.16 176.00 } (>16.0, waited=1000s), sleeping 5s
+[04:22:17] WAIT phone-r1-argent load={ 140.82 164.33 175.30 } (>16.0, waited=1005s), sleeping 5s
+[04:22:22] WAIT phone-r1-argent load={ 132.83 162.28 174.51 } (>16.0, waited=1010s), sleeping 5s
+[04:22:27] WAIT phone-r1-argent load={ 124.27 160.02 173.64 } (>16.0, waited=1015s), sleeping 5s
+[04:22:32] WAIT phone-r1-argent load={ 117.04 157.93 172.82 } (>16.0, waited=1020s), sleeping 5s
+[04:22:37] WAIT phone-r1-argent load={ 109.03 155.59 171.91 } (>16.0, waited=1025s), sleeping 5s
+[04:22:42] WAIT phone-r1-argent load={ 102.46 153.45 171.06 } (>16.0, waited=1030s), sleeping 5s
+[04:22:47] WAIT phone-r1-argent load={ 96.58 151.39 170.23 } (>16.0, waited=1035s), sleeping 5s
+[04:22:52] WAIT phone-r1-argent load={ 91.49 149.42 169.43 } (>16.0, waited=1040s), sleeping 5s
+[04:22:57] WAIT phone-r1-argent load={ 85.60 147.24 168.54 } (>16.0, waited=1045s), sleeping 5s
+[04:23:02] WAIT phone-r1-argent load={ 80.11 145.08 167.65 } (>16.0, waited=1050s), sleeping 5s
+[04:23:07] WAIT phone-r1-argent load={ 74.58 142.85 166.73 } (>16.0, waited=1055s), sleeping 5s
+[04:23:13] WAIT phone-r1-argent load={ 69.80 140.73 165.84 } (>16.0, waited=1060s), sleeping 5s
+[04:23:18] WAIT phone-r1-argent load={ 64.53 138.46 164.89 } (>16.0, waited=1065s), sleeping 5s
+[04:23:23] WAIT phone-r1-argent load={ 60.25 136.34 163.99 } (>16.0, waited=1070s), sleeping 5s
+[04:23:28] WAIT phone-r1-argent load={ 55.82 134.16 163.06 } (>16.0, waited=1075s), sleeping 5s
+[04:23:33] WAIT phone-r1-argent load={ 52.39 132.15 162.18 } (>16.0, waited=1080s), sleeping 5s
+[04:23:38] WAIT phone-r1-argent load={ 48.60 130.04 161.26 } (>16.0, waited=1085s), sleeping 5s
+[04:23:43] WAIT phone-r1-argent load={ 45.27 128.00 160.35 } (>16.0, waited=1090s), sleeping 5s
+[04:23:48] WAIT phone-r1-argent load={ 42.28 126.00 159.46 } (>16.0, waited=1095s), sleeping 5s
+[04:23:53] WAIT phone-r1-argent load={ 40.42 124.23 158.64 } (>16.0, waited=1100s), sleeping 5s
+[04:23:58] WAIT phone-r1-argent load={ 38.54 122.45 157.81 } (>16.0, waited=1105s), sleeping 5s
+[04:24:03] WAIT phone-r1-argent load={ 39.46 121.24 157.18 } (>16.0, waited=1110s), sleeping 5s
+[04:24:08] WAIT phone-r1-argent load={ 36.62 119.30 156.28 } (>16.0, waited=1115s), sleeping 5s
+[04:24:13] WAIT phone-r1-argent load={ 34.33 117.45 155.41 } (>16.0, waited=1120s), sleeping 5s
+[04:24:18] WAIT phone-r1-argent load={ 32.14 115.61 154.54 } (>16.0, waited=1125s), sleeping 5s
+[04:24:23] WAIT phone-r1-argent load={ 30.61 113.91 153.71 } (>16.0, waited=1130s), sleeping 5s
+[04:24:28] WAIT phone-r1-argent load={ 29.28 112.25 152.89 } (>16.0, waited=1135s), sleeping 5s
+[04:24:33] WAIT phone-r1-argent load={ 27.97 110.60 152.07 } (>16.0, waited=1140s), sleeping 5s
+[04:24:38] WAIT phone-r1-argent load={ 26.53 108.93 151.24 } (>16.0, waited=1145s), sleeping 5s
+[04:24:43] WAIT phone-r1-argent load={ 24.81 107.21 150.38 } (>16.0, waited=1150s), sleeping 5s
+[04:24:48] WAIT phone-r1-argent load={ 23.62 105.59 149.56 } (>16.0, waited=1155s), sleeping 5s
+[04:24:53] WAIT phone-r1-argent load={ 23.57 104.22 148.82 } (>16.0, waited=1160s), sleeping 5s
+[04:24:58] WAIT phone-r1-argent load={ 22.25 102.61 147.99 } (>16.0, waited=1165s), sleeping 5s
+[04:25:03] WAIT phone-r1-argent load={ 21.82 101.19 147.22 } (>16.0, waited=1170s), sleeping 5s
+[04:25:08] WAIT phone-r1-argent load={ 21.28 99.75 146.44 } (>16.0, waited=1175s), sleeping 5s
+[04:25:13] WAIT phone-r1-argent load={ 21.34 98.46 145.71 } (>16.0, waited=1180s), sleeping 5s
+[04:25:18] WAIT phone-r1-argent load={ 20.11 96.93 144.90 } (>16.0, waited=1185s), sleeping 5s
+[04:25:23] WAIT phone-r1-argent load={ 19.38 95.50 144.11 } (>16.0, waited=1190s), sleeping 5s
+[04:25:28] WAIT phone-r1-argent load={ 18.71 94.10 143.33 } (>16.0, waited=1195s), sleeping 5s
+[04:25:33] WAIT phone-r1-argent load={ 17.69 92.64 142.53 } (>16.0, waited=1200s), sleeping 5s
+[04:25:38] WAIT phone-r1-argent load={ 17.63 91.38 141.79 } (>16.0, waited=1205s), sleeping 5s
+[04:25:43] WAIT phone-r1-argent load={ 16.54 89.93 140.98 } (>16.0, waited=1210s), sleeping 5s
+[04:25:48] START phone-r1-argent load={ 15.62 88.52 140.19 } (waited=1215s thresh=16.0)
+[04:26:16] WAIT phone-r1-e2e load={ 14.30 82.34 136.46 } (>12.0, waited=0s), sleeping 5s
+[04:26:21] WAIT phone-r1-e2e load={ 13.48 81.04 135.69 } (>12.0, waited=5s), sleeping 5s
+[04:26:26] WAIT phone-r1-e2e load={ 13.44 79.91 134.97 } (>12.0, waited=10s), sleeping 5s
+[04:26:31] WAIT phone-r1-e2e load={ 13.49 78.82 134.26 } (>12.0, waited=15s), sleeping 5s
+[04:26:36] WAIT phone-r1-e2e load={ 13.13 77.66 133.52 } (>12.0, waited=20s), sleeping 5s
+[04:26:41] WAIT phone-r1-e2e load={ 12.72 76.50 132.79 } (>12.0, waited=25s), sleeping 5s
+[04:26:46] WAIT phone-r1-e2e load={ 12.02 75.30 132.03 } (>12.0, waited=30s), sleeping 5s
+[04:26:51] START phone-r1-e2e load={ 11.38 74.11 131.28 } (waited=35s thresh=12.0)
+[04:27:47] WAIT phone-r2-argent load={ 16.25 64.87 124.25 } (>12.0, waited=0s), sleeping 5s
+[04:27:52] WAIT phone-r2-argent load={ 15.47 63.10 122.94 } (>12.0, waited=5s), sleeping 5s
+[04:27:57] WAIT phone-r2-argent load={ 14.47 62.11 122.23 } (>12.0, waited=10s), sleeping 5s
+[04:28:02] WAIT phone-r2-argent load={ 13.63 61.14 121.54 } (>12.0, waited=15s), sleeping 5s
+[04:28:07] WAIT phone-r2-argent load={ 13.90 60.41 120.93 } (>12.0, waited=20s), sleeping 5s
+[04:28:12] WAIT phone-r2-argent load={ 13.99 59.66 120.31 } (>12.0, waited=25s), sleeping 5s
+[04:28:17] WAIT phone-r2-argent load={ 13.67 58.83 119.66 } (>12.0, waited=30s), sleeping 5s
+[04:28:22] WAIT phone-r2-argent load={ 13.05 57.95 118.99 } (>12.0, waited=35s), sleeping 5s
+[04:28:27] WAIT phone-r2-argent load={ 12.33 57.06 118.32 } (>12.0, waited=40s), sleeping 5s
+[04:28:32] START phone-r2-argent load={ 11.74 56.19 117.65 } (waited=45s thresh=12.0)
+[04:28:54] WAIT phone-r2-e2e load={ 13.68 53.78 115.36 } (>12.0, waited=0s), sleeping 5s
+[04:28:59] WAIT phone-r2-e2e load={ 18.03 54.01 115.08 } (>12.0, waited=5s), sleeping 5s
+[04:29:04] WAIT phone-r2-e2e load={ 17.95 53.40 114.51 } (>12.0, waited=10s), sleeping 5s
+[04:29:09] WAIT phone-r2-e2e load={ 17.95 52.81 113.94 } (>12.0, waited=15s), sleeping 5s
+[04:29:14] WAIT phone-r2-e2e load={ 16.99 52.03 113.31 } (>12.0, waited=20s), sleeping 5s
+[04:29:19] WAIT phone-r2-e2e load={ 18.20 51.70 112.83 } (>12.0, waited=25s), sleeping 5s
+[04:29:24] WAIT phone-r2-e2e load={ 17.38 50.97 112.22 } (>12.0, waited=30s), sleeping 5s
+[04:29:29] WAIT phone-r2-e2e load={ 16.31 50.19 111.58 } (>12.0, waited=35s), sleeping 5s
+[04:29:34] WAIT phone-r2-e2e load={ 15.56 49.48 110.97 } (>12.0, waited=40s), sleeping 5s
+[04:29:39] WAIT phone-r2-e2e load={ 15.12 48.82 110.38 } (>12.0, waited=45s), sleeping 5s
+[04:29:44] WAIT phone-r2-e2e load={ 14.31 48.09 109.76 } (>12.0, waited=50s), sleeping 5s
+[04:29:49] WAIT phone-r2-e2e load={ 14.44 47.56 109.21 } (>12.0, waited=55s), sleeping 5s
+[04:29:54] WAIT phone-r2-e2e load={ 13.68 46.85 108.60 } (>12.0, waited=60s), sleeping 5s
+[04:29:59] WAIT phone-r2-e2e load={ 13.15 46.19 108.01 } (>12.0, waited=65s), sleeping 5s
+[04:30:04] WAIT phone-r2-e2e load={ 12.74 45.56 107.42 } (>12.0, waited=70s), sleeping 5s
+[04:30:09] WAIT phone-r2-e2e load={ 12.36 44.93 106.84 } (>12.0, waited=75s), sleeping 5s
+[04:30:14] START phone-r2-e2e load={ 11.93 44.30 106.25 } (waited=80s thresh=12.0)
+[04:31:08] WAIT phone-r3-argent load={ 37.44 46.93 103.41 } (>12.0, waited=0s), sleeping 5s
+[04:31:13] WAIT phone-r3-argent load={ 36.77 46.64 102.97 } (>12.0, waited=5s), sleeping 5s
+[04:31:18] WAIT phone-r3-argent load={ 34.54 46.01 102.42 } (>12.0, waited=10s), sleeping 5s
+[04:31:23] WAIT phone-r3-argent load={ 32.34 45.36 101.86 } (>12.0, waited=15s), sleeping 5s
+[04:31:28] WAIT phone-r3-argent load={ 30.39 44.74 101.31 } (>12.0, waited=20s), sleeping 5s
+[04:31:33] WAIT phone-r3-argent load={ 28.84 44.18 100.78 } (>12.0, waited=25s), sleeping 5s
+[04:31:38] WAIT phone-r3-argent load={ 27.89 43.73 100.29 } (>12.0, waited=30s), sleeping 5s
+[04:31:43] WAIT phone-r3-argent load={ 26.38 43.15 99.75 } (>12.0, waited=35s), sleeping 5s
+[04:31:48] WAIT phone-r3-argent load={ 25.46 42.69 99.26 } (>12.0, waited=40s), sleeping 5s
+[04:31:53] WAIT phone-r3-argent load={ 24.31 42.16 98.74 } (>12.0, waited=45s), sleeping 5s
+[04:31:58] WAIT phone-r3-argent load={ 24.60 41.92 98.32 } (>12.0, waited=50s), sleeping 5s
+[04:32:03] WAIT phone-r3-argent load={ 25.03 41.73 97.92 } (>12.0, waited=55s), sleeping 5s
+[04:32:08] WAIT phone-r3-argent load={ 27.91 42.05 97.71 } (>12.0, waited=60s), sleeping 5s
+[04:32:13] WAIT phone-r3-argent load={ 27.20 41.66 97.25 } (>12.0, waited=65s), sleeping 5s
+[04:32:18] WAIT phone-r3-argent load={ 25.18 41.00 96.69 } (>12.0, waited=70s), sleeping 5s
+[04:32:23] WAIT phone-r3-argent load={ 23.89 40.47 96.17 } (>12.0, waited=75s), sleeping 5s
+[04:32:28] WAIT phone-r3-argent load={ 22.29 39.87 95.63 } (>12.0, waited=80s), sleeping 5s
+[04:32:33] WAIT phone-r3-argent load={ 21.07 39.32 95.11 } (>12.0, waited=85s), sleeping 5s
+[04:32:38] WAIT phone-r3-argent load={ 19.78 38.75 94.59 } (>12.0, waited=90s), sleeping 5s
+[04:32:43] WAIT phone-r3-argent load={ 18.52 38.17 94.05 } (>12.0, waited=95s), sleeping 5s
+[04:32:48] WAIT phone-r3-argent load={ 17.35 37.61 93.53 } (>12.0, waited=100s), sleeping 5s
+[04:32:53] WAIT phone-r3-argent load={ 16.28 37.05 93.00 } (>12.0, waited=105s), sleeping 5s
+[04:32:58] WAIT phone-r3-argent load={ 15.78 36.60 92.51 } (>12.0, waited=110s), sleeping 5s
+[04:33:04] WAIT phone-r3-argent load={ 15.24 36.14 92.02 } (>12.0, waited=115s), sleeping 5s
+[04:33:09] WAIT phone-r3-argent load={ 14.42 35.62 91.51 } (>12.0, waited=120s), sleeping 5s
+[04:33:14] WAIT phone-r3-argent load={ 14.38 35.26 91.06 } (>12.0, waited=125s), sleeping 5s
+[04:33:19] WAIT phone-r3-argent load={ 14.11 34.86 90.59 } (>12.0, waited=130s), sleeping 5s
+[04:33:24] WAIT phone-r3-argent load={ 13.62 34.42 90.11 } (>12.0, waited=135s), sleeping 5s
+[04:33:29] WAIT phone-r3-argent load={ 13.49 34.04 89.65 } (>12.0, waited=140s), sleeping 5s
+[04:33:34] WAIT phone-r3-argent load={ 13.13 33.63 89.18 } (>12.0, waited=145s), sleeping 5s
+[04:33:39] WAIT phone-r3-argent load={ 12.80 33.22 88.71 } (>12.0, waited=150s), sleeping 5s
+[04:33:44] WAIT phone-r3-argent load={ 12.10 32.73 88.21 } (>12.0, waited=155s), sleeping 5s
+[04:33:49] START phone-r3-argent load={ 11.37 32.24 87.71 } (waited=160s thresh=12.0)
+[04:34:10] START phone-r3-e2e load={ 10.49 30.68 85.86 } (waited=0s thresh=12.0)
