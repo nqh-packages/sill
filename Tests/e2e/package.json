@@ -1,0 +1,9 @@
+{
+  "name": "sill-e2e",
+  "private": true,
+  "type": "module",
+  "devDependencies": {
+    "@e2e-dev/mobile": "^0.12.8",
+    "e2e": "^0.24.0"
+  }
+}

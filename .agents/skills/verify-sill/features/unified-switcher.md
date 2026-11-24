@@ -4,24 +4,25 @@ Modal sheet for picking the Mac Desktop, switching open Mac windows, or launchin
 
 ## Sub-features
 
-- Desktop hero card showing display bezel, display names, active `Streaming` status, and display stop indicator.
+- Desktop hero card showing display bezel, display names, `Streaming` (only while the Desktop streams: `SillActive=desktop`), and display stop indicator.
 - Open windows grid with `TactileDisplayBezel` thumbnails, corner app icons, window titles, and active selection rim.
-- Installed Mac apps section to launch apps on the Mac.
-- Live search filtering across windows and installed apps, with an explicit empty-match state (`No windows or apps match “…”`).
+- `Apps on <Mac>` section to launch installed apps on the Mac.
+- Live search filtering across windows and installed apps (trimmed of spaces), with the system's search empty state (`ContentUnavailableView.search`).
+- `Done` closes it; a window card's context menu offers Close, Minimize and Full Screen.
 
 ## How to get to it (user POV)
 
-Tap `Apps` in the iPad floating capsule, or tap the active window chip in the iPhone Focus dock. Directly seedable in mock harness with `SillDrawer=1` (and optional `SillDrawerSearch=<query>`).
+Tap `Apps` in the floating capsule (the search field takes focus), or the active-app key of the compact capsule below 500 pt wide (no focus). Seedable in the mock harness with `-SillDrawer 1` (opens 1.5 s after launch, no focus). `-SillDrawerSearch` only reaches the old `AppDrawer`, which nothing shows any more.
 
 ## Driving it
 
-- **Lane 2 (Maestro — primary):** `.maestro/switcher-and-controls.yaml` opens `Apps`, verifies `Mac mini`, `Desktop`, and `Finder`, taps `Desktop`, and confirms the sheet dismisses back to the stream chrome.
-- **Locators:** `Apps`, `Mac mini` (navigation title), `Desktop`, `Finder`, `Code`, `Notes`, `Streaming`.
-- **Lane 3 (Local):** `Tests/checks/tactile-workspace/run.sh` (section 9) verifies `.switcher` acquires the `.drawer` keyboard taker and preserves `restoreKeyboardAfterModal`.
+- **Lane 2 (e2e — primary):** `Tests/e2e/tests/switcher-and-controls.e2e.ts` (`--target ipad`) opens `Apps`, verifies `Done` and `Windows`, taps `Desktop`, and confirms the sheet dismisses into Control Center's root. **Fails today** on a product bug (Gotchas).
+- **Locators:** `Apps`, `Done`, `Windows`, `Desktop` (the card and the Finder window titled "Desktop": `.first()`), `Finder`, `Code`, `Notes`, `Streaming` (with `SillActive=desktop`). The `Mac mini` navigation title is drawn but not reported to the accessibility tree.
+- **Lane 3 (Local):** `Tests/checks/tactile-workspace/run.sh` section 8 verifies `.switcher` acquires the `.drawer` keyboard taker, section 3 `restoreKeyboardAfterModal`.
 
 ## Proof
 
-On screen: sheet presents with Mac name title (`Mac mini`), Desktop card, and window cards (`Finder`, `Code`, `Notes`); selecting `Desktop` dismisses the switcher sheet and returns to the stream screen with active chrome.
+On screen: sheet presents with the Mac's name as its title, the Desktop card, and window cards (`Finder`, `Code`, `Notes`); selecting `Desktop` dismisses the switcher sheet and returns to the stream screen with active chrome.
 
 ## Charters
 
@@ -39,3 +40,4 @@ switcher-empty-search|ios|fuzzer|Open Unified Switcher and enter nonsense string
 
 - `TactileDisplayBezel` clips thumbnails via an `.overlay` + `.clipShape` so portrait or mismatched aspect ratio mock thumbnails must never bleed past the card border — check this visually in `switcher-typical`.
 - In mock mode, `client.macName` is `"Mac mini"` unless overridden by `-SillMockMacName`.
+- **Known product bug (2026-11-24, iOS 27.3 simulator, iPad):** opening the switcher from `Apps` pins Sill at 100 % CPU inside `UISheetPresentationController`'s keyboard layout (the search field's focus), so every accessibility query and tap after it times out. Reproduced at a795274c and 58613b5d. Until it is fixed the switcher test fails at its first tap.

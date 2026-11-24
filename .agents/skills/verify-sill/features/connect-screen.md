@@ -5,18 +5,18 @@ Root discovery and pairing screen shown before connecting to a Mac (`TactileConn
 ## Sub-features
 
 - Discovered and saved Macs displayed as machined `TactileDisplayBezel` cards with connection method badges (`Wired`, `Wi-Fi`, `Direct`, `Remote`, `Not paired`).
-- Empty/searching state (`looking`), hint with `Search Nearby` (`hint`), permission-denied explanation (`denied`), version-floor refusal (`update`), and remote failure states (`remotefail`).
+- Empty/searching state (`looking`), hint with `Search Nearby` (`hint`), permission-denied explanation (`denied`), version-floor refusal (`update`), and remote failure states (`remotefail`, its words set by `-SillRemoteFailure`).
 - `Add a Mac` button (`+`) opening the manual pairing / QR / code entry sheet (`Add a Mac` / `Cancel`).
 - `Reconnect automatically` switch and footer links + version label.
 
 ## How to get to it (user POV)
 
-Launch Sill with no active Mac connection (or after disconnecting). Directly seedable in mock harness via `SillConnectCase=looking|hint|methods|denied|update|remotefail|addmac`.
+Launch Sill with no active Mac connection (or after disconnecting). Seedable in the mock harness via `-SillConnectCase` (`MockCatalog.ConnectCase`: `looking`, `hint`, `methods`, `denied`, `update`, `remotefail`, `addmac`, `addcode`, `nearby`, `notice`, `remote`, `pairing`, `camera`, the `home*` cases and more). The mock never auto-reconnects, so the "Reconnecting to …" pill is not seen there.
 
 ## Driving it
 
-- **Lane 2 (Maestro — primary):** `.maestro/connect-screen.yaml` launches `SillConnectCase=methods`, verifies `Sill`, `Add a Mac`, and `Reconnect automatically`, opens `Add a Mac`, verifies `Cancel`, and dismisses back.
-- **Locators:** `Sill`, `Add a Mac`, `Reconnect automatically`, `Cancel`, `Search Nearby`.
+- **Lane 2 (e2e — primary):** `Tests/e2e/tests/connect-screen.e2e.ts` (`--target ipad`) launches `-SillConnectCase methods`, verifies `Add a Mac` and `Reconnect automatically`, opens `Add a Mac`, verifies `Cancel`, and dismisses back.
+- **Locators:** `Add a Mac`, `Reconnect automatically` (switch and text: `.first()`), `Cancel` (two in the sheet: `.first()`), `Search Nearby` (`hint` and `looking` only).
 - **Lane 3 (Local):** `Tests/checks/connection-list/run.sh`, `Tests/checks/home-device/run.sh`, and `Tests/checks/goodbye/run.sh` test discovery/pairing/refusal rules headlessly.
 
 ## Proof
@@ -41,5 +41,5 @@ connect-edge-cases|ios|fuzzer|Inspect Connect screen across looking, denied, upd
 
 ## Gotchas
 
-- Launching without `-SillLayout` uses real Bonjour discovery on the local network and will show real nearby Macs (e.g. `MarkoloPro`) as `Not paired`; always pass `SillConnectCase` for deterministic UI proofs.
+- Launching without `-SillLayout` uses real Bonjour discovery and lists the real Macs nearby (e.g. `MarkoloPro, Wired`). **Never tap one**: it would connect to a person's Mac and its encoder. Always pass `-SillLayout` and `-SillConnectCase`.
 - QR code camera scanning inside `Add a Mac` is unavailable on iOS Simulator; use code entry or `-SillConnectCase addcode` instead.

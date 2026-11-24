@@ -1189,6 +1189,13 @@ Below, "this file" means CLAUDE.md, and "Build and run below" means docs/BUILD-A
   a key: `13:down,wait:2,13:up`), `run.sh UDID point SCRIPT`;
   only a booted simulator of your own, by UDID (its README has what it showed:
   after its keys UIKit there counts a hardware keyboard for good).
+- `Tests/e2e/` — TEST ONLY, simulator only: the app driven by taps through its DEBUG harness, e2e
+  (`@e2e-dev/mobile`, exact locators, no model; its own `package.json`, `pnpm install` there):
+  `e2e.config.ts` names two targets, `ipad` and `phone` (`SILL_E2E_IPAD`, `SILL_E2E_PHONE`: simulator
+  names), `tests/*.e2e.ts` a test per feature of `.agents/skills/verify-sill/features/` and
+  `tests/gallery.e2e.ts` the state gallery's rows (`Scripts/render-states.sh`). It taps, so it runs on
+  simulators of the agent's own, never the agents' photo pair (verify-sill, "Launch"). Replaced
+  `.maestro/` on 2026-11-24 (Maestro is not used).
 - `Scripts/harness-photos/` — the DEBUG harness photographed on the agents' shared simulators,
   never one an agent makes for itself: `Scripts/agent-simulators.sh create` makes them once ("Sill
   agents Duo", iPhone Duo on iOS 27.1, and "Sill agents iPad", iPad Pro 13-inch (M5) on iOS 27.0,

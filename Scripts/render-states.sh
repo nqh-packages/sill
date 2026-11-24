@@ -2,43 +2,42 @@
 set -euo pipefail
 
 # State gallery renderer for Sill (iOS / iPadOS).
-# Uses Maestro + Sill's deterministic DEBUG LayoutHarness (-SillLayout / -SillConnectCase / etc.)
-# to capture every major screen and component across reachable states (including Dynamic Type XL),
-# then builds a browsable HTML contact sheet at .e2e/states/index.html.
+# Runs the e2e gallery (Tests/e2e/tests/gallery.e2e.ts) against Sill's deterministic DEBUG LayoutHarness
+# (-SillLayout / -SillConnectCase / etc.) on the iPad and iPhone simulators e2e targets, Dynamic Type XXXL
+# included, then builds a browsable HTML contact sheet at .e2e/states/index.html.
+# It installs nothing: build and install the Debug simulator app first (verify-sill, "Launch").
 #
 # Usage:
-#   Scripts/render-states.sh [--ipad-udid UDID] [--phone-udid UDID] [--out DIR] [--force]
+#   Scripts/render-states.sh [--ipad NAME] [--phone NAME] [--out DIR] [--force]
 #
 # Env:
-#   SILL_VERIFY_IPAD_UDID   Booted iPad simulator UDID (auto-detected if omitted)
-#   SILL_VERIFY_PHONE_UDID  Booted iPhone simulator UDID (auto-detected if omitted)
+#   SILL_E2E_IPAD   iPad simulator name for the e2e "ipad" target (default: e2e.config.ts's)
+#   SILL_E2E_PHONE  iPhone simulator name for the e2e "phone" target (default: e2e.config.ts's)
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+E2E="${ROOT}/Tests/e2e"
 OUT_DIR="${ROOT}/.e2e/states"
-IPAD_UDID="${SILL_VERIFY_IPAD_UDID:-}"
-PHONE_UDID="${SILL_VERIFY_PHONE_UDID:-}"
 FORCE=0
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --ipad-udid) IPAD_UDID="$2"; shift 2 ;;
-        --phone-udid) PHONE_UDID="$2"; shift 2 ;;
+        --ipad) export SILL_E2E_IPAD="$2"; shift 2 ;;
+        --phone) export SILL_E2E_PHONE="$2"; shift 2 ;;
         --out) OUT_DIR="$2"; shift 2 ;;
         --force) FORCE=1; shift ;;
         -h|--help)
-            sed -n '3,16p' "$0"
+            sed -n '3,15p' "$0"
             exit 0
             ;;
         *) echo "Unknown arg: $1" >&2; exit 2 ;;
     esac
 done
 
-if ! command -v maestro >/dev/null 2>&1; then
-    echo "ERROR: maestro is not installed (brew install maestro)." >&2
+if [[ ! -x "${E2E}/node_modules/.bin/e2e" ]]; then
+    echo "ERROR: e2e is not installed: (cd Tests/e2e && pnpm install)." >&2
     exit 1
 fi
 
-# Doctor gate: refuse if machine 1-min load is very high unless --force.
 if [[ "$FORCE" -eq 0 ]]; then
     LOAD1="$(sysctl -n vm.loadavg | awk '{print $2}')"
     if awk -v l="$LOAD1" 'BEGIN { exit !(l > 8.0) }'; then
@@ -47,341 +46,51 @@ if [[ "$FORCE" -eq 0 ]]; then
     fi
 fi
 
-# Auto-detect booted simulators if not supplied.
-if [[ -z "$IPAD_UDID" ]]; then
-    IPAD_UDID="$(xcrun simctl list devices booted | awk -F '[()]' '/iPad/ {print $2; exit}')"
-fi
-if [[ -z "$PHONE_UDID" ]]; then
-    PHONE_UDID="$(xcrun simctl list devices booted | awk -F '[()]' '/iPhone/ {print $2; exit}')"
-fi
+udid_named() {
+    xcrun simctl list devices booted -j | python3 -c 'import json,sys
+name=sys.argv[1]
+for devs in json.load(sys.stdin)["devices"].values():
+    for d in devs:
+        if d["name"]==name: print(d["udid"]); raise SystemExit' "$1"
+}
 
-if [[ -z "$IPAD_UDID" && -z "$PHONE_UDID" ]]; then
-    echo "ERROR: No booted iOS/iPadOS simulator found. Boot one first or pass --ipad-udid / --phone-udid." >&2
-    exit 1
-fi
-
-FRAMES_DIR="${OUT_DIR}/frames"
-TMP_DIR="$(mktemp -d "${TMPDIR:-/tmp}/sill-gallery.XXXXXX")"
-mkdir -p "$FRAMES_DIR"
-
+rm -rf "$OUT_DIR"
+mkdir -p "$OUT_DIR/frames"
+export SILL_GALLERY_OUT="$OUT_DIR"
+MANIFEST="${OUT_DIR}/manifest.tsv"
+: > "$MANIFEST"
+XL_UDID=""
 cleanup() {
-    # Always restore default Dynamic Type size on simulators we touched.
-    if [[ -n "$IPAD_UDID" ]]; then
-        xcrun simctl ui "$IPAD_UDID" content_size large >/dev/null 2>&1 || true
-    fi
-    if [[ -n "$PHONE_UDID" ]]; then
-        xcrun simctl ui "$PHONE_UDID" content_size large >/dev/null 2>&1 || true
-    fi
-    rm -rf "$TMP_DIR"
+    if [[ -n "$XL_UDID" ]]; then xcrun simctl ui "$XL_UDID" content_size large >/dev/null 2>&1 || true; fi
 }
 trap cleanup EXIT
 
-run_flow() {
-    local udid="$1"
-    local name="$2"
-    local yaml_path="${TMP_DIR}/${name}.yaml"
-    local debug_dir="${TMP_DIR}/out-${name}"
-    cat > "$yaml_path"
-    echo "==> Rendering ${name} on ${udid}"
-    maestro --device "$udid" test "$yaml_path" --debug-output "$debug_dir" >/dev/null
-    local png
-    png="$(find "$debug_dir" -name "${name}.png" -type f | head -n 1 || true)"
-    if [[ -z "$png" || ! -f "$png" ]]; then
-        # Maestro may also save screenshots relative to cwd if path is bare
-        if [[ -f "${ROOT}/${name}.png" ]]; then
-            mv "${ROOT}/${name}.png" "${FRAMES_DIR}/${name}.png"
-        elif [[ -f "${PWD}/${name}.png" ]]; then
-            mv "${PWD}/${name}.png" "${FRAMES_DIR}/${name}.png"
-        else
-            echo "ERROR: Expected screenshot ${name}.png not produced" >&2
-            exit 1
-        fi
-    else
-        cp "$png" "${FRAMES_DIR}/${name}.png"
-    fi
+FAILED=0
+gallery() {
+    (cd "$E2E" && pnpm exec e2e run --target "$1" --tag "$2" tests/gallery.e2e.ts) || FAILED=1
 }
 
-# Build manifest as TSV: group\tframe\tcaption
-MANIFEST="${TMP_DIR}/manifest.tsv"
-: > "$MANIFEST"
-
-add_entry() {
-    printf "%s\t%s\t%s\n" "$1" "$2" "$3" >> "$MANIFEST"
-}
+IPAD_NAME="${SILL_E2E_IPAD:-iPad Pro 11-inch (M5)}"
+PHONE_NAME="${SILL_E2E_PHONE:-iPhone 17 Pro}"
+IPAD_UDID="$(udid_named "$IPAD_NAME" || true)"
+PHONE_UDID="$(udid_named "$PHONE_NAME" || true)"
+if [[ -z "$IPAD_UDID" && -z "$PHONE_UDID" ]]; then
+    echo "ERROR: neither \"$IPAD_NAME\" nor \"$PHONE_NAME\" is booted. Boot one, or name yours with --ipad / --phone." >&2
+    exit 1
+fi
 
 if [[ -n "$IPAD_UDID" ]]; then
     xcrun simctl ui "$IPAD_UDID" content_size large >/dev/null 2>&1 || true
-
-    # 1. Connect screen states
-    run_flow "$IPAD_UDID" "connect-looking" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillConnectCase: "looking"
-- assertVisible: "Sill"
-- takeScreenshot: "connect-looking"
-EOF
-    add_entry "Connect Screen" "connect-looking" "Empty / searching for Macs (SillConnectCase=looking)"
-
-    run_flow "$IPAD_UDID" "connect-methods" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillConnectCase: "methods"
-- assertVisible: "Sill"
-- takeScreenshot: "connect-methods"
-EOF
-    add_entry "Connect Screen" "connect-methods" "Overloaded discovery: Wired, Wi-Fi, Direct, long Mac names"
-
-    run_flow "$IPAD_UDID" "connect-denied" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillConnectCase: "denied"
-- assertVisible: "Sill"
-- takeScreenshot: "connect-denied"
-EOF
-    add_entry "Connect Screen" "connect-denied" "Permission denied (Local Network access denied)"
-
-    run_flow "$IPAD_UDID" "connect-error-update" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillConnectCase: "update"
-- assertVisible: "Sill"
-- takeScreenshot: "connect-error-update"
-EOF
-    add_entry "Connect Screen" "connect-error-update" "Error: Mac refused older app version"
-
-    run_flow "$IPAD_UDID" "connect-error-remotefail" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillConnectCase: "remotefail"
-- assertVisible: "Sill"
-- takeScreenshot: "connect-error-remotefail"
-EOF
-    add_entry "Connect Screen" "connect-error-remotefail" "Error: Remote connection failed"
-
-    # 2. iPad PencilKit Floating Chrome states
-    run_flow "$IPAD_UDID" "pad-chrome-bottom" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-- assertVisible: "Apps"
-- takeScreenshot: "pad-chrome-bottom"
-EOF
-    add_entry "iPad PencilKit Chrome" "pad-chrome-bottom" "Typical: unified capsule docked at bottom"
-
-    run_flow "$IPAD_UDID" "pad-chrome-trailing-aa" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-- assertVisible: "Apps"
-- swipe:
-    start: "50%,96%"
-    end: "95%,50%"
-    duration: 500
-- tapOn: "Text size"
-- assertVisible: "Off"
-- takeScreenshot: "pad-chrome-trailing-aa"
-EOF
-    add_entry "iPad PencilKit Chrome" "pad-chrome-trailing-aa" "Vertical right rail with inward Aa detent popover"
-
-    run_flow "$IPAD_UDID" "pad-chrome-orb" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-- assertVisible: "Minimize controls"
-- tapOn: "Minimize controls"
-- assertNotVisible: "Apps"
-- assertVisible: "Controls"
-- takeScreenshot: "pad-chrome-orb"
-EOF
-    add_entry "iPad PencilKit Chrome" "pad-chrome-orb" "Minimized 48x48 corner orb showing active app icon"
-
-    run_flow "$IPAD_UDID" "pad-chrome-desktop-aa-disabled" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillActive: "desktop"
-- assertVisible: "Text size"
-- takeScreenshot: "pad-chrome-desktop-aa-disabled"
-EOF
-    add_entry "iPad PencilKit Chrome" "pad-chrome-desktop-aa-disabled" "Desktop streaming: Aa disabled/dimmed"
-
-    run_flow "$IPAD_UDID" "pad-chrome-empty-none" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillActive: "none"
-- assertVisible: "Apps"
-- takeScreenshot: "pad-chrome-empty-none"
-EOF
-    add_entry "iPad PencilKit Chrome" "pad-chrome-empty-none" "Empty: nothing streaming (SillActive=none)"
-
-    run_flow "$IPAD_UDID" "pad-fullscreen-hint" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillFullScreen: "1"
-      SillFullScreenHint: "hold"
-- assertVisible: ".*Mac mini.*"
-- waitForAnimationToEnd
-- takeScreenshot: "pad-fullscreen-hint"
-EOF
-    add_entry "iPad PencilKit Chrome" "pad-fullscreen-hint" "Full screen hidden chrome with swipe-in hint"
-
-    # 3. Unified Switcher & Control Center (typical + Dynamic Type XL)
-    run_flow "$IPAD_UDID" "switcher-typical" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillDrawer: "1"
-- assertVisible: "Mac mini"
-- takeScreenshot: "switcher-typical"
-EOF
-    add_entry "Unified Switcher" "switcher-typical" "Typical: Desktop card + open windows + installed apps"
-
-    run_flow "$IPAD_UDID" "controls-typical" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillSettings: "1"
-- assertVisible: "Streaming"
-- takeScreenshot: "controls-typical"
-EOF
-    add_entry "Control Center" "controls-typical" "Typical: Mac header, Streaming controls, This iPad"
-
-    # Dynamic Type XL edge case on iPad
+    gallery ipad gallery-ipad
+    XL_UDID="$IPAD_UDID"
     xcrun simctl ui "$IPAD_UDID" content_size accessibility-extra-extra-extra-large >/dev/null 2>&1 || true
-
-    run_flow "$IPAD_UDID" "connect-methods-xl" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillConnectCase: "methods"
-- assertVisible: "Sill"
-- takeScreenshot: "connect-methods-xl"
-EOF
-    add_entry "Accessibility (Dynamic Type XXXL)" "connect-methods-xl" "Connect screen overloaded at accessibility-extra-extra-extra-large"
-
-    run_flow "$IPAD_UDID" "controls-typical-xl" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "834x1194"
-      SillSettings: "1"
-- assertVisible: "Streaming"
-- takeScreenshot: "controls-typical-xl"
-EOF
-    add_entry "Accessibility (Dynamic Type XXXL)" "controls-typical-xl" "Control Center at accessibility-extra-extra-extra-large"
-
+    gallery ipad gallery-ipad-xl
     xcrun simctl ui "$IPAD_UDID" content_size large >/dev/null 2>&1 || true
+    XL_UDID=""
 fi
-
 if [[ -n "$PHONE_UDID" ]]; then
     xcrun simctl ui "$PHONE_UDID" content_size large >/dev/null 2>&1 || true
-
-    run_flow "$PHONE_UDID" "phone-pencilkit-bottom" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "402x874"
-      SillIdiom: "phone"
-- assertVisible: "Minimize controls"
-- takeScreenshot: "phone-pencilkit-bottom"
-EOF
-    add_entry "iPhone Workspace" "phone-pencilkit-bottom" "Typical: unified compact PencilKit floating capsule at bottom"
-
-    run_flow "$PHONE_UDID" "phone-pencilkit-orb" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "402x874"
-      SillIdiom: "phone"
-- tapOn: "Minimize controls"
-- assertNotVisible: "Apps"
-- assertVisible: "Controls"
-- takeScreenshot: "phone-pencilkit-orb"
-EOF
-    add_entry "iPhone Workspace" "phone-pencilkit-orb" "Minimized 48x48 corner orb on full-bleed phone canvas"
-
-    run_flow "$PHONE_UDID" "phone-control-deck" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "402x874"
-      SillIdiom: "phone"
-- tapOn: "Trackpad"
-- assertVisible: "Drag to move the pointer. Tap to click, two fingers to scroll."
-- takeScreenshot: "phone-control-deck"
-EOF
-    add_entry "iPhone Workspace" "phone-control-deck" "Control Deck: tactile trackpad + Esc/modifier command bar"
-
-    run_flow "$PHONE_UDID" "phone-switcher" <<'EOF'
-appId: com.uxheavy.sill
----
-- launchApp:
-    clearState: false
-    arguments:
-      SillLayout: "402x874"
-      SillIdiom: "phone"
-      SillDrawer: "1"
-- assertVisible: "Mac mini"
-- takeScreenshot: "phone-switcher"
-EOF
-    add_entry "iPhone Workspace" "phone-switcher" "Unified Switcher sheet on compact phone width"
+    gallery phone gallery-phone
 fi
 
 # Generate one browsable HTML contact sheet grouped by component.
@@ -452,3 +161,7 @@ with open(index_path, "w", encoding="utf-8") as f:
     f.write(doc)
 print(f"State gallery written: {index_path} ({count} frames)")
 PY
+if [[ "$FAILED" -ne 0 ]]; then
+    echo "Some states failed to render: see Tests/e2e/.e2e/results/." >&2
+    exit 1
+fi

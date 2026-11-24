@@ -30,3 +30,14 @@ corners"). Verified: Tests/checks/full-screen (3,000 random rects: every corner 
 a clear one unchanged; mutants K1–K6 caught); the simulator build. **Untested, on a device:** whether
 `concentricCornerRadii` answers at the root (the console's "corners: …" line says; else the cautious 62 pt),
 whether the extension effect draws the video layer, and its cost per frame.
+
+**verify-sill maintained, Maestro replaced by e2e (2026-11-24).** Huy: "maestro (uninstall/remove it globally),
+switch to e2e". Maestro is uninstalled (Homebrew, `~/.maestro`, the global skill); `.maestro/` became
+`Tests/e2e/` (e2e with `@e2e-dev/mobile`: smoke, pad chrome, switcher, connect, phone workspace, Control
+Center's Auto), and `Scripts/render-states.sh` renders the gallery through `Tests/e2e/tests/gallery.e2e.ts`.
+The feature map's drift is fixed (section numbers, Auto quality, the dead `-SillDrawerSearch`, keyboard
+clearance, corner strips, locators that repeat). Live on own iOS 27.3 simulators (deleted after): every
+test passes but the switcher's. **Product bug:** on the iPad, `Apps` opens the switcher with its search
+focused and Sill spins at 100 % CPU in `UISheetPresentationController`'s keyboard layout (reproduced at
+a795274c, before the corner change, so not it; `-SillDrawer`'s open without focus is fine). At Dynamic
+Type XXXL the Control Center's "Picture in Picture" tile truncates to "Picture in…".

@@ -8,6 +8,8 @@ Unified size-adaptive PencilKit floating palette paired with the bottom-anchored
 - Compact horizontal density (`width < 500 pt`): grip notch + active app icon button (`Apps`, opens Unified Switcher) + divider + `Keyboard`, `Trackpad`, `Controls`, `Minimize controls` (`~235 pt` wide). Dragging to a vertical side rail morphs into the full vertical tool rail.
 - Width-adaptive Trackpad (`width < 600 pt`): tapping `Trackpad` opens the bottom-anchored Control Deck (`Drag to move the pointer. Tap to click, two fingers to scroll.`) with hardware-style command keycaps (`TactileCommandBar`), 1-tap `Switch to keyboard` / `Switch to trackpad`, and `Stow trackpad`.
 - Viewport stability: mid-drag deck movement never thrashes Mac viewport resizes; settled deck open/close refits the visible canvas above the deck or software keyboard.
+- The capsule keeps 10 pt above the software keyboard (`StreamWorkspaceState.chromeBottomClearance`).
+- The picture stays clear of the screen's rounded corners, shown and in full screen, its own edges mirrored into the strips this leaves (`ScreenCorners`, `StreamScreen.cornerStrips`; DEBUG `-SillCornerRadius R`, `-SillCornerFill 0`; the console's "corners: …" line).
 
 ## How to get to it (user POV)
 
@@ -15,8 +17,8 @@ Connect to a Mac on iPhone in portrait orientation. In the offline mock harness,
 
 ## Driving it
 
-- **Lane 2 (Maestro — primary):** `.maestro/phone-workspace.yaml` verifies the compact bottom PencilKit pill (`Apps`, `Keyboard`, `Trackpad`, `Controls`, `Minimize controls`), minimizes to and expands from the corner orb, opens and stows the Control Deck (`Stow trackpad`), and opens `Controls` → Mac `Menus` (`File`) → `Done`.
-- **Locators:** `Apps`, `Keyboard`, `Trackpad`, `Controls`, `Minimize controls`, `Drag to move the pointer. Tap to click, two fingers to scroll.`, `Stow trackpad`, `Switch to keyboard`, `Full Screen`, `Menus`, `File`, `Done`, `Mac mini`.
+- **Lane 2 (e2e — primary):** `Tests/e2e/tests/phone-workspace.e2e.ts` (`--target phone`) verifies the compact bottom PencilKit pill (`Apps`, `Keyboard`, `Trackpad`, `Controls`, `Minimize controls`), minimizes to and expands from the corner orb, opens and stows the Control Deck (`Stow trackpad`), and opens `Controls` → Mac `Menus` (`File`) → `Done`.
+- **Locators:** `Apps`, `Keyboard`, `Trackpad`, `Controls`, `Minimize controls`, `Drag to move the pointer. Tap to click, two fingers to scroll.`, `Stow trackpad`, `Switch to keyboard`, `Full Screen` and `Menus` (tile and row: `.first()`), `File`, `Done`.
 - **Lane 3 (Local):** `Tests/checks/tactile-workspace/run.sh` pins deck drag/snap thresholds, Keyboard ↔ Trackpad swap, viewport locking, and 4-edge / 4-corner snap physics.
 
 ## Proof
@@ -40,4 +42,5 @@ phone-deck-keyboard|ios|fuzzer|Alternate rapidly between Control Deck, software 
 ## Gotchas
 
 - `Aa` and `Menus` are intentionally omitted from the compact horizontal pill (`width < 500 pt`) to prevent overflow; both remain 1 tap away inside `Controls` (or directly on the capsule when docked vertically on a side rail).
+- The corner clearance does not show in the mock (its picture is black, and `-SillPointer`'s frame is landscape, letterboxed away from the corners): see it on a live picture (`-SillConnect 127.0.0.1:<PORT>` to a `--synthetic` host) or a device, and in the console's "corners: …" line.
 - Software keyboard visibility on a simulator depends on whether UIKit considers a hardware keyboard connected; in mock mode `-SillKeyboard 1` lights the Keyboard button without raising the system IME over the fake frame.

@@ -4,10 +4,10 @@ User-facing feature map for the Sill iOS/iPadOS app (`com.uxheavy.sill`). Each f
 
 | Feature | Entry point / Launch args | Test / Flow | Status |
 | --- | --- | --- | --- |
-| [iPad PencilKit Floating Chrome](pad-pencilkit-chrome.md) | Stream screen (iPad / landscape / Duo book) · `SillLayout=834x1194` | `.maestro/pad-pencilkit-chrome.yaml`, `Tests/checks/tactile-workspace/run.sh` | tested |
-| [iPhone Compact PencilKit Chrome & Control Deck](phone-workspace.md) | Stream screen (iPhone portrait) · `SillLayout=402x874`, `SillIdiom=phone` | `.maestro/phone-workspace.yaml`, `Tests/checks/tactile-workspace/run.sh` | tested |
-| [Unified Switcher](unified-switcher.md) | Tap `Apps` (iPad) or active window chip (iPhone) · `SillDrawer=1` | `.maestro/switcher-and-controls.yaml` | tested |
-| [Control Center](control-center.md) | Tap `Controls` on dock or capsule · `SillSettings=1` | `.maestro/switcher-and-controls.yaml`, `.maestro/phone-workspace.yaml` | tested |
-| [Connect Screen & Add a Mac](connect-screen.md) | Disconnected root screen · `SillConnectCase=methods` | `.maestro/connect-screen.yaml` | tested |
+| [iPad PencilKit Floating Chrome](pad-pencilkit-chrome.md) | Stream screen (iPad / landscape / Duo book) · `SillLayout=834x1194` | `Tests/e2e/tests/pad-pencilkit-chrome.e2e.ts`, `Tests/checks/tactile-workspace/run.sh` | tested |
+| [iPhone Compact PencilKit Chrome & Control Deck](phone-workspace.md) | Stream screen (iPhone portrait) · `SillLayout=402x874`, `SillIdiom=phone` | `Tests/e2e/tests/phone-workspace.e2e.ts`, `Tests/checks/tactile-workspace/run.sh` | tested |
+| [Unified Switcher](unified-switcher.md) | Tap `Apps` (or the compact capsule's active-app key) · `SillDrawer=1` | `Tests/e2e/tests/switcher-and-controls.e2e.ts` | failing: CPU spin on open (product bug) |
+| [Control Center](control-center.md) | Tap `Controls` on the capsule · `SillSettings=1` | `Tests/e2e/tests/control-center.e2e.ts`, `Tests/e2e/tests/phone-workspace.e2e.ts` | tested |
+| [Connect Screen & Add a Mac](connect-screen.md) | Disconnected root screen · `SillConnectCase=methods` | `Tests/e2e/tests/connect-screen.e2e.ts` | tested |
 
 Unmapped secondary surfaces (add files when a change touches them): Mac menus pull-down (`-SillMacMenu`), Picture in Picture (`-Sill.pictureInPicture`), Clipboard chip (`-SillClipboardNote`), Guided Tour (`TourOverlay`), and macOS host `Sill.app` (`docs/BUILD-AND-RUN.md`).
