@@ -72,3 +72,15 @@ wraps, centred (stock `Text`). e2e: `control-center-xl` launches with `-UIPrefer
 UICTContentSizeCategoryAccessibilityXXXL` and asserts the label's drawn height (the accessibility text is whole even
 when the drawing is cut) exceeds a one-line tile's. **Still clipped at XXXL, not changed:** the link pill's readout
 ("2880×1800 · 60 fps ·…").
+
+**Sill for Mac on the fork's own identity, the new icon and glyph, 0.6.4 (2026-11-24).** Huy's answers: a
+notarized DMG on nqh-packages/sill, the updater reading that repository's releases, the menu bar glyph as the icon's
+two panes with the state in the front one, every place the old art showed. The bundle is `com.uxheavy.sill.mac` on
+team 9V2FMKQ3WU (the bundle ID and a Developer ID profile registered with `asc`; the profile kept in
+`~/.config/sill/`, passed as `SILL_PROVISION_PROFILE`), the feed and endpoints nqh-packages/sill, Update Now's key
+443e8b32 (its private half `~/.config/sill/update-key`, mode 0600), no nightly key (the fork publishes none).
+make-app.sh compiles the icon from `iOSClient/Sill.icon`, one source for both apps; `StatusGlyph` draws the icon's
+panes (previews: `-SillRenderPreviews`, glyphs.png). No accent colour: the icon's blue is the system's. `site/` is
+Noah's getsill.app and keeps its icon; `landing/` already had the new one; the DMG's background has no art.
+release.sh notarizes through asc with `SILL_NOTARY_PROFILE=asc` (no notarytool profile on this Mac) and takes the
+fork's remote as `SILL_RELEASE_REMOTE=uxheavy`.
