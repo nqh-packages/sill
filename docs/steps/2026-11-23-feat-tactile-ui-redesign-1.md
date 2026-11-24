@@ -65,3 +65,10 @@ bar (`SheetStatusBar`, `StreamScreen.sheetStatusBarHidden`; the harness says it 
 two runs of 4 of 4); before the fix its first test timed out at the `Desktop` tap and the Control Center drag test hung.
 **Untested, on a device:** whether the Duo's inner display (status bar hidden by `duoStatusBar`) showed the same loop;
 the sheets now match it either way.
+
+**The Picture in Picture tile at the largest text size, fixed (2026-11-24).** `DeckTile` pinned its title and
+detail to one line (`lineLimit(1)`), so "Picture in Picture" read "Picture in…" at Dynamic Type XXXL; the label now
+wraps, centred (stock `Text`). e2e: `control-center-xl` launches with `-UIPreferredContentSizeCategoryName
+UICTContentSizeCategoryAccessibilityXXXL` and asserts the label's drawn height (the accessibility text is whole even
+when the drawing is cut) exceeds a one-line tile's. **Still clipped at XXXL, not changed:** the link pill's readout
+("2880×1800 · 60 fps ·…").

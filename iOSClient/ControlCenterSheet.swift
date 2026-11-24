@@ -518,14 +518,13 @@ private struct DeckTile: View {
                 }
                 Text(title)
                     .font(.caption.weight(.semibold))
-                    .lineLimit(1)
                 if let detail {
                     Text(detail)
                         .font(.caption2)
                         .foregroundStyle(TactileTokens.textSecondary)
-                        .lineLimit(1)
                 }
             }
+            .multilineTextAlignment(.center)
             .foregroundStyle(TactileTokens.textPrimary)
             .frame(maxWidth: .infinity, minHeight: 66)
         }
