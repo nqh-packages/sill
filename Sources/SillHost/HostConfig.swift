@@ -158,7 +158,7 @@ package struct HostConfig: Equatable, Sendable {
     /// Sill.app's defaults: `standard` with the virtual display on (Noah, 2026-10-27: "have Virtual
     /// Desktop on by default. Of course, if a user changes a setting remember their choice for future
     /// sessions as you do now"). HostSettings registers these, so a key the Mac's user or a device ever
-    /// set (`virtualDisplay` in me.saffer.sill.mac) always wins, and only an install that never set it
+    /// set (`virtualDisplay` in com.uxheavy.sill.mac) always wins, and only an install that never set it
     /// streams a picked window from the virtual display by default. The CLI keeps `standard`.
     package static let app: HostConfig = {
         var c = standard

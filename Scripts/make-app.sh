@@ -5,7 +5,7 @@
 #   SILL_UNIVERSAL=1 Scripts/make-app.sh   …for Apple silicon and Intel Macs (arm64 and x86_64; #62)
 #   Scripts/make-app.sh --install          …then replace /Applications/Sill.app (a running copy quits first)
 #   Scripts/make-app.sh --install --open   …and launch it: Noah's one command after any change
-#   SILL_SIGN_IDENTITY='Developer ID Application: … (9B2KKVM937)' Scripts/make-app.sh --release
+#   SILL_SIGN_IDENTITY='Developer ID Application: … (9V2FMKQ3WU)' Scripts/make-app.sh --release
 #                                          (M6; refused unless HEAD carries the tag v‹version› and
 #                                          the signature is Developer ID; Scripts/release.sh --dry-run
 #                                          sets SILL_RELEASE_DRY_RUN=1, which only warns about the tag)
@@ -18,7 +18,7 @@
 # macOS belongs to an app bundle. Screen Recording, Accessibility, Local Network and Login Items
 # are granted to the CFBundleIdentifier plus the code's designated requirement. So: swift build,
 # wrap the SillMenuBar executable with Packaging/Info.plist and an icon compiled from
-# design/AppIcon.svg, sign the whole bundle last, verify.
+# iOSClient/Sill.icon, sign the whole bundle last, verify.
 #
 # Grants survive rebuilds only with a real identity: its designated requirement names the bundle ID
 # and the certificate, not this binary. Ad hoc ("-") is a hash of this exact build, so every
@@ -39,7 +39,7 @@ done
 # so only after the upload. The default identity is Apple Development, so without
 # SILL_SIGN_IDENTITY stop now, before building; the signature itself is checked after signing.
 if [ "$release" = 1 ] && [ -z "${SILL_SIGN_IDENTITY:-}" ]; then
-    echo "error: --release needs SILL_SIGN_IDENTITY='Developer ID Application: … (9B2KKVM937)'" >&2
+    echo "error: --release needs SILL_SIGN_IDENTITY='Developer ID Application: … (9V2FMKQ3WU)'" >&2
     exit 2
 fi
 # A release is built only from the commit its tag names: the tag is "v" + Packaging/Info.plist's
@@ -116,40 +116,20 @@ if [ "${SILL_RELEASE_NIGHTLY:-}" = 1 ]; then
 fi
 printf 'APPL????' > "$stage/Contents/PkgInfo"
 
-# The icon. design/AppIcon.svg is the iOS art, a full-bleed square. macOS 26+ masks and lights a
-# full-bleed icon itself when it comes from an asset catalog, but shows a legacy .icns shrunk
-# inside a grey tile (seen on macOS 27). So Quick Look renders the SVG (design/README.md's own
-# tool), the render becomes the one layer of an Icon Composer document, and actool, the compiler
-# Xcode uses, turns that into Assets.car (macOS 26+) plus an AppIcon.icns masked for macOS 14–15.
-# A layered Packaging/AppIcon.icon made in Icon Composer (the SVG's four groups) wins when it
-# exists. Cached in .build/icon until the SVG, that document or this script changes.
+# The icon: iOSClient/Sill.icon, the Icon Composer document the iOS app ships, so both apps carry one
+# icon from one source. actool, the compiler Xcode uses, turns it into Assets.car (macOS 26+, masked
+# and lit by the system) plus an AppIcon.icns for macOS 14–15. actool names the icon after the
+# document, so it is copied as AppIcon.icon first. Cached in .build/icon until the document or this
+# script changes.
 icon_out="$PWD/.build/icon"   # absolute: actool resolves relative paths in its helper's directory, not ours
-if [ ! -f "$icon_out/compiled/Assets.car" ] || [ design/AppIcon.svg -nt "$icon_out/compiled/Assets.car" ] \
-   || [ "$0" -nt "$icon_out/compiled/Assets.car" ] \
-   || { [ -d Packaging/AppIcon.icon ] && [ -n "$(find Packaging/AppIcon.icon -newer "$icon_out/compiled/Assets.car" 2>/dev/null)" ]; }; then
+icon_src=iOSClient/Sill.icon
+if [ ! -f "$icon_out/compiled/Assets.car" ] || [ "$0" -nt "$icon_out/compiled/Assets.car" ] \
+   || [ -n "$(find "$icon_src" -newer "$icon_out/compiled/Assets.car" 2>/dev/null)" ]; then
     rm -rf "$icon_out"; mkdir -p "$icon_out/compiled"
-    if [ -d Packaging/AppIcon.icon ]; then
-        doc="$PWD/Packaging/AppIcon.icon"
-    else
-        doc="$icon_out/AppIcon.icon"
-        mkdir -p "$doc/Assets"
-        qlmanage -t -s 1024 -o "$icon_out" "$PWD/design/AppIcon.svg" >/dev/null 2>&1 || true
-        mv "$icon_out/AppIcon.svg.png" "$doc/Assets/Sill.png" 2>/dev/null || true
-        cat > "$doc/icon.json" <<'JSON'
-{
-  "fill" : { "solid" : "srgb:0.00000,0.00000,0.00000,1.00000" },
-  "groups" : [ { "layers" : [ { "image-name" : "Sill.png", "name" : "Sill" } ] } ],
-  "supported-platforms" : { "squares" : [ "macOS" ] }
-}
-JSON
-    fi
-    if [ -f "$doc/icon.json" ] && { [ "$doc" = "$PWD/Packaging/AppIcon.icon" ] || [ -f "$doc/Assets/Sill.png" ]; }; then
-        xcrun actool --compile "$icon_out/compiled" --platform macosx --minimum-deployment-target 14.0 \
-            --app-icon AppIcon --output-partial-info-plist "$icon_out/partial.plist" "$doc" >/dev/null \
-            || echo "warning: actool could not compile the icon; Sill.app gets the generic icon" >&2
-    else
-        echo "warning: Quick Look did not render design/AppIcon.svg; Sill.app gets the generic icon" >&2
-    fi
+    cp -R "$icon_src" "$icon_out/AppIcon.icon"
+    xcrun actool --compile "$icon_out/compiled" --platform macosx --minimum-deployment-target 14.0 \
+        --app-icon AppIcon --output-partial-info-plist "$icon_out/partial.plist" "$icon_out/AppIcon.icon" >/dev/null \
+        || echo "warning: actool could not compile $icon_src; Sill.app gets the generic icon" >&2
 fi
 cp "$icon_out"/compiled/* "$stage/Contents/Resources/" 2>/dev/null || true
 
@@ -178,9 +158,9 @@ if [ "$release" = 1 ]; then
     # and said in the log so the softer keychain is never a silent surprise.
     #
     # SillRelease.entitlements holds exactly three profile-restricted entitlements —
-    # com.apple.application-identifier 9B2KKVM937.me.saffer.sill.mac,
-    # com.apple.developer.team-identifier 9B2KKVM937 and keychain-access-groups
-    # [9B2KKVM937.me.saffer.sill.mac] — and NO XML comments: codesign feeds it to AMFI's entitlement
+    # com.apple.application-identifier 9V2FMKQ3WU.com.uxheavy.sill.mac,
+    # com.apple.developer.team-identifier 9V2FMKQ3WU and keychain-access-groups
+    # [9V2FMKQ3WU.com.uxheavy.sill.mac] — and NO XML comments: codesign feeds it to AMFI's entitlement
     # parser (AMFIUnserializeXML), which rejects a comment with "syntax error", so a commented file
     # fails the sign. The application identifier goes under the macOS key: a Mac profile grants
     # com.apple.application-identifier, never iOS's application-identifier, and an app signed with
@@ -197,7 +177,7 @@ if [ "$release" = 1 ]; then
         # here instead, so a build it would kill is never written: every entitlement the app is
         # signed with is one the profile grants (the same value, or for each element of a list such
         # as the keychain groups the same name or a pattern that covers it: a Developer ID profile
-        # grants "9B2KKVM937.*"), the certificate that signs it is one the profile lists, and the
+        # grants "9V2FMKQ3WU.*"), the certificate that signs it is one the profile lists, and the
         # profile has not expired. Each refusal takes the stage with it.
         prof_dir="$(mktemp -d)"; trap 'rm -rf "$prof_dir"' EXIT
         refuse_profile() {

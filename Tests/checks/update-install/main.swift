@@ -17,24 +17,24 @@ let v030 = SillVersion("0.3.0")!, v040 = SillVersion("0.4.0")!, v041 = SillVersi
 
 // MARK: The two constants Sill.app uses
 
-let pinned = "anchor apple generic and identifier \"me.saffer.sill.mac\" and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = \"9B2KKVM937\""
+let pinned = "anchor apple generic and identifier \"com.uxheavy.sill.mac\" and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = \"9V2FMKQ3WU\""
 let release = P.Trust.release
 check(P.pinnedRequirement == pinned, "the pinned requirement: \(P.pinnedRequirement)")
 check(release.signer == pinned, "release signs with the pinned requirement")
 check(release.notarized && release.stapledTicket && release.hardenedRuntime && release.runningRequirement, "release: notarized, stapled, runtime, the running requirement")
-check(release.identifier == "me.saffer.sill.mac" && release.teamID == "9B2KKVM937", "release: identifier and team")
+check(release.identifier == "com.uxheavy.sill.mac" && release.teamID == "9V2FMKQ3WU", "release: identifier and team")
 check(release.bundleName == "Sill.app" && release.executable == "Sill", "release: Sill.app/Contents/MacOS/Sill")
-check(release.entitlements == [.string(key: "com.apple.application-identifier", value: "9B2KKVM937.me.saffer.sill.mac"),
-                               .string(key: "com.apple.developer.team-identifier", value: "9B2KKVM937"),
-                               .arrayContaining(key: "keychain-access-groups", value: "9B2KKVM937.me.saffer.sill.mac")],
+check(release.entitlements == [.string(key: "com.apple.application-identifier", value: "9V2FMKQ3WU.com.uxheavy.sill.mac"),
+                               .string(key: "com.apple.developer.team-identifier", value: "9V2FMKQ3WU"),
+                               .arrayContaining(key: "keychain-access-groups", value: "9V2FMKQ3WU.com.uxheavy.sill.mac")],
       "release: the three entitlements")
 check(release.updateKeys == M.releaseKeys, "release: the compiled-in update keys")
 for key in M.releaseKeys { check(M.usableKey(key) != nil, "a compiled-in update key is not usable: \(key)") }
 let gh = P.Endpoints.github
 check(gh.latestRelease == UpdatePolicy.feed, "the release request is the check's feed")
-check(gh.latestRelease.absoluteString == "https://api.github.com/repos/Saffsanity/sill/releases/latest", "the feed")
+check(gh.latestRelease.absoluteString == "https://api.github.com/repos/nqh-packages/sill/releases/latest", "the feed")
 check(gh.apiOrigins == ["https://api.github.com"], "api origins: \(gh.apiOrigins)")
-check(gh.downloadPrefix == "https://github.com/Saffsanity/sill/releases/download/", "download prefix")
+check(gh.downloadPrefix == "https://github.com/nqh-packages/sill/releases/download/", "download prefix")
 check(gh.assetName == "Sill.zip" && gh.manifestName == "Sill.zip.manifest", "asset names")
 check(gh.redirectOrigins == ["https://release-assets.githubusercontent.com", "https://objects.githubusercontent.com"], "redirect origins")
 check(gh.redirectPathPrefix == "/github-production-release-asset", "redirect path")
@@ -58,7 +58,7 @@ check(!P.downloadRedirectAllowed(u("https://release-assets.githubusercontent.com
 check(!P.downloadRedirectAllowed(u("https://evilrelease-assets.githubusercontent.com/github-production-release-asset/1"), endpoints: gh), "a look-alike host")
 check(!P.downloadRedirectAllowed(u("https://release-assets.githubusercontent.com:8443/github-production-release-asset/1"), endpoints: gh), "a port")
 check(!P.downloadRedirectAllowed(u("https://x@release-assets.githubusercontent.com/github-production-release-asset/1"), endpoints: gh), "a user")
-check(!P.downloadRedirectAllowed(u("https://github.com/Saffsanity/sill/releases/download/v0.4.0/Sill.zip"), endpoints: gh), "github.com is no redirect target")
+check(!P.downloadRedirectAllowed(u("https://github.com/nqh-packages/sill/releases/download/v0.4.0/Sill.zip"), endpoints: gh), "github.com is no redirect target")
 check(!P.downloadRedirectAllowed(u("https://api.github.com/github-production-release-asset/1"), endpoints: gh), "the API host")
 check(P.apiRedirectAllowed(u("https://api.github.com/repositories/1381093165/releases/latest"), endpoints: gh), "a renamed repository")
 check(!P.apiRedirectAllowed(u("http://api.github.com/x"), endpoints: gh), "the API over http")
@@ -76,8 +76,8 @@ for (tag, ok) in [("v0.6.2", true), ("V0.6.2", false), ("0.6.2", false), ("v0.6.
     check((P.strictTag(tag) != nil) == ok, "strictTag(\(tag)) should be \(ok)")
 }
 check(P.strictTag("v0.4.0") == v040, "v0.4.0 is 0.4")
-check(P.assetURL(tag: "v0.4.0", name: "Sill.zip", endpoints: gh)?.absoluteString == "https://github.com/Saffsanity/sill/releases/download/v0.4.0/Sill.zip", "the zip's URL")
-check(P.assetURL(tag: "v0.4.0", name: "Sill.zip.manifest", endpoints: gh)?.absoluteString == "https://github.com/Saffsanity/sill/releases/download/v0.4.0/Sill.zip.manifest", "the manifest's URL")
+check(P.assetURL(tag: "v0.4.0", name: "Sill.zip", endpoints: gh)?.absoluteString == "https://github.com/nqh-packages/sill/releases/download/v0.4.0/Sill.zip", "the zip's URL")
+check(P.assetURL(tag: "v0.4.0", name: "Sill.zip.manifest", endpoints: gh)?.absoluteString == "https://github.com/nqh-packages/sill/releases/download/v0.4.0/Sill.zip.manifest", "the manifest's URL")
 check(P.assetURL(tag: "v0.4.0", name: "Sill.dmg", endpoints: gh) == nil, "another asset")
 check(P.assetURL(tag: "../v0.4.0", name: "Sill.zip", endpoints: gh) == nil, "a tag that is a path")
 
@@ -131,8 +131,8 @@ check(P.words(.lowSpace(volume: "X", neededMB: 96)) == "Not enough free space on
 
 // MARK: The release
 
-let zipURL = "https://github.com/Saffsanity/sill/releases/download/v0.4.0/Sill.zip"
-let manURL = "https://github.com/Saffsanity/sill/releases/download/v0.4.0/Sill.zip.manifest"
+let zipURL = "https://github.com/nqh-packages/sill/releases/download/v0.4.0/Sill.zip"
+let manURL = "https://github.com/nqh-packages/sill/releases/download/v0.4.0/Sill.zip.manifest"
 let sha = String(repeating: "ab", count: 32), sha1x = String(repeating: "cd", count: 32)
 func asset(_ name: String, _ url: String, size: Any = 5_920_002, state: Any = "uploaded", digest: Any? = "sha256:" + String(repeating: "ab", count: 32)) -> [String: Any] {
     var a: [String: Any] = ["name": name, "browser_download_url": url, "size": size, "state": state]
@@ -144,7 +144,7 @@ func body(tag: Any = "v0.4.0", draft: Any = false, prerelease: Any = false, asse
     let defaultAssets: [[String: Any]] = [asset("Sill.zip", zipURL), asset("Sill.zip.manifest", manURL, size: 700, digest: nil),
                                           asset("Sill.dmg", zipURL.replacingOccurrences(of: ".zip", with: ".dmg"))]
     var d: [String: Any] = ["tag_name": tag, "draft": draft, "prerelease": prerelease, "assets": assets ?? defaultAssets,
-                            "html_url": "https://github.com/Saffsanity/sill/releases/tag/v0.4.0"]
+                            "html_url": "https://github.com/nqh-packages/sill/releases/tag/v0.4.0"]
     if let published { d["published_at"] = published }
     if let id { d["id"] = id }
     return try! JSONSerialization.data(withJSONObject: d)
@@ -196,8 +196,8 @@ check(failure(rel(body(assets: [asset("Sill.zip", zipURL, size: 65 << 20), asset
 check(failure(rel(body(assets: [asset("Sill.zip", zipURL, size: 1000), asset("Sill.zip.manifest", manURL, size: 700, digest: nil)]))) == .releaseUnreadable("Sill.zip’s size"), "a zip too small")
 check(failure(rel(body(assets: [asset("Sill.zip", zipURL, size: "5920002"), asset("Sill.zip.manifest", manURL, size: 700, digest: nil)]))) == .releaseUnreadable("Sill.zip’s size"), "a size that is a string")
 check(failure(rel(body(assets: [asset("Sill.zip", zipURL), asset("Sill.zip.manifest", manURL, size: 5000, digest: nil)]))) == .releaseUnreadable("Sill.zip.manifest’s size"), "a manifest too large")
-for bad in ["https://github.com/Evil/sill/releases/download/v0.4.0/Sill.zip", "http://github.com/Saffsanity/sill/releases/download/v0.4.0/Sill.zip",
-            "https://github.com/Saffsanity/sill/releases/download/v0.3.0/Sill.zip", "https://evil.example/Sill.zip"] {
+for bad in ["https://github.com/Evil/sill/releases/download/v0.4.0/Sill.zip", "http://github.com/nqh-packages/sill/releases/download/v0.4.0/Sill.zip",
+            "https://github.com/nqh-packages/sill/releases/download/v0.3.0/Sill.zip", "https://evil.example/Sill.zip"] {
     check(failure(rel(body(assets: [asset("Sill.zip", bad), asset("Sill.zip.manifest", manURL, size: 700, digest: nil)]))) == .releaseUnreadable("Sill.zip’s URL"), "a zip URL elsewhere: \(bad)")
 }
 check(failure(rel(body(assets: [asset("Sill.zip", zipURL, digest: "md5:abc"), asset("Sill.zip.manifest", manURL, size: 700, digest: nil)]))) == .releaseUnreadable("Sill.zip’s digest"), "a digest of another kind")
@@ -367,13 +367,13 @@ base.signer = true
 base.notarized = true
 base.stapledTicket = true
 base.runningRequirement = true
-base.identifier = "me.saffer.sill.mac"
-base.teamID = "9B2KKVM937"
+base.identifier = "com.uxheavy.sill.mac"
+base.teamID = "9V2FMKQ3WU"
 base.flags = 0x10000
-base.entitlements = ["com.apple.application-identifier": .string("9B2KKVM937.me.saffer.sill.mac"),
-                     "com.apple.developer.team-identifier": .string("9B2KKVM937"),
-                     "keychain-access-groups": .strings(["9B2KKVM937.me.saffer.sill.mac"])]
-base.plist = ["CFBundleIdentifier": "me.saffer.sill.mac", "CFBundleExecutable": "Sill", "CFBundleShortVersionString": "0.4.0",
+base.entitlements = ["com.apple.application-identifier": .string("9V2FMKQ3WU.com.uxheavy.sill.mac"),
+                     "com.apple.developer.team-identifier": .string("9V2FMKQ3WU"),
+                     "keychain-access-groups": .strings(["9V2FMKQ3WU.com.uxheavy.sill.mac"])]
+base.plist = ["CFBundleIdentifier": "com.uxheavy.sill.mac", "CFBundleExecutable": "Sill", "CFBundleShortVersionString": "0.4.0",
               "CFBundleVersion": "120", "LSMinimumSystemVersion": "14.0"]
 base.cdhashes = cd
 let macOS = OperatingSystemVersion(majorVersion: 27, minorVersion: 2, patchVersion: 0)
@@ -399,8 +399,8 @@ let bundleCases: [((inout P.BundleFacts) -> Void, P.BundleProblem)] = [
     ({ $0.flags = 0 }, .noHardenedRuntime),
     ({ $0.entitlements["com.apple.application-identifier"] = nil }, .entitlement("com.apple.application-identifier")),
     ({ $0.entitlements["com.apple.developer.team-identifier"] = .string("ABCDE12345") }, .entitlement("com.apple.developer.team-identifier")),
-    ({ $0.entitlements["keychain-access-groups"] = .strings(["9B2KKVM937.other"]) }, .entitlement("keychain-access-groups")),
-    ({ $0.entitlements["keychain-access-groups"] = .string("9B2KKVM937.me.saffer.sill.mac") }, .entitlement("keychain-access-groups")),
+    ({ $0.entitlements["keychain-access-groups"] = .strings(["9V2FMKQ3WU.other"]) }, .entitlement("keychain-access-groups")),
+    ({ $0.entitlements["keychain-access-groups"] = .string("9V2FMKQ3WU.com.uxheavy.sill.mac") }, .entitlement("keychain-access-groups")),
     ({ $0.entitlements["com.apple.security.get-task-allow"] = .bool(true) }, .debuggable),
     ({ $0.plist["CFBundleIdentifier"] = "me.saffer.sill.other" }, .info("CFBundleIdentifier")),
     ({ $0.plist["CFBundleExecutable"] = "Other" }, .info("CFBundleExecutable")),
@@ -423,7 +423,7 @@ check(problem(verdict(running: v040)) == .notNewer("0.4.0"), "the same version r
 check(problem(verdict(arch: .x86_64)) == nil, "an Intel Mac takes the x86_64 slice")
 check(problem(verdict({ $0.plist["LSMinimumSystemVersion"] = nil })) == nil, "no minimum macOS")
 check(problem(verdict({ $0.plist["LSMinimumSystemVersion"] = "27.2" })) == nil, "this macOS exactly")
-check(problem(verdict({ $0.entitlements["keychain-access-groups"] = .strings(["X.other", "9B2KKVM937.me.saffer.sill.mac"]) })) == nil, "a second keychain group beside Sill's")
+check(problem(verdict({ $0.entitlements["keychain-access-groups"] = .strings(["X.other", "9V2FMKQ3WU.com.uxheavy.sill.mac"]) })) == nil, "a second keychain group beside Sill's")
 check(problem(verdict({ $0.entitlements["com.apple.security.get-task-allow"] = .bool(false) })) == nil, "get-task-allow false")
 // Order: an invalid signature is said before what the plist says.
 check(problem(verdict({ $0.signatureStatus = -1; $0.plist = [:] })) == .invalidSignature(-1), "the signature before the plist")
@@ -610,7 +610,7 @@ let lost = pane(.failed(.didNotStart("x", putBack: false)), keptAt: "/k/Sill.app
 check(lost.line?.contains("/k/Sill.app") == true && !lost.updateNowEnabled, "lost: the path, no try again")
 check(!pane(.failed(.hashMismatch), refusal: .otherInstance).updateNowEnabled, "failed and now refused")
 let menuOld = P.menuItem(.idle, offered: v040, running: v030, available: false, refusal: nil)
-check(menuOld.title == UpdatePolicy.menuTitle(UpdatePolicy.Offer(version: v040, tag: "v0.4.0", url: u("https://github.com/Saffsanity/sill/releases/tag/v0.4.0")))
+check(menuOld.title == UpdatePolicy.menuTitle(UpdatePolicy.Offer(version: v040, tag: "v0.4.0", url: u("https://github.com/nqh-packages/sill/releases/tag/v0.4.0")))
       && menuOld.subtitle == UpdatePolicy.menuSubtitle(running: v030) && !menuOld.opensSettings, "without Update Now: the item as before")
 let menuNew = P.menuItem(.idle, offered: v040, running: v030, available: true, refusal: nil)
 check(menuNew == ("Sill 0.4 Is Available…", "You have 0.3; update it in Settings", true), "with Update Now: Settings")
@@ -953,7 +953,7 @@ check(!P.isNewer(v062, build: 1471, than: v062, runningBuild: 1400, byBuild: fal
 check(!P.isNewer(v062, build: 9999, than: v063, runningBuild: 1, byBuild: true), "a lower version never wins by its build")
 // What Update Now offers.
 func offer(_ v: SillVersion, build: Int? = nil) -> UpdatePolicy.Offer {
-    UpdatePolicy.Offer(version: v, tag: build == nil ? "v\(v)" : "nightly", url: u("https://github.com/Saffsanity/sill/releases/tag/x"), signed: true, build: build)
+    UpdatePolicy.Offer(version: v, tag: build == nil ? "v\(v)" : "nightly", url: u("https://github.com/nqh-packages/sill/releases/tag/x"), signed: true, build: build)
 }
 check(P.chooseOffer(release: offer(v063), nightly: nil, running: v062, runningBuild: 1471) == offer(v063), "a newer release")
 check(P.chooseOffer(release: nil, nightly: offer(v063, build: 1500), running: v062, runningBuild: 1471) == offer(v063, build: 1500), "a newer nightly")
@@ -980,23 +980,23 @@ check(problem(P.verdict(base, trust: release, manifest: manifest, running: v040,
       "a release's manifest of this version never passes by its build over a release")
 // The nightly channel's endpoints and listing: the version and build come from the signed manifest alone.
 let ne = P.Endpoints.nightly
-check(ne.latestRelease.absoluteString == "https://api.github.com/repos/Saffsanity/sill/releases/tags/nightly" && ne.channelTag == "nightly"
+check(ne.latestRelease.absoluteString == "https://api.github.com/repos/nqh-packages/sill/releases/tags/nightly" && ne.channelTag == "nightly"
       && ne.assetName == "Sill-nightly.zip" && ne.manifestName == "Sill-nightly.zip.manifest" && ne.stopName == nil
       && ne.downloadPrefix == gh.downloadPrefix && ne.redirectOrigins == gh.redirectOrigins && ne.apiOrigins == gh.apiOrigins, "the nightly endpoints")
-check(P.assetURL(tag: "nightly", name: "Sill-nightly.zip", endpoints: ne)?.absoluteString == "https://github.com/Saffsanity/sill/releases/download/nightly/Sill-nightly.zip"
+check(P.assetURL(tag: "nightly", name: "Sill-nightly.zip", endpoints: ne)?.absoluteString == "https://github.com/nqh-packages/sill/releases/download/nightly/Sill-nightly.zip"
       && P.assetURL(tag: "nightly", name: "Sill.zip", endpoints: gh) == nil, "the tag nightly only on the nightly channel")
-let nZip = "https://github.com/Saffsanity/sill/releases/download/nightly/Sill-nightly.zip"
+let nZip = "https://github.com/nqh-packages/sill/releases/download/nightly/Sill-nightly.zip"
 let nMan = nZip + ".manifest"
 func nightlyBody(tag: Any = "nightly", draft: Any = false, prerelease: Any = true, assets: Any? = nil, name: Any = "Sill nightly 9.9 (1), 2026-11-12") -> Data {
     let defaultAssets: [[String: Any]] = [asset("Sill-nightly.zip", nZip, size: 6_210_000), asset("Sill-nightly.zip.manifest", nMan, size: 900, digest: nil),
-                                          asset("Sill-nightly-20261112-abcdef0.dmg", "https://github.com/Saffsanity/sill/releases/download/nightly/Sill-nightly-20261112-abcdef0.dmg")]
+                                          asset("Sill-nightly-20261112-abcdef0.dmg", "https://github.com/nqh-packages/sill/releases/download/nightly/Sill-nightly-20261112-abcdef0.dmg")]
     let d: [String: Any] = ["tag_name": tag, "draft": draft, "prerelease": prerelease, "assets": assets ?? defaultAssets, "name": name,
                             "html_url": "https://evil.example/elsewhere"]
     return try! JSONSerialization.data(withJSONObject: d)
 }
 func listing(_ b: Data, endpoints: P.Endpoints = ne) -> Result<P.NightlyListing, P.Failure> { P.nightlyListing(b, endpoints: endpoints) }
 if case .success(let l) = listing(nightlyBody()) {
-    check(l.page.absoluteString == "https://github.com/Saffsanity/sill/releases/tag/nightly", "the page is Sill's own, never GitHub's word: \(l.page)")
+    check(l.page.absoluteString == "https://github.com/nqh-packages/sill/releases/tag/nightly", "the page is Sill's own, never GitHub's word: \(l.page)")
     check(l.zip.size == 6_210_000 && l.zip.url.absoluteString == nZip && l.manifest.url.absoluteString == nMan, "the pair under the fixed names")
 } else { check(false, "a good nightly listing: \(listing(nightlyBody()))") }
 func listingFailure(_ r: Result<P.NightlyListing, P.Failure>) -> P.Failure? { if case .failure(let f) = r { return f }; return nil }

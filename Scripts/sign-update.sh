@@ -58,7 +58,7 @@
 # of Noah's account here, who also controls signed.txt, this script and the LaunchAgent.
 #
 # Options: --zip PATH, --run ID, --key-file PATH (a key in a file of mode 0600 instead of the login keychain:
-# no in-person prompt, for tests and the rehearsal), --repo OWNER/NAME (default Saffsanity/sill), --source DIR
+# no in-person prompt, for tests and the rehearsal), --repo OWNER/NAME (default nqh-packages/sill), --source DIR
 # (the checkout whose tag is read and whose files the signer is built from; by default this script's own),
 # --yes (no question before building the signer or the upload; the updater's changes are asked about anyway),
 # --replace (a manifest is already there), --notify (with --audit). SILL_SIGNER_DIR (TEST ONLY, with
@@ -69,7 +69,7 @@
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 root="$(cd "$here/.." && pwd)"
-repo="Saffsanity/sill" tag="" keyfile="" yes=0 replace=0 mode="sign" zip="" run_id="" source="$root" notify=0
+repo="nqh-packages/sill" tag="" keyfile="" yes=0 replace=0 mode="sign" zip="" run_id="" source="$root" notify=0
 while [ $# -gt 0 ]; do
     case "$1" in
         --install-signer) mode="install-signer" ;;
@@ -108,7 +108,7 @@ on_exit() {
     fi
 }
 trap on_exit EXIT
-pinned='anchor apple generic and identifier "me.saffer.sill.mac" and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = "9B2KKVM937"'
+pinned='anchor apple generic and identifier "com.uxheavy.sill.mac" and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = "9V2FMKQ3WU"'
 signer_dir="${SILL_SIGNER_DIR:-$HOME/Library/Application Support/Sill Update Signer}"
 signer="$signer_dir/update-manifest"
 anchors_file="$signer_dir/trust.txt"
@@ -457,7 +457,7 @@ codesign --verify --strict --deep --verbose=2 -R "=$pinned and notarized" "$app"
 xcrun stapler validate "$app" >/dev/null || die "the app has no valid stapled ticket"
 assessment="$(spctl -a -t exec -vv "$app" 2>&1 || true)"
 grep -q "source=Notarized Developer ID" <<< "$assessment" || die "spctl does not say Notarized Developer ID"
-[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$plist")" = "me.saffer.sill.mac" ] || die "not me.saffer.sill.mac"
+[ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$plist")" = "com.uxheavy.sill.mac" ] || die "not com.uxheavy.sill.mac"
 [ "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$plist")" = "$version" ] || die "the app's version is not $version"
 build="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleVersion' "$plist")"
 

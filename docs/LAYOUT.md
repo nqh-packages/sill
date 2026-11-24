@@ -491,7 +491,7 @@ Below, "this file" means CLAUDE.md, and "Build and run below" means docs/BUILD-A
   git-ignored; docs/keychain-plan.md), and `ExportOptions-appstore.plist`, how
   the iOS app's archive is exported for App Store Connect. `Scripts/release-ios.sh`
   makes the iOS app's build: the Release archive (automatic signing on team
-  9B2KKVM937, or none with `--sign-at-export` and `--unsigned`), the export
+  9V2FMKQ3WU, or none with `--sign-at-export` and `--unsigned`), the export
   (destination export; `--upload` adds a second one whose destination is
   upload), the .ipa checked (version and build, the export compliance key,
   the Local Network, Bonjour and camera entries, the privacy manifest, an

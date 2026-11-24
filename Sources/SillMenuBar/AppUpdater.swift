@@ -1067,7 +1067,7 @@ final class AppUpdater {
                 print("Update: \(Policy.name(version: failed, build: nightly ? failedBuild : nil)) didn’t run properly (\(why)), so Sill’s watcher put \(running) back and started it.")
                 if automatic { remember { Auto.failed($0, failed, why: "it didn’t run: \(why)", build: nightly ? failedBuild : nil) } }
                 let tag = nightly ? UpdateManifest.nightlyTag : "v\(failed)"
-                target = UpdatePolicy.Offer(version: failed, tag: tag, url: URL(string: "https://github.com/Saffsanity/sill/releases/tag/\(tag)")!,
+                target = UpdatePolicy.Offer(version: failed, tag: tag, url: URL(string: "https://github.com/nqh-packages/sill/releases/tag/\(tag)")!,
                                             signed: true, build: nightly ? failedBuild : nil)
                 state = Policy.State(phase: .failed(.didNotStart(why, putBack: true)), mode: automatic ? .automatic : .manual)
                 if Policy.reopensSettings(automatic: automatic) { showUpdated?() }
@@ -1171,7 +1171,7 @@ final class AppUpdater {
     nonisolated private static var notes: URL {
         let caches = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
             ?? URL(fileURLWithPath: NSHomeDirectory()).appendingPathComponent("Library/Caches")
-        return caches.appendingPathComponent("me.saffer.sill.mac", isDirectory: true)
+        return caches.appendingPathComponent("com.uxheavy.sill.mac", isDirectory: true)
     }
 
     /// The folder that holds the copy an update replaced, for the next Sill (it can't find it by listing).

@@ -43,7 +43,7 @@ func check(_ desc: String, _ ok: Bool, _ detail: @autoclosure () -> String = "")
 }
 
 typealias F = AppIdentity.Facts
-let sill = "me.saffer.sill.mac"
+let sill = "com.uxheavy.sill.mac"
 let build = "/Users/x/sill/.build/arm64-apple-macosx/release"
 func facts(_ id: String?, _ sig: AppIdentity.Signature, _ bundle: String?, _ path: String) -> F {
     F(signingIdentifier: id, signature: sig, bundleIdentifier: bundle, bundlePath: path)
@@ -88,13 +88,13 @@ let cases: [(String, F, Bool)] = [
     ("a signature that could not be read", facts(nil, .unreadable, nil, build), true),
     ("an identifier that could not be read, ad hoc", facts(nil, .adHoc, nil, build), false),
     // In any case.
-    ("Sill's identifier in capitals", facts("ME.SAFFER.SILL.MAC", .adHoc, nil, "/tmp"), true),
-    ("Sill's bundle identifier in mixed case", facts("SillMenuBar", .adHoc, "Me.Saffer.Sill.Mac", "/tmp/Sill.bin"), true),
+    ("Sill's identifier in capitals", facts("COM.UXHEAVY.SILL.MAC", .adHoc, nil, "/tmp"), true),
+    ("Sill's bundle identifier in mixed case", facts("SillMenuBar", .adHoc, "Com.Uxheavy.Sill.Mac", "/tmp/Sill.bin"), true),
     ("a .APP folder", facts("SillMenuBar", .adHoc, nil, "/tmp/Sill.APP"), true),
     // Near misses.
-    ("an identifier that only starts with Sill's", facts("me.saffer.sill.mac.helper", .adHoc, nil, build), false),
+    ("an identifier that only starts with Sill's", facts("com.uxheavy.sill.mac.helper", .adHoc, nil, build), false),
     ("an identifier Sill's starts with", facts("me.saffer.sill", .adHoc, nil, build), false),
-    ("a bundle identifier that only starts with Sill's", facts("SillMenuBar", .adHoc, "me.saffer.sill.mac2", "/tmp/Sill.bin"), false),
+    ("a bundle identifier that only starts with Sill's", facts("SillMenuBar", .adHoc, "com.uxheavy.sill.mac2", "/tmp/Sill.bin"), false),
     ("an empty bundle identifier", facts("SillMenuBar", .adHoc, "", "/tmp/Sill.bin"), false),
     ("a folder named app", facts("SillMenuBar", .adHoc, nil, "/tmp/app"), false),
     ("a .apps folder", facts("SillMenuBar", .adHoc, nil, "/tmp/x.apps"), false),
@@ -106,9 +106,9 @@ for (desc, f, want) in cases {
 
 // Every combination of the facts against an oracle written apart from the rule: a test host is
 // unsigned or ad hoc, signed under another identifier, in no bundle that says Sill, not in a .app.
-let identifiers: [String?] = [nil, "", "SillMenuBar", sill, "ME.saffer.SILL.mac", "me.saffer.sill.mac.helper", "other"]
+let identifiers: [String?] = [nil, "", "SillMenuBar", sill, "COM.uxheavy.SILL.mac", "com.uxheavy.sill.mac.helper", "other"]
 let signatures: [AppIdentity.Signature] = [.unsigned, .adHoc, .certificate, .unreadable]
-let bundles: [String?] = [nil, "", sill, "Me.Saffer.Sill.Mac", "me.saffer.sill.test", "me.saffer.sill.mac2"]
+let bundles: [String?] = [nil, "", sill, "Com.Uxheavy.Sill.Mac", "me.saffer.sill.test", "com.uxheavy.sill.mac2"]
 let paths = [build, "/Applications/Sill.app", "/tmp/Sill.APP", "/tmp/Sill.bin", "/tmp/Sill", "/tmp/x.apps", "/tmp/app", "/"]
 func oracleTestHost(_ f: F) -> Bool {
     let signedAsSill = f.signingIdentifier.map { $0.caseInsensitiveCompare(sill) == .orderedSame } ?? false
@@ -155,11 +155,11 @@ check("note: none for the bare binary in a .app of another ID (as before)", note
 check("note: none for a .APP folder", note(facts(sill, .certificate, sill, "/tmp/Sill.APP")) == nil)
 check("note: the scan's copy",
       note(facts(sill, .certificate, sill, "/Users/x/x/Sill.bin"))
-        == "Running from /Users/x/x/Sill.bin, which is not a .app, as Sill.app itself (signed me.saffer.sill.mac): it takes no test hook.",
+        == "Running from /Users/x/x/Sill.bin, which is not a .app, as Sill.app itself (signed com.uxheavy.sill.mac): it takes no test hook.",
       note(facts(sill, .certificate, sill, "/Users/x/x/Sill.bin")) ?? "nil")
 check("note: a link to Sill.app's executable",
       note(facts(sill, .certificate, nil, "/tmp/x"))
-        == "Running from /tmp/x, which is not a .app, as Sill.app itself (signed me.saffer.sill.mac): it takes no test hook.")
+        == "Running from /tmp/x, which is not a .app, as Sill.app itself (signed com.uxheavy.sill.mac): it takes no test hook.")
 check("note: a certificate alone",
       note(facts("SillMenuBar", .certificate, nil, build))
         == "Running from \(build), which is not a .app, as Sill.app itself (signed with a certificate): it takes no test hook.")
@@ -167,8 +167,8 @@ check("note: an unreadable signature",
       note(facts(nil, .unreadable, nil, build))
         == "Running from \(build), which is not a .app, as Sill.app itself (its signature could not be read): it takes no test hook.")
 check("note: a bundle that says Sill alone",
-      note(facts("SillMenuBar", .adHoc, "Me.Saffer.Sill.Mac", "/tmp/Sill.bin"))
-        == "Running from /tmp/Sill.bin, which is not a .app, as Sill.app itself (its bundle says Me.Saffer.Sill.Mac): it takes no test hook.")
+      note(facts("SillMenuBar", .adHoc, "Com.Uxheavy.Sill.Mac", "/tmp/Sill.bin"))
+        == "Running from /tmp/Sill.bin, which is not a .app, as Sill.app itself (its bundle says Com.Uxheavy.Sill.Mac): it takes no test hook.")
 for (desc, f, want) in cases {
     let n = note(f)
     let folderSaysApp = URL(fileURLWithPath: f.bundlePath).pathExtension.lowercased() == "app"

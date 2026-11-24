@@ -58,7 +58,7 @@ enum UpdateInstallPolicy {
     /// Security's language reads best: Apple's anchor, the Developer ID intermediate
     /// (1.2.840.113635.100.6.2.6), a Developer ID Application leaf (1.2.840.113635.100.6.1.13), the
     /// team, the identifier.
-    static let pinnedRequirement = "anchor apple generic and identifier \"me.saffer.sill.mac\" and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = \"9B2KKVM937\""
+    static let pinnedRequirement = "anchor apple generic and identifier \"com.uxheavy.sill.mac\" and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = \"9V2FMKQ3WU\""
 
     // MARK: Endpoints
 
@@ -1233,11 +1233,11 @@ extension UpdateInstallPolicy.Trust {
     /// The only Trust Sill.app uses.
     static let release = UpdateInstallPolicy.Trust(
         signer: UpdateInstallPolicy.pinnedRequirement, notarized: true, bundleName: "Sill.app", executable: "Sill",
-        identifier: "me.saffer.sill.mac", teamID: "9B2KKVM937", stapledTicket: true, hardenedRuntime: true,
+        identifier: "com.uxheavy.sill.mac", teamID: "9V2FMKQ3WU", stapledTicket: true, hardenedRuntime: true,
         runningRequirement: true,
-        entitlements: [.string(key: "com.apple.application-identifier", value: "9B2KKVM937.me.saffer.sill.mac"),
-                       .string(key: "com.apple.developer.team-identifier", value: "9B2KKVM937"),
-                       .arrayContaining(key: "keychain-access-groups", value: "9B2KKVM937.me.saffer.sill.mac")],
+        entitlements: [.string(key: "com.apple.application-identifier", value: "9V2FMKQ3WU.com.uxheavy.sill.mac"),
+                       .string(key: "com.apple.developer.team-identifier", value: "9V2FMKQ3WU"),
+                       .arrayContaining(key: "keychain-access-groups", value: "9V2FMKQ3WU.com.uxheavy.sill.mac")],
         // A key in both lists is trusted for neither (plan §16.2: the nightly key is never the update key; the third
         // security pass's N10 a: the code refuses it, not only the check), and the tests' key, which anyone can make,
         // for nothing.
@@ -1249,19 +1249,19 @@ extension UpdateInstallPolicy.Endpoints {
     /// The nightly channel's (plan §16): the pre-release `nightly`, its newest build under fixed names beside the
     /// dated files (`Sill-nightly.zip` and its manifest, signed with the nightly key, Scripts/sign-nightly.sh).
     static let nightly = UpdateInstallPolicy.Endpoints(
-        latestRelease: URL(string: "https://api.github.com/repos/Saffsanity/sill/releases/tags/nightly")!,
+        latestRelease: URL(string: "https://api.github.com/repos/nqh-packages/sill/releases/tags/nightly")!,
         apiOrigins: github.apiOrigins, downloadPrefix: github.downloadPrefix,
         assetName: "Sill-nightly.zip", manifestName: "Sill-nightly.zip.manifest", stopName: nil, channelTag: "nightly",
         redirectOrigins: github.redirectOrigins, redirectPathPrefix: github.redirectPathPrefix,
         maxRedirects: github.maxRedirects, minAssetBytes: github.minAssetBytes, maxAssetBytes: github.maxAssetBytes)
 
-    /// The only Endpoints Sill.app uses for releases: GitHub, over https, Saffsanity/sill's releases. GitHub sends a
+    /// The only Endpoints Sill.app uses for releases: GitHub, over https, nqh-packages/sill's releases. GitHub sends a
     /// release download to release-assets.githubusercontent.com (measured 2026-11-11, path
     /// /github-production-release-asset/1381093165/…); objects.githubusercontent.com is its older host.
     static let github = UpdateInstallPolicy.Endpoints(
-        latestRelease: URL(string: "https://api.github.com/repos/Saffsanity/sill/releases/latest")!,
+        latestRelease: URL(string: "https://api.github.com/repos/nqh-packages/sill/releases/latest")!,
         apiOrigins: ["https://api.github.com"],
-        downloadPrefix: "https://github.com/Saffsanity/sill/releases/download/",
+        downloadPrefix: "https://github.com/nqh-packages/sill/releases/download/",
         assetName: "Sill.zip", manifestName: "Sill.zip.manifest", stopName: "Sill.zip.stop",
         redirectOrigins: ["https://release-assets.githubusercontent.com", "https://objects.githubusercontent.com"],
         redirectPathPrefix: "/github-production-release-asset",

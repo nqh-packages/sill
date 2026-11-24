@@ -55,8 +55,8 @@ Scripts/make-app.sh --install --open
 ```
 
 That builds the `SillMenuBar` executable with SwiftPM, wraps it into
-`Sill.app` (bundle ID `me.saffer.sill.mac`, the icon compiled from
-`design/AppIcon.svg`), signs it with your Apple Development identity, quits a
+`Sill.app` (bundle ID `com.uxheavy.sill.mac`, the icon compiled from
+`iOSClient/Sill.icon`, the iOS app's own), signs it with your Apple Development identity, quits a
 running Sill (its streamed window goes home first), replaces
 `/Applications/Sill.app` and opens it. Run the same command after every change.
 Without `--install` it only builds `.build/Sill.app`. It will not replace an
@@ -108,7 +108,7 @@ much): Low 4 Mbps (for a slow link away from home), Efficient 8, Balanced 15
 Extreme 150. Ultra and Extreme need the
 USB cable or very fast Wi-Fi; if the picture lags (the device's frame age in
 the menu climbs), step down. Any other value from 1 to 200 Mbps can be set by
-hand (quit Sill, `defaults write me.saffer.sill.mac bitrate -int 60000000`,
+hand (quit Sill, `defaults write com.uxheavy.sill.mac bitrate -int 60000000`,
 open it again) and shows as Custom; a device can pick only the presets.
 
 Virtual Display is on by default (2026-10-27): on a Mac whose `virtualDisplay`
@@ -127,12 +127,12 @@ wait. The default is registered, never written
 (`HostConfig.app` in `HostSettings`), so a key set from the menu, Settings ›
 Virtual Display or a device always wins: a Mac that turned it off keeps it
 off. To go back to the default, quit Sill, run `defaults delete
-me.saffer.sill.mac virtualDisplay` and open it again. The command-line host
+com.uxheavy.sill.mac virtualDisplay` and open it again. The command-line host
 keeps it off unless it runs with `--virtual-display`.
 
 The log: `tail -F ~/Library/Logs/Sill/Sill.log` (`-F`, not `-f`: at 10 MB the
 file moves to Sill.1.log and a new one starts), or Show Log… in the menu.
-Settings: `defaults read me.saffer.sill.mac`.
+Settings: `defaults read com.uxheavy.sill.mac`.
 
 Updates: once a day (and when you click Check Now in Settings › General),
 Sill asks GitHub (api.github.com) whether a newer Sill has been released, and
@@ -150,10 +150,10 @@ the latest published release of Saffsanity/sill (`UpdatePolicy.feed`),
 whichever repository a build came from; should GitHub answer 404 there (no
 release, as before v0.3.0), it logs "Update check failed: GitHub has no
 release of Sill (HTTP 404)." once a day. It keeps `updateLastCheck`,
-`updateETag`, `updateLatestTag` and `updateLatestURL` in `me.saffer.sill.mac`;
+`updateETag`, `updateLatestTag` and `updateLatestURL` in `com.uxheavy.sill.mac`;
 to make the next launch check again after 30 s: `for k in updateLastCheck
 updateETag updateLatestTag updateLatestURL updateLatestSigned; do defaults delete
-me.saffer.sill.mac $k; done` (`defaults delete` takes one key at a time).
+com.uxheavy.sill.mac $k; done` (`defaults delete` takes one key at a time).
 
 Update Now (docs/one-click-update-plan.md): beside Open Release Page…, in a
 build with an update key (`UpdateManifest.releaseKeys`, empty until Noah makes
@@ -162,8 +162,8 @@ stores `updateLatestSigned` when the release lists `Sill.zip.manifest`). One
 click reads the release again, verifies the manifest's Ed25519 signature with
 the compiled-in key, downloads `Sill.zip` (GitHub's hosts only, the manifest's
 size and SHA-256), unpacks it with Sill's own zip reader into a temporary folder
-on Sill.app's volume, checks the app (Developer ID 9B2KKVM937 as
-me.saffer.sill.mac, notarized, strictly valid, this app's own designated
+on Sill.app's volume, checks the app (Developer ID 9V2FMKQ3WU as
+com.uxheavy.sill.mac, notarized, strictly valid, this app's own designated
 requirement, the keychain entitlements, newer, every slice the code the
 manifest names), checks it once more right before it swaps it into place in one
 `renamex_np(RENAME_SWAP)`, checks it again there, launches it as a new instance,
@@ -595,9 +595,9 @@ the package reference. Nothing else. A new source file needs its four
 - Grants survive rebuilds because every build is signed with the same
   identity. If they ever go stale (the switch is on in System Settings but Sill
   still can't capture or click): quit Sill, run `tccutil reset ScreenCapture
-  me.saffer.sill.mac` and `tccutil reset Accessibility me.saffer.sill.mac`,
-  then `defaults delete me.saffer.sill.mac askedScreenRecording` and
-  `defaults delete me.saffer.sill.mac askedAccessibility`, open Sill again and
+  com.uxheavy.sill.mac` and `tccutil reset Accessibility com.uxheavy.sill.mac`,
+  then `defaults delete com.uxheavy.sill.mac askedScreenRecording` and
+  `defaults delete com.uxheavy.sill.mac askedAccessibility`, open Sill again and
   use Allow… in Settings › Permissions. The `defaults` step matters: Sill
   shows each system alert only once and remembers that it did, so without it
   Allow… only opens System Settings, where the reset has removed Sill from both
@@ -622,7 +622,7 @@ and its Settings window and menu show it; the change applies to every connected
 device, and a streaming setting restarts the stream for a moment. A device away
 from home sets the away quality instead (Remote access, below). To put one
 setting back to its default, quit Sill, run `defaults delete
-me.saffer.sill.mac <key>` (`bitrate`, `maxFPS`, `captureScale`, `awayBitrate`,
+com.uxheavy.sill.mac <key>` (`bitrate`, `maxFPS`, `captureScale`, `awayBitrate`,
 `awayCaptureScale`, `prioritizeSpeed`, `virtualDisplay`, `sendAudio` or
 `directWireless`) and open Sill again.
 
@@ -656,7 +656,7 @@ sound's bytes count in remote pacing's backlog, which drops frames and never
 the sound. The log says what the sound is of ("Audio: capturing Safari's sound
 (every window of it).") and why it stops; the stats line gains `aud.in`,
 `aud.out`, `aud.sent`, `aud.drop` and `aud.gap` while it runs. `defaults
-delete me.saffer.sill.mac sendAudio` puts it back to off. docs/audio-plan.md
+delete com.uxheavy.sill.mac sendAudio` puts it back to off. docs/audio-plan.md
 has the design.
 
 On the device, the Settings panel's Mute switch (right under Send Audio, off by default, for every
@@ -1407,9 +1407,9 @@ reads nothing, what is copied meanwhile is never sent, the log says so once,
 and Settings › General says why under the switch, with "Allow in System
 Settings…" (which, while macOS has not asked about Sill yet, makes one read on
 that click so macOS asks and lists Sill there). A device's text is still
-written. To try it with Sill.app: `defaults write me.saffer.sill.mac
+written. To try it with Sill.app: `defaults write com.uxheavy.sill.mac
 EnablePasteboardPrivacyDeveloperPreview -bool yes`, relaunch Sill, and
-`defaults delete me.saffer.sill.mac EnablePasteboardPrivacyDeveloperPreview`
+`defaults delete com.uxheavy.sill.mac EnablePasteboardPrivacyDeveloperPreview`
 after.
 
 A synthetic host never touches this Mac's clipboard: it shares a pasteboard of
@@ -1493,7 +1493,7 @@ refused.
 ### This account while another user is on the screen
 
 Show this account while another user is on the screen (Settings › Devices; off
-by default; `offConsoleView` in `me.saffer.sill.mac`; `SillHost
+by default; `offConsoleView` in `com.uxheavy.sill.mac`; `SillHost
 --off-console-view`; docs/off-console-plan.md, issue #316) is for a Mac another
 account holds from startup, or one you switch away from, reached only through
 Sill. While it is on and the console's own user (the dynamic store, never a
@@ -1563,7 +1563,7 @@ mock Mac locked, switched, or just unlocked.
 ## Lock this Mac when the last device leaves
 
 Settings › Devices' Lock this Mac when the last device leaves (off by default; `lockAfterSession` in
-`me.saffer.sill.mac`; docs/privacy-mode-plan.md, part 1, issues #283 and #275) is for a Mac you unlock from afar:
+`com.uxheavy.sill.mac`; docs/privacy-mode-plan.md, part 1, issues #283 and #275) is for a Mac you unlock from afar:
 30 seconds after the last session of any kind ends, unless one comes back, Sill locks the Mac (login.framework's
 `SACLockScreenImmediate`, the call macOS's own Lock Screen makes) and puts its display to sleep (`pmset
 displaysleepnow`). A paired device unlocks it again by typing the password at the lock screen (A locked Mac, above).
@@ -1865,7 +1865,7 @@ is the host to pair with for good.
 
 To start over on the Mac: quit Sill, then `for k in remoteAccess remotePort
 internetAccess remoteAddressName remoteDevicesSeen; do defaults delete
-me.saffer.sill.mac $k; done`. The downloaded Sill for Mac (0.4.0 and later)
+com.uxheavy.sill.mac $k; done`. The downloaded Sill for Mac (0.4.0 and later)
 keeps the Mac's identity, its paired devices and Require pairing in the
 data-protection keychain, not the login keychain: remove devices in Settings ›
 Devices. A Sill.app you build yourself without the Developer ID provisioning
@@ -2143,7 +2143,7 @@ settings in the defaults domain `SillMenuBar` (delete it after), and takes:
 Sill.app itself ignores every `-Sill…After` argument, `-SillTestScreenHeight`,
 `-SillSettingsShot` and `-requirePairing`, with one line each. Sill.app here is
 its code wherever it runs from, known by what it is, not by its folder's name
-(`AppIdentity`, `Tests/checks/test-host`): signed as `me.saffer.sill.mac` or
+(`AppIdentity`, `Tests/checks/test-host`): signed as `com.uxheavy.sill.mac` or
 with any certificate (or a signature it can't read), a bundle whose identifier
 is Sill's, or a `.app`. Only the bare binary as `swift build` makes it (the
 linker's ad hoc signature, no Info.plist) takes the hooks; a copy of it in a
@@ -2151,7 +2151,7 @@ scratch bundle with Sill's Info.plist ignores them too. Sill.app's code in a
 folder that is not a `.app` (a renamed copy, a link to its executable, that
 scratch bundle) says why first, a renamed copy of Sill.app as: "Running from
 …/Sill.bin, which is not a .app, as Sill.app itself (signed
-me.saffer.sill.mac): it takes no test hook."
+com.uxheavy.sill.mac): it takes no test hook."
 
 `--encoder-selftest` and `--virtual-display-selftest` work in the app too.
 
@@ -2719,7 +2719,7 @@ and refuses to start unless origin has the tag and it names HEAD (gh would
 otherwise make the tag from the default branch); a `SILL_RELEASE_REPO` other
 than Saffsanity/sill gets a warning, since no Sill.app offers a release
 published there. It needs
-`SILL_SIGN_IDENTITY='Developer ID Application: … (9B2KKVM937)'` and
+`SILL_SIGN_IDENTITY='Developer ID Application: … (9V2FMKQ3WU)'` and
 `SILL_NOTARY_PROFILE` (a profile saved with `xcrun notarytool
 store-credentials sill-notary`), and refuses to start without them. Give
 both on the release command itself, never in your shell profile: `make-app.sh`
@@ -2807,7 +2807,7 @@ trashes the running Sill's settings and log.
 
 The iOS app goes to App Store Connect (TestFlight, then the App Store) from
 `Scripts/release-ios.sh`: a Release archive signed by Xcode's automatic
-signing on team 9B2KKVM937, exported as `.build/ios/export/Sill.ipa` and
+signing on team 9V2FMKQ3WU, exported as `.build/ios/export/Sill.ipa` and
 checked (the version and build, the export compliance key, the Local Network
 and camera strings, the privacy manifest, an App Store signature and
 profile), and with `--upload` uploaded. `--bump` gives each upload of a

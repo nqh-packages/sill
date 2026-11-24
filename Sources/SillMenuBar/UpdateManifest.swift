@@ -38,21 +38,15 @@ import StreamProtocol
 /// beside it, `Sill.zip.stop`, signed with an update key too (`Stop`): it names the release's tag and its
 /// zip's SHA-256, and a Sill that reads it installs that release neither by Update Now nor by itself.
 struct UpdateManifest: Equatable, Sendable {
-    /// The Ed25519 public keys (raw 32 bytes, base64) whose signature Update Now accepts. The one here is
-    /// Noah's update key, key ID dbbd6d58, made on his Mac on 2026-11-15 with Scripts/sign-update.sh --new-key
-    /// after the rehearsal (docs/one-click-update-plan.md §12); its private half is in his login keychain and
-    /// nowhere else but his own copy. With no key here Update Now is not offered at all
-    /// (UpdateInstallPolicy.Trust.release). A second key beside the first is how the key is rotated (plan §4.3).
-    static let releaseKeys: [String] = ["VBi6RT1SKi60dit73HwGK1T3YALXQCPpq/rQX49+ZVE="]
+    /// The Ed25519 public keys (raw 32 bytes, base64) whose signature Update Now accepts. The one here is the
+    /// nqh-packages/sill update key, key ID 443e8b32, made on 2026-11-24 with update-manifest new-key --key-file;
+    /// its private half is a file of mode 0600 outside the repository. With no key here Update Now is not offered
+    /// at all (UpdateInstallPolicy.Trust.release). A second key beside the first is how the key is rotated (plan §4.3).
+    static let releaseKeys: [String] = ["JMWngr7ZPBZs+mK+aJzC+HsiKrzK0+s43aCk35bBeK4="]
 
-    /// The Ed25519 public keys of the nightly key (plan §16.2, Noah's decision of 2026-11-12: "A separate nightly
-    /// key that GitHub holds"), held by GitHub as a secret and used only by nightly.yml, whose signature a
-    /// nightly's manifest ("Sill nightly 1") needs. Trusted only for the nightly channel, only while "Use nightly
-    /// builds" is on; never for a release, whose manifest needs `releaseKeys`. The one here is the nightly key Noah
-    /// made on his Mac on 2026-11-15 with Scripts/sign-nightly.sh --new-key (plan §16.8), key ID 3e6d90f4; its
-    /// private half is the secret SILL_NIGHTLY_UPDATE_KEY of the GitHub environment `nightly`. With no key here
-    /// the switch doesn't show.
-    static let nightlyKeys: [String] = ["LdPr0TWuzpFrPlCivrH1UGypmw65S2fQ76diCh+loRo="]
+    /// The Ed25519 public keys of the nightly key (plan §16.2), whose signature a nightly's manifest ("Sill nightly 1")
+    /// needs. nqh-packages/sill publishes no nightlies, so there is none and the switch doesn't show.
+    static let nightlyKeys: [String] = []
 
     static let firstLine = "Sill update 1"
     /// A nightly's manifest: its own first line, so that neither kind can ever be read as the other.

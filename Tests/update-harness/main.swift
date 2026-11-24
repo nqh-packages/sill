@@ -950,9 +950,9 @@ if FileManager.default.fileExists(atPath: g.appendingPathComponent("plain.zip").
     let sillEndpoints = endpoints(asset: "Sill.zip")
     let real = UpdateInstaller(trust: releaseTrust(), endpoints: sillEndpoints, userAgent: "Sill/test")
     var sillDR: SecRequirement?
-    SecRequirementCreateWithString("identifier \"me.saffer.sill.mac\" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = \"9B2KKVM937\"" as CFString, [], &sillDR)
+    SecRequirementCreateWithString("identifier \"com.uxheavy.sill.mac\" and anchor apple generic and certificate 1[field.1.2.840.113635.100.6.2.6] /* exists */ and certificate leaf[field.1.2.840.113635.100.6.1.13] /* exists */ and certificate leaf[subject.OU] = \"9V2FMKQ3WU\"" as CFString, [], &sillDR)
     var appleOnly: SecRequirement?
-    SecRequirementCreateWithString("identifier \"me.saffer.sill.mac\" and anchor apple" as CFString, [], &appleOnly)
+    SecRequirementCreateWithString("identifier \"com.uxheavy.sill.mac\" and anchor apple" as CFString, [], &appleOnly)
     let plainApp = g.appendingPathComponent("plain/Sill.app"), installedSill = g.appendingPathComponent("installed/Sill.app")
     let codes = cdhashes(plainApp)
     check(codes.keys.sorted() == ["arm64", "x86_64"], "the release is universal: \(codes)")
@@ -976,7 +976,7 @@ if FileManager.default.fileExists(atPath: g.appendingPathComponent("plain.zip").
                   installedFrom: installedSill, runningRequirement: sillDR) { $0 == .releaseNotNewer }
     await refused("genuine, tagged v0.6.2", { var x = genuine; x.tag = "v0.6.2"; return x }(), offeredTag: "v0.6.2", running: SillVersion("0.6.0")!,
                   using: real, installedFrom: installedSill, runningRequirement: sillDR) { $0 == .bundle(.notManifest("version")) }
-    let otherTeam = UpdateInstaller(trust: releaseTrust(signer: P.pinnedRequirement.replacingOccurrences(of: "9B2KKVM937", with: "ABCDE12345")),
+    let otherTeam = UpdateInstaller(trust: releaseTrust(signer: P.pinnedRequirement.replacingOccurrences(of: "9V2FMKQ3WU", with: "ABCDE12345")),
                                     endpoints: sillEndpoints, userAgent: "Sill/test")
     await refused("genuine, another team pinned", genuine, offeredTag: "v0.6.1", running: SillVersion("0.6.0")!, using: otherTeam,
                   installedFrom: installedSill, runningRequirement: sillDR) { $0 == .bundle(.wrongSigner) }

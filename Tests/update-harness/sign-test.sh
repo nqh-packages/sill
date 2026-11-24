@@ -78,7 +78,7 @@ def release(tag, items, start, draft=False, prerelease=False):
         data = open(file, "rb").read()
         files[start + i] = file
         out.append({"id": start + i, "name": name, "size": len(data), "state": "uploaded", "digest": "sha256:" + hashlib.sha256(data).hexdigest(),
-                    "browser_download_url": "https://github.com/Saffsanity/sill/releases/download/%s/%s" % (tag, name)})
+                    "browser_download_url": "https://github.com/nqh-packages/sill/releases/download/%s/%s" % (tag, name)})
     return {"id": start * 1000, "tag_name": tag, "draft": draft, "prerelease": prerelease, "assets": out}
 main = release("v0.6.1", [(n, os.path.join(assets, n)) for n in sorted(os.listdir(assets))], 100)
 listing = [main]
@@ -353,7 +353,7 @@ done
 keys_line "$pub" "$other"; retag "rotation support"
 expect fail "F2: a second key in the release's Sill" signs v0.6.1 "${src[@]}" --replace
 keys_line "$pub"; retag "back to one key"
-sed -i '' 's/leaf\[subject.OU\] = \\"9B2KKVM937\\"/leaf[subject.OU] = \\"ABCDE12345\\"/' "$scratch/Sources/SillMenuBar/UpdateInstallPolicy.swift"; retag "another team"
+sed -i '' 's/leaf\[subject.OU\] = \\"9V2FMKQ3WU\\"/leaf[subject.OU] = \\"ABCDE12345\\"/' "$scratch/Sources/SillMenuBar/UpdateInstallPolicy.swift"; retag "another team"
 expect fail "F2: another team in the pinned requirement" signs v0.6.1 "${src[@]}" --replace
 git -C "$scratch" checkout -q HEAD~1 -- Sources/SillMenuBar/UpdateInstallPolicy.swift; retag "the team back"
 sed -i '' 's#"https://api.github.com"#"https://api.githubusercontent.com"#' "$scratch/Sources/SillMenuBar/UpdateInstallPolicy.swift"; retag "another API host"

@@ -12,7 +12,7 @@ import Security
 ///   Sill then adopts it (the security review, 2026-09-27). So this store is used only where the
 ///   strong keychain is out of reach — a development build, or a release with no embedded
 ///   provisioning profile — and never by an entitled Sill.app.
-/// - **Data-protection (`accessGroup` set, e.g. `9B2KKVM937.me.saffer.sill.mac`):** the
+/// - **Data-protection (`accessGroup` set, e.g. `9V2FMKQ3WU.com.uxheavy.sill.mac`):** the
 ///   data-protection keychain under that access group. Only a process signed by the same team and
 ///   entitled to that group can create or read the items, so no other process can pre-create or read
 ///   them: the pre-creation hole is closed, and the key becomes unreadable to other apps as a bonus.

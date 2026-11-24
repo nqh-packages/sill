@@ -18,7 +18,7 @@ import Security
 enum AppIdentity {
     /// Sill.app's bundle identifier (Packaging/Info.plist), which codesign also makes its signing
     /// identifier (Scripts/make-app.sh), and so the first clause of its designated requirement.
-    static let sill = "me.saffer.sill.mac"
+    static let sill = "com.uxheavy.sill.mac"
 
     /// How the running code is signed.
     enum Signature: Equatable, Sendable {
@@ -35,7 +35,7 @@ enum AppIdentity {
     /// What the process knows about itself at launch.
     struct Facts: Equatable, Sendable {
         /// The running code's signing identifier, as the kernel holds it (SecTaskCopySigningIdentifier;
-        /// the signature on disk only if that has none): `me.saffer.sill.mac` for Sill.app, the
+        /// the signature on disk only if that has none): `com.uxheavy.sill.mac` for Sill.app, the
         /// linker's name for the file (`SillMenuBar`) for the bare binary, nil for unsigned code.
         var signingIdentifier: String?
         var signature: Signature
@@ -49,8 +49,8 @@ enum AppIdentity {
 
     /// Sill.app's own code, wherever and however it runs (true), or the bare binary as `swift build`
     /// makes it (false). Any one of these makes it Sill.app:
-    /// - Signed as Sill (`me.saffer.sill.mac`, in any case). A TCC grant to Sill is kept with Sill's
-    ///   designated requirement, which begins `identifier "me.saffer.sill.mac"`, so every copy of the
+    /// - Signed as Sill (`com.uxheavy.sill.mac`, in any case). A TCC grant to Sill is kept with Sill's
+    ///   designated requirement, which begins `identifier "com.uxheavy.sill.mac"`, so every copy of the
     ///   code that can hold Sill's grants carries it: renamed, moved, flat, linked. The kernel's copy
     ///   of it, which no folder, file name or later change on disk alters; signing the code again
     ///   under another identifier gives the grants up.

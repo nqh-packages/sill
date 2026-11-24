@@ -94,9 +94,9 @@ MUTANTS = [
     ("http to the asset host", POL, "redirectOrigins: [\"https://release-assets.githubusercontent.com\",", "redirectOrigins: [\"http://release-assets.githubusercontent.com\","),
     ("github.com as a redirect target", POL, "\"https://objects.githubusercontent.com\"],", "\"https://objects.githubusercontent.com\", \"https://github.com\"],"),
     # The trust.
-    ("no team in the requirement", POL, " and certificate leaf[subject.OU] = \\\"9B2KKVM937\\\"\"", "\""),
+    ("no team in the requirement", POL, " and certificate leaf[subject.OU] = \\\"9V2FMKQ3WU\\\"\"", "\""),
     ("notarization not asked", POL, "signer: UpdateInstallPolicy.pinnedRequirement, notarized: true,", "signer: UpdateInstallPolicy.pinnedRequirement, notarized: false,"),
-    ("no stapled ticket asked", POL, "teamID: \"9B2KKVM937\", stapledTicket: true,", "teamID: \"9B2KKVM937\", stapledTicket: false,"),
+    ("no stapled ticket asked", POL, "teamID: \"9V2FMKQ3WU\", stapledTicket: true,", "teamID: \"9V2FMKQ3WU\", stapledTicket: false,"),
     ("the running requirement not asked", POL, "        runningRequirement: true,\n", "        runningRequirement: false,\n"),
     ("notarization ignored", POL, "if trust.notarized, !f.notarized { return .failure(.notNotarized) }", ""),
     ("any team", POL, "guard f.identifier == trust.identifier, trust.teamID == nil || f.teamID == trust.teamID else", "guard f.identifier == trust.identifier else"),

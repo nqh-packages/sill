@@ -45,9 +45,9 @@ check(!lists(win("Tiny", app: "Pages", bundle: "com.apple.iWork.Pages", 600, 100
 check(lists(win("Tiny", app: "Pages", bundle: "com.apple.iWork.Pages", 600, 101)), "101 points tall is listed")
 check(!lists(win("", app: "BetterDisplay", bundle: "pro.betterdisplay.BetterDisplay", 1, 1)),
       "a menu bar app's 1 × 1 window is not")
-check(!lists(win("Pair iPad", app: "Sill", bundle: "me.saffer.sill.mac", pid: own)),
+check(!lists(win("Pair iPad", app: "Sill", bundle: "com.uxheavy.sill.mac", pid: own)),
       "Sill's own windows (the pairing window with its code) are not")
-check(lists(win("Pair iPad", app: "Sill", bundle: "me.saffer.sill.mac", pid: own + 1)),
+check(lists(win("Pair iPad", app: "Sill", bundle: "com.uxheavy.sill.mac", pid: own + 1)),
       "another process's window of the same name is")
 
 // MARK: LayerProbeParent (left out before #114 too)

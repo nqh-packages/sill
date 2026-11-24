@@ -11,7 +11,7 @@ FOLDER = "return (f.bundlePath as NSString).pathExtension.lowercased() == \"app\
 NOTE = "guard isSillApp(f), (f.bundlePath as NSString).pathExtension.lowercased() != \"app\" else { return nil }"
 MUTANTS = [
     # The rule.
-    ("Sill's identifier mistyped", "static let sill = \"me.saffer.sill.mac\"", "static let sill = \"me.saffer.sill.app\""),
+    ("Sill's identifier mistyped", "static let sill = \"com.uxheavy.sill.mac\"", "static let sill = \"me.saffer.sill.app\""),
     ("the rule before the fix: the folder's extension alone",
      "        " + SIGNED + "\n        switch f.signature {",
      "        return (f.bundlePath as NSString).pathExtension == \"app\"\n        switch f.signature {"),

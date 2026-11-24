@@ -58,8 +58,8 @@ SILL_TEST_LOOPBACK=1 SILL_TEST_SOFTWARE_ENCODER=1 SILL_TEST_NO_ROUTER=1 SILL_TES
 Scripts/make-app.sh                     # .build/Sill.app, signed with the Apple Development identity (~2 s unchanged)
 Scripts/make-app.sh --install --open    # Noah: replace /Applications/Sill.app (a running one quits first), launch it
 SILL_UNIVERSAL=1 Scripts/make-app.sh    # .build/Sill.app for Apple silicon and Intel (arm64 and x86_64), as releases are since 0.6.0 (#62): twice the build time
-SILL_SIGN_IDENTITY='Developer ID Application: … (9B2KKVM937)' Scripts/make-app.sh --release   # M6
-SILL_SIGN_IDENTITY='Developer ID Application: … (9B2KKVM937)' SILL_NOTARY_PROFILE=sill-notary Scripts/release.sh [--dry-run]   # M6: the notarized download (docs/release-checklist.md)
+SILL_SIGN_IDENTITY='Developer ID Application: … (9V2FMKQ3WU)' Scripts/make-app.sh --release   # M6
+SILL_SIGN_IDENTITY='Developer ID Application: … (9V2FMKQ3WU)' SILL_NOTARY_PROFILE=sill-notary Scripts/release.sh [--dry-run]   # M6: the notarized download (docs/release-checklist.md)
 Scripts/release-ios.sh                  # the iOS app for App Store Connect: archive, export .build/ios/export/Sill.ipa, check it; uploads nothing
 Scripts/release-ios.sh --bump --upload  # Noah: the next build to TestFlight (docs/release-checklist.md, TestFlight; --privacy-report, --print-version)
 Scripts/make-dmg.sh --sign - .build/Sill.app .build/Sill.dmg   # the download's disk image of any build, ad hoc (release.sh makes the real one)
@@ -78,7 +78,7 @@ First run prompts for Screen Recording: the CLI's belongs to Terminal (or
 whatever launched it), Sill.app's to Sill itself.
 Sill.app: the log is `~/Library/Logs/Sill/Sill.log` (`tail -F`, not `-f`: at
 10 MB it moves to Sill.1.log; Show Log… in the menu); settings are `defaults
-read me.saffer.sill.mac` (maxFPS, captureScale, bitrate, prioritizeSpeed,
+read com.uxheavy.sill.mac` (maxFPS, captureScale, bitrate, prioritizeSpeed,
 virtualDisplay, directWireless, sendAudio, shareClipboard, lockAfterSession, lockSleepsDisplay, lockOnlyAfterAway, updateCheck,
 showPairingWindowToScreenSharing; the update check keeps
 updateLastCheck, updateETag, updateLatestTag and updateLatestURL), and a launch
@@ -102,7 +102,7 @@ retry s/24), `-SillPrintMenuAfter <s>` (the status menu as it would open, and
 Settings › General's update line, in the log), `-SillSetAfter '<s>
 updateCheck=0'`. Never run a test against GitHub. To make Sill.app check again at
 its next launch: `for k in updateLastCheck updateETag updateLatestTag
-updateLatestURL; do defaults delete me.saffer.sill.mac $k; done`. Render previews from
+updateLatestURL; do defaults delete com.uxheavy.sill.mac $k; done`. Render previews from
 `.build/Sill.app/Contents/MacOS/Sill` to see what Sill.app looks like: only the
 bundle's copy records the real SDK (make-app.sh sets it with vtool; see Current
 step), and the bare binary draws the pre-26 look. `--encoder-selftest` and
@@ -297,7 +297,7 @@ by a host that does not advertise, makes both doors of a test host listen on
 `127.0.0.1:PORT`); a device on this Mac, the simulator included, and the test
 clients reach it by 127.0.0.1. Reset the app's remote settings with
 `for k in remoteAccess remotePort internetAccess remoteAddressName
-remoteDevicesSeen; do defaults delete me.saffer.sill.mac $k; done`.
+remoteDevicesSeen; do defaults delete com.uxheavy.sill.mac $k; done`.
 Debug harness (simulator; the iPhone Duo's from the iOS 27.1 runtime, folded
 by Tests/duorig): launch arguments `-SillLayout 951x669` (inner landscape) /
 `669x951` / `466x678` / `678x466` (the cover), each with the safe area its
