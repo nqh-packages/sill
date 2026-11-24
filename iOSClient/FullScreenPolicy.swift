@@ -480,3 +480,60 @@ enum FullScreenPolicy {
         static let notOffered = "Full Screen works while Sill fills the screen."
     }
 }
+
+// MARK: - The screen's rounded corners
+
+/// The screen's rounded corners (Huy, 2026-11-24: no pixel of the Mac's under them): a picture that reaches the
+/// screen's edges is pulled in until each of its corners is inside the screen's curve, keeping the most room.
+/// Whatever the picture leaves of the screen the picture's own edges fill, mirrored and blurred
+/// (StreamScreen's `cornerStrips`). The radius is the system's on iOS 27 (StreamScreen's `screenCornerRadius`),
+/// else `cautiousRadius`.
+enum ScreenCorners {
+    /// When the system does not say: the roundest iPhone's or iPad's, for a screen with a home indicator; a
+    /// screen without one (a Home button's) is square.
+    static func cautiousRadius(pad: Bool, homeIndicator: Bool) -> CGFloat {
+        guard homeIndicator else { return 0 }
+        return pad ? 30 : 62
+    }
+
+    /// How far from the screen's top or bottom edge a corner `across` in from its side must be to clear a curve
+    /// of `radius`.
+    static func inset(across: CGFloat, radius: CGFloat) -> CGFloat {
+        guard radius > 0, across < radius else { return 0 }
+        let d = radius - max(0, across)
+        return radius - (radius * radius - d * d).squareRoot()
+    }
+
+    /// Whether `point` (in the screen's space) is on the screen, its rounded corners taken off.
+    static func onScreen(_ point: CGPoint, screen: CGSize, radius: CGFloat) -> Bool {
+        let across = min(point.x, screen.width - point.x), down = min(point.y, screen.height - point.y)
+        guard across >= 0, down >= 0 else { return false }
+        return down + 1e-6 >= inset(across: across, radius: radius)
+    }
+
+    /// `rect` (in the screen's space) pulled in, by whole half points, until its four corners are on the screen,
+    /// as large as that allows. A rect already clear comes back as it was.
+    static func clear(_ rect: CGRect, screen: CGSize, radius: CGFloat) -> CGRect {
+        guard radius > 0, rect.width > 0, rect.height > 0 else { return rect }
+        let corners = [CGPoint(x: rect.minX, y: rect.minY), CGPoint(x: rect.maxX, y: rect.minY),
+                       CGPoint(x: rect.minX, y: rect.maxY), CGPoint(x: rect.maxX, y: rect.maxY)]
+        if corners.allSatisfy({ onScreen($0, screen: screen, radius: radius) }) { return rect }
+        let left = max(0, rect.minX), right = max(0, screen.width - rect.maxX)
+        let top = max(0, rect.minY), bottom = max(0, screen.height - rect.maxY)
+        func sides(from start: CGFloat) -> [CGFloat] {
+            start >= radius ? [start] : Array(stride(from: start, to: radius, by: 0.5)) + [radius]
+        }
+        var best = CGRect.zero, bestArea: CGFloat = -1
+        for l in sides(from: left) {
+            for r in sides(from: right) {
+                let need = max(inset(across: l, radius: radius), inset(across: r, radius: radius))
+                let t = max(top, need), b = max(bottom, need)
+                let w = screen.width - l - r, h = screen.height - t - b
+                guard w > 0, h > 0, w * h > bestArea else { continue }
+                best = CGRect(x: l, y: t, width: w, height: h)
+                bestArea = w * h
+            }
+        }
+        return bestArea < 0 ? rect : best
+    }
+}

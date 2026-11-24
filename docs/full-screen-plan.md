@@ -219,6 +219,19 @@ in black); a window the Mac fits to the viewport fills it. The other two choices
 the whole screen (under the island and the rounded corners) and the whole safe area (clear of the home
 indicator too); DEBUG `-SillFullScreenRoom screen|housing|safe`.
 
+### The screen's rounded corners (Huy, 2026-11-24)
+
+Wherever the picture reaches the screen's edges, shown or hidden, with Sill's window covering the screen, no
+pixel of the Mac's goes under the screen's rounded corners: the picture's place is pulled in until each of its
+corners is inside the screen's curve, keeping the most room (`ScreenCorners.clear`, by half points; on an
+iPhone upright about 2 pt off each side and 46 pt off the bottom). The Mac fits its window to the smaller
+place, so nothing is cut. The strips that leaves are filled with the picture's own edges, mirrored and blurred
+(iOS 26's background extension effect, through the safe area). The radius: the system's on iOS 27
+(`GeometryProxy.concentricCornerRadii` at the full-screen view's bottom corner), else a cautious one (62 pt
+on an iPhone, 30 on an iPad, none without a home indicator). The trackpad or keyboard up, or the picture
+above the trackpad's well, leaves it short of the bottom corners and unchanged; `-SillFullScreenRoom screen`
+keeps the old picture under the corners. DEBUG `-SillCornerRadius R` and `-SillCornerFill 0`.
+
 ## The software keyboard, the hardware keyboard, the rest (open questions 7, 8, 9)
 
 - Hiding takes the person's own software keyboard down (it would cover half the picture); it comes back

@@ -398,6 +398,9 @@ struct ContentView: View {
 ///   console says "full screen: hidden by …" and "full screen: shown by …", and in a Debug build every touch the
 ///   swipe in judged at the left edge, "reveal: …" with its numbers (RevealEdgePan), and each lift's travel,
 ///   speed and verdict.
+/// * `-SillCornerRadius R` — the screen's corner radius in points the picture is pulled in from (ScreenCorners;
+///   0: none), in place of the system's or the cautious one; `-SillCornerFill 0` leaves the strips the corners
+///   take black instead of the picture's edges. The console says "corners: the screen's radius …".
 /// * `-SillInputScript '<t> <step>; …'` — with `-SillLive 1` only: input for the simulator gates,
 ///   which have no finger (`InputScript`): `t` is seconds since the session's first window list, and
 ///   a step is `down`, `pad DX,DY`, `lift`, `click` or `padscroll DX,DY` on the portrait pad, `tap

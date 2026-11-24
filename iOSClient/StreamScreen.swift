@@ -241,6 +241,7 @@ struct StreamScreen: View {
     @State private var coversScreen = true
     @State private var shownInsets: FullScreenPolicy.Insets? = nil
     @State private var windowInsets: FullScreenPolicy.Insets? = nil
+    @State private var windowSize: CGSize? = nil
     @Environment(\.harnessSafeArea) private var harnessSafeArea
     @State private var keyboardBeforeHide = false
     @State private var hintShown = false
@@ -319,7 +320,8 @@ struct StreamScreen: View {
 
             ZStack {
                 // Single unconditional canvas node so HEVCDisplayView and InputOverlay never re-parent.
-                streamCanvas(size: geo.size, hidden: hidden, room: room, insets: insets)
+                streamCanvas(size: geo.size, hidden: hidden, room: room, insets: insets,
+                             frame: geo.frame(in: .global), cornerRadius: screenCornerRadius(geo, insets: insets))
                     .allowsHitTesting(!overlayShown && tour == nil)
                     .ignoresSafeArea(.keyboard)
 
@@ -393,6 +395,12 @@ struct StreamScreen: View {
             .duoFold(posture, size: geo.size, screen: "stream screen")
             .duoStatusBar(posture, size: geo.size)
             .modifier(FullScreenSystem(hidden: hidden))
+            #if DEBUG
+            .onChange(of: screenCornerRadius(geo, insets: insets), initial: true) { _, used in
+                let system = Self.systemCornerRadius(geo).map { String(format: "%.1f", $0) } ?? "none"
+                print(String(format: "corners: the screen's radius %.1f pt (the system's: %@)", used, system))
+            }
+            #endif
         }
         .background(TactileTokens.canvasBlack)
         .sheet(item: activeSheet) { sheet in
@@ -672,12 +680,45 @@ struct StreamScreen: View {
         return (pictureHeight: fittedHeight, padHeight: spareBottom)
     }
 
-    private func streamCanvas(size: CGSize, hidden: Bool, room: CGRect, insets: FullScreenPolicy.Insets) -> some View {
+    /// The screen's corner radius (ScreenCorners): the system's on iOS 27, from this full-screen view's bottom
+    /// corner, which is the screen's; else a cautious one.
+    private func screenCornerRadius(_ geo: GeometryProxy, insets: FullScreenPolicy.Insets) -> CGFloat {
+        #if DEBUG
+        if let r = FullScreenDebug.current.cornerRadius { return r }
+        #endif
+        if let r = Self.systemCornerRadius(geo), r > 0 { return r }
+        return ScreenCorners.cautiousRadius(pad: UIDevice.current.userInterfaceIdiom == .pad, homeIndicator: insets.bottom > 0)
+    }
+
+    private static func systemCornerRadius(_ geo: GeometryProxy) -> CGFloat? {
+        guard #available(iOS 27, *) else { return nil }
+        return geo.concentricCornerRadii?.bottomLeading
+    }
+
+    /// What the screen's corners take off the picture's place (in from each side), while Sill's window covers
+    /// the screen and the picture reaches its edges; the picture's own edges fill it (PictureEdgesExtended).
+    private func cornerStrips(canvas: CGRect, cornerRadius: CGFloat) -> EdgeInsets {
+        guard coversScreen, let windowSize, canvas.width > 0, canvas.height > 0 else { return EdgeInsets() }
+        let clear = ScreenCorners.clear(canvas, screen: windowSize, radius: cornerRadius)
+        return EdgeInsets(top: clear.minY - canvas.minY, leading: clear.minX - canvas.minX,
+                          bottom: canvas.maxY - clear.maxY, trailing: canvas.maxX - clear.maxX)
+    }
+
+    private func streamCanvas(size: CGSize, hidden: Bool, room: CGRect, insets: FullScreenPolicy.Insets,
+                              frame: CGRect, cornerRadius: CGFloat) -> some View {
         let canvasInsets = streamCanvasInsets(size: size, hidden: hidden, room: room, insets: insets)
         let naturalSplit = letterboxedPhoneSplit(size: size, hidden: hidden, insets: insets)
+        let underCorners = naturalSplit == nil && !(hidden && Self.roomChoice == .screen)
+        let strips = underCorners
+            ? cornerStrips(canvas: CGRect(x: frame.minX + canvasInsets.leading, y: frame.minY + canvasInsets.top,
+                                          width: frame.width - canvasInsets.leading - canvasInsets.trailing,
+                                          height: frame.height - canvasInsets.top - canvasInsets.bottom),
+                           cornerRadius: cornerRadius)
+            : EdgeInsets()
         return VStack(spacing: 0) {
             ZStack {
                 ZoomedStreamView(client: client, zoom: zoom)
+                    .modifier(PictureEdgesExtended(on: strips != EdgeInsets() && Self.cornerFill))
                 InputOverlay(videoSize: client.videoSize,
                              send: { client.sendInput($0) },
                              setOwnPointer: { client.setOwnPointer($0, from: $1) },
@@ -716,6 +757,7 @@ struct StreamScreen: View {
             }
         }
         .tourTarget(.stream)
+        .safeAreaPadding(strips)
         .padding(canvasInsets)
         .animation(.easeOut(duration: 0.22), value: keyboardShown)
         .animation(.easeOut(duration: 0.22), value: keyboardFrame.frame?.height ?? 0)
@@ -1182,7 +1224,8 @@ struct StreamScreen: View {
                 let now = FullScreenPolicy.Insets(top: e.top, left: e.left, bottom: e.bottom, right: e.right)
                 windowInsets = now
                 if chrome == .shown { shownInsets = now }
-            })
+            },
+            onWindowSize: { windowSize = $0 })
     }
 
     private var fullScreenSituation: FullScreenPolicy.Situation {
@@ -1210,6 +1253,14 @@ struct StreamScreen: View {
     private func deviceInsets(_ geo: GeometryProxy) -> FullScreenPolicy.Insets {
         if let harnessSafeArea { return Self.insets(harnessSafeArea) }
         return windowInsets ?? Self.insets(geo.safeAreaInsets)
+    }
+
+    private static var cornerFill: Bool {
+        #if DEBUG
+        return FullScreenDebug.current.cornerFill
+        #else
+        return true
+        #endif
     }
 
     private static var roomChoice: FullScreenPolicy.Room {
@@ -2821,6 +2872,21 @@ extension PhonePortraitLayout.Streaming {
         case .none: self = .nothing
         case .desktop: self = .desktop
         case .window: self = .window
+        }
+    }
+}
+
+/// The picture's edges, mirrored and blurred, over the strips the screen's corners leave it (ScreenCorners;
+/// iOS 26's background extension effect, which fills the safe area around the view). Always the same view, on or
+/// off, so the picture's layer never moves to a new parent.
+private struct PictureEdgesExtended: ViewModifier {
+    var on: Bool
+
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            content.backgroundExtensionEffect(isEnabled: on)
+        } else {
+            content
         }
     }
 }

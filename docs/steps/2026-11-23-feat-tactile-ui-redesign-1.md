@@ -20,3 +20,13 @@
   properties); the iOS Quality menu and the resolution notice on a device or simulator (the agents' Duo and
   iPad simulators do not exist; mocks `-SillSettingsCase auto` and `autolowered` are ready); a real Wi-Fi
   and away session.
+
+**The screen's rounded corners (2026-11-24).** Huy's photo: the picture ran under the iPhone's bottom
+corners (controls shown: the root ignores the bottom safe area and the canvas had no inset). Grilled: no Mac
+pixel hidden; the strips filled with the picture's edges; the radius from iOS 27's public API. Now
+`ScreenCorners` (FullScreenPolicy.swift) pulls the picture's place in until its corners clear the curve, shown
+and hidden, and `PictureEdgesExtended` fills the strips (docs/full-screen-plan.md, "The screen's rounded
+corners"). Verified: Tests/checks/full-screen (3,000 random rects: every corner on the screen, never larger,
+a clear one unchanged; mutants K1–K6 caught); the simulator build. **Untested, on a device:** whether
+`concentricCornerRadii` answers at the root (the console's "corners: …" line says; else the cautious 62 pt),
+whether the extension effect draws the video layer, and its cost per frame.

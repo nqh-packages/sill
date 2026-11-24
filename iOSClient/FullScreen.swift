@@ -27,6 +27,8 @@ struct FullScreenEdges: UIViewRepresentable {
     /// The window's safe area, as it changes (the swipe in's preview lands where the shown layout will be,
     /// the status bar's room included).
     var onInsets: (UIEdgeInsets) -> Void = { _ in }
+    /// The window's size, as it changes: the space the picture's corners are measured in (ScreenCorners).
+    var onWindowSize: (CGSize) -> Void = { _ in }
 
     func makeUIView(context: Context) -> Anchor { Anchor() }
 
@@ -39,6 +41,7 @@ struct FullScreenEdges: UIViewRepresentable {
         anchor.onShake = onShake
         anchor.onCoverage = onCoverage
         anchor.onInsets = onInsets
+        anchor.onWindowSize = onWindowSize
         anchor.reportCoverage()
     }
 
@@ -60,7 +63,9 @@ struct FullScreenEdges: UIViewRepresentable {
         var onShake: () -> Void = {}
         var onCoverage: (Bool) -> Void = { _ in }
         var onInsets: (UIEdgeInsets) -> Void = { _ in }
+        var onWindowSize: (CGSize) -> Void = { _ in }
         private var insets: UIEdgeInsets?
+        private var windowSize: CGSize?
         private var shakes: NSObjectProtocol?
         private var dwell = EdgeDwell()
         private var dwellCheck: Timer?
@@ -119,6 +124,11 @@ struct FullScreenEdges: UIViewRepresentable {
             if window.safeAreaInsets != insets {
                 insets = window.safeAreaInsets
                 let report = onInsets, now = window.safeAreaInsets
+                DispatchQueue.main.async { report(now) }
+            }
+            if window.bounds.size != windowSize {
+                windowSize = window.bounds.size
+                let report = onWindowSize, now = window.bounds.size
                 DispatchQueue.main.async { report(now) }
             }
             let frame = window.convert(window.bounds, to: screen.coordinateSpace)
@@ -293,8 +303,9 @@ struct HiddenPictureElement: View {
 /// Settings › Full Screen and the swipe in do), `-SillFullScreenSwipe <s>[,<s>…]` a swipe in from the left edge
 /// played at those seconds (its progress in steps, then its lift), `-SillFullScreenTakeBack <s>[,<s>…]` one taken
 /// back (in 60 % of the width, then lifted moving back: it springs back), `-SillRevealSlow F` the swipe in's own
-/// animations F times slower (photos mid-way), and `-SillShakeAt <s>[,<s>…]` a shake (the
-/// window's notification) at those seconds.
+/// animations F times slower (photos mid-way), `-SillShakeAt <s>[,<s>…]` a shake (the
+/// window's notification) at those seconds, `-SillCornerRadius R` the screen's corner radius in points (0: none
+/// cleared; ScreenCorners) and `-SillCornerFill 0` the strips it leaves black, not the picture's edges.
 struct FullScreenDebug {
     enum Hint { case off, every, hold }
     var startHidden = false
@@ -308,6 +319,8 @@ struct FullScreenDebug {
     /// The swipe in's own animations (its landing, its spring back) this many times slower, for photos of them
     /// mid-way (`-SillRevealSlow`; 1 to 50).
     var slow: Double = 1
+    var cornerRadius: CGFloat? = nil
+    var cornerFill = true
 
     static let current: FullScreenDebug = {
         let d = UserDefaults.standard
@@ -328,6 +341,8 @@ struct FullScreenDebug {
         debug.takeBacks = seconds("SillFullScreenTakeBack")
         debug.shakes = seconds("SillShakeAt")
         if let raw = d.string(forKey: "SillRevealSlow"), let f = Double(raw) { debug.slow = min(max(f, 1), 50) }
+        if let raw = d.string(forKey: "SillCornerRadius"), let r = Double(raw), r >= 0 { debug.cornerRadius = CGFloat(r) }
+        debug.cornerFill = d.string(forKey: "SillCornerFill") != "0"
         return debug
     }()
 }

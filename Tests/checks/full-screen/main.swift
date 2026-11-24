@@ -467,6 +467,51 @@ check(FullScreenPolicy.room(size: CGSize(width: 466, height: 678), insets: I(bot
 check(FullScreenPolicy.room(size: CGSize(width: 10, height: 10), insets: I(top: 20, left: 20), choice: .safeArea).width == 0,
       "insets larger than the screen leave no room, never a negative one")
 
+// MARK: - The screen's rounded corners
+
+typealias SC = ScreenCorners
+func cornersOn(_ r: CGRect, _ screen: CGSize, _ radius: CGFloat) -> Bool {
+    [CGPoint(x: r.minX, y: r.minY), CGPoint(x: r.maxX, y: r.minY), CGPoint(x: r.minX, y: r.maxY), CGPoint(x: r.maxX, y: r.maxY)]
+        .allSatisfy { SC.onScreen($0, screen: screen, radius: radius) }
+}
+let phone17 = CGSize(width: 402, height: 874)
+let uprightRoom = SC.clear(CGRect(x: 0, y: 62, width: 402, height: 812), screen: phone17, radius: 62)
+check(uprightRoom == CGRect(x: 2, y: 62, width: 398, height: phone17.height - 62 - SC.inset(across: 2, radius: 62))
+      && cornersOn(uprightRoom, phone17, 62),
+      "an iPhone upright, under the island down to the bottom edge: 2 pt off each side, 46 pt off the bottom (\(uprightRoom))")
+let sidewaysRoom = CGRect(x: 62, y: 0, width: 750, height: 402)
+check(SC.clear(sidewaysRoom, screen: CGSize(width: 874, height: 402), radius: 62) == sidewaysRoom,
+      "sideways, clear of the island's side: the corners are already on the screen, unchanged")
+let docked = CGRect(x: 0, y: 62, width: 402, height: 420)
+check(SC.clear(docked, screen: phone17, radius: 62) == docked, "the trackpad or the keyboard up: the picture ends above them, unchanged")
+check(SC.clear(CGRect(x: 0, y: 0, width: 375, height: 667), screen: CGSize(width: 375, height: 667), radius: 0)
+      == CGRect(x: 0, y: 0, width: 375, height: 667), "a Home button's square screen: unchanged")
+let pad = SC.clear(CGRect(x: 0, y: 0, width: 1133, height: 744), screen: CGSize(width: 1133, height: 744), radius: 30)
+check(pad.minX > 0 && pad.minY > 0 && pad.minX < 30 && pad.minY < 30 && cornersOn(pad, CGSize(width: 1133, height: 744), 30),
+      "an iPad, the whole screen: a little off every side, not the radius off two (\(pad))")
+let laptop = CGRect(x: 0, y: 0, width: 669, height: 455.5)
+let laptopClear = SC.clear(laptop, screen: CGSize(width: 669, height: 951), radius: 40)
+check(laptopClear.maxY == 455.5 && cornersOn(laptopClear, CGSize(width: 669, height: 951), 40),
+      "the Duo's laptop pose: the fold's edge stays, the top corners clear (\(laptopClear))")
+check(SC.cautiousRadius(pad: false, homeIndicator: true) == 62 && SC.cautiousRadius(pad: true, homeIndicator: true) == 30
+      && SC.cautiousRadius(pad: false, homeIndicator: false) == 0, "the cautious radii")
+check(SC.inset(across: 0, radius: 62) == 62 && SC.inset(across: 62, radius: 62) == 0 && SC.inset(across: 100, radius: 62) == 0,
+      "a corner at the side needs the whole radius, one a radius in needs none")
+var corners = SystemRandomNumberGenerator()
+var cornerCases = 0
+for _ in 0..<3_000 {
+    let screen = CGSize(width: CGFloat.random(in: 300...1400, using: &corners), height: CGFloat.random(in: 300...1400, using: &corners))
+    let radius = CGFloat.random(in: 0...70, using: &corners)
+    let x = CGFloat.random(in: 0...80, using: &corners), y = CGFloat.random(in: 0...80, using: &corners)
+    let rect = CGRect(x: x, y: y, width: screen.width - x - CGFloat.random(in: 0...80, using: &corners),
+                      height: screen.height - y - CGFloat.random(in: 0...80, using: &corners))
+    let out = SC.clear(rect, screen: screen, radius: radius)
+    cornerCases += 1
+    check(cornersOn(out, screen, radius), "every corner on the screen: \(rect) in \(screen) at \(radius) gave \(out)")
+    check(rect.insetBy(dx: -1e-6, dy: -1e-6).contains(out), "never past what it was given: \(rect) gave \(out)")
+    if cornersOn(rect, screen, radius) { check(out == rect, "already clear, unchanged: \(rect) gave \(out)") }
+}
+
 // MARK: - The levels and the words
 
 check(ChromeLevel.shown.afterHide == .hidden && ChromeLevel.hidden.afterReveal == .shown, "one level: Full Screen hides it all, a swipe brings it all")

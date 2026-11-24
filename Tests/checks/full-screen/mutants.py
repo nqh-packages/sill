@@ -8,6 +8,13 @@ os.makedirs(OUT, exist_ok=True)
 SRC = os.path.join(ROOT, "iOSClient/FullScreenPolicy.swift")
 orig = open(SRC).read()
 MUTANTS = {
+    # ScreenCorners: the curve, a shared edge, the search, the cautious radii.
+    "K1 the curve's chord off": ("return radius - (radius * radius - d * d).squareRoot()", "return radius - (radius * radius - d * d).squareRoot() - 1"),
+    "K2 the top edge from the left corner alone": ("let need = max(inset(across: l, radius: radius), inset(across: r, radius: radius))", "let need = inset(across: l, radius: radius)"),
+    "K3 sides never moved": ("start >= radius ? [start] : Array(stride(from: start, to: radius, by: 0.5)) + [radius]", "[start]"),
+    "K4 a clear rect remade": ("if corners.allSatisfy({ onScreen($0, screen: screen, radius: radius) }) { return rect }", ""),
+    "K5 a cautious iPhone too square": ("return pad ? 30 : 62", "return pad ? 30 : 39"),
+    "K6 a Home button's screen rounded": ("guard homeIndicator else { return 0 }", ""),
     # EdgeSwipe: the band, the judging distance, the direction, the clock, a second finger, the lift.
     "S1 the band's edge left out": ("else if x > band { verdict = .notASwipe(.outsideBand) }", "else if x >= band { verdict = .notASwipe(.outsideBand) }"),
     "S2 no band": ("else if x > band { verdict = .notASwipe(.outsideBand) }", "else if false { verdict = .notASwipe(.outsideBand) }"),
