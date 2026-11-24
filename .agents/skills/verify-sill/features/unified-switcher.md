@@ -16,7 +16,7 @@ Tap `Apps` in the floating capsule (the search field takes focus), or the active
 
 ## Driving it
 
-- **Lane 2 (e2e — primary):** `Tests/e2e/tests/switcher-and-controls.e2e.ts` (`--target ipad`) opens `Apps`, verifies `Done` and `Windows`, taps `Desktop`, and confirms the sheet dismisses into Control Center's root. **Fails today** on a product bug (Gotchas).
+- **Lane 2 (e2e — primary):** `Tests/e2e/tests/switcher-and-controls.e2e.ts` (`--target ipad`): `Apps` opens the switcher with the search focused and `Done` closes it; `Desktop` is picked and Control Center opens; a switcher opened without the keyboard filters by what is typed.
 - **Locators:** `Apps`, `Done`, `Windows`, `Desktop` (the card and the Finder window titled "Desktop": `.first()`), `Finder`, `Code`, `Notes`, `Streaming` (with `SillActive=desktop`). The `Mac mini` navigation title is drawn but not reported to the accessibility tree.
 - **Lane 3 (Local):** `Tests/checks/tactile-workspace/run.sh` section 8 verifies `.switcher` acquires the `.drawer` keyboard taker, section 3 `restoreKeyboardAfterModal`.
 
@@ -40,4 +40,3 @@ switcher-empty-search|ios|fuzzer|Open Unified Switcher and enter nonsense string
 
 - `TactileDisplayBezel` clips thumbnails via an `.overlay` + `.clipShape` so portrait or mismatched aspect ratio mock thumbnails must never bleed past the card border — check this visually in `switcher-typical`.
 - In mock mode, `client.macName` is `"Mac mini"` unless overridden by `-SillMockMacName`.
-- **Known product bug (2026-11-24, iOS 27.3 simulator, iPad):** opening the switcher from `Apps` pins Sill at 100 % CPU inside `UISheetPresentationController`'s keyboard layout (the search field's focus), so every accessibility query and tap after it times out. Reproduced at a795274c and 58613b5d. Until it is fixed the switcher test fails at its first tap.

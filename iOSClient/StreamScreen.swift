@@ -243,6 +243,8 @@ struct StreamScreen: View {
     @State private var windowInsets: FullScreenPolicy.Insets? = nil
     @State private var windowSize: CGSize? = nil
     @Environment(\.harnessSafeArea) private var harnessSafeArea
+    @Environment(\.harnessHidesStatusBar) private var harnessHidesStatusBar
+    @State private var statusBarHidden = false
     @State private var keyboardBeforeHide = false
     @State private var hintShown = false
     @State private var hintFade: Task<Void, Never>? = nil
@@ -254,6 +256,8 @@ struct StreamScreen: View {
     @State private var tourWaitLogged: Double? = nil
     @State private var tourSkipPressed = false
     #endif
+
+    private var sheetStatusBarHidden: Bool { statusBarHidden || harnessHidesStatusBar }
 
     private enum WorkspaceSheet: Identifiable {
         case switcher(initialSearch: Bool)
@@ -395,6 +399,9 @@ struct StreamScreen: View {
             .duoFold(posture, size: geo.size, screen: "stream screen")
             .duoStatusBar(posture, size: geo.size)
             .modifier(FullScreenSystem(hidden: hidden))
+            .onChange(of: hidden || DuoPosture.hidesStatusBar(posture.pose(geo.size)), initial: true) { _, now in
+                statusBarHidden = now
+            }
             #if DEBUG
             .onChange(of: screenCornerRadius(geo, insets: insets), initial: true) { _, used in
                 let system = Self.systemCornerRadius(geo).map { String(format: "%.1f", $0) } ?? "none"
@@ -412,6 +419,7 @@ struct StreamScreen: View {
                     dismiss: { dispatch(.closeModal(restoreKeyboard: true)) }
                 )
                 .preferredColorScheme(.dark)
+                .modifier(SheetStatusBar(hidden: sheetStatusBarHidden))
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
             case .controlCenter:
@@ -426,6 +434,7 @@ struct StreamScreen: View {
                     dismiss: { dispatch(.closeModal(restoreKeyboard: true)) }
                 )
                 .preferredColorScheme(.dark)
+                .modifier(SheetStatusBar(hidden: sheetStatusBarHidden))
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
             }

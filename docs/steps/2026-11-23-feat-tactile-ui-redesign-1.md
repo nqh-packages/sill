@@ -50,3 +50,18 @@ runs the suite about 2.6× faster but its simulator runner sees only UIKit views
 coordinate: e2e stays. Found on the way: `control-center` failed 3 of 3 for both candidates because the sheet
 expands and scrolls past the row; the test now taps the grabber (3 of 3 pass). The e2e config names each
 session after its simulator, so two agents no longer collide on `e2e-ipad-0`.
+
+**The switcher and Control Center freeze on the iPad, fixed (2026-11-24, `fix/ipad-switcher-freeze-pip-tile`).**
+Sill spun at 100 % CPU when a two-detent sheet's frame changed: the keyboard coming up for the switcher's
+search (`Apps`), or a drag of Control Center from half to full height. Cause, found by removing it: the stream
+screen's status bar was hidden (the harness's `.statusBar(hidden:)`; on the Duo and in full screen the app's own
+`statusBarHidden`) while the sheet's was not, and `UISheetPresentationController` then lays out again on every pass
+(`_updatePresentedViewControllerStatusBarAppearanceIfNeeded` in the sample; about 486 stacked additive animations on
+the sheet's `UIDropShadowView`). Not the cause, each tried and still hanging: `KeyboardFrameMonitor`, the sheet's
+content, corner radius, colour scheme, detent selection, `ignoresSafeArea(.keyboard)`, `FullScreenSystem`; a bare
+two-detent sheet with `.searchable` at the app's root did not hang. Fix: both sheets declare the presenter's status
+bar (`SheetStatusBar`, `StreamScreen.sheetStatusBarHidden`; the harness says it hides it through
+`harnessHidesStatusBar`). The search still opens focused with the keyboard up. e2e: `switcher-and-controls` (4 tests,
+two runs of 4 of 4); before the fix its first test timed out at the `Desktop` tap and the Control Center drag test hung.
+**Untested, on a device:** whether the Duo's inner display (status bar hidden by `duoStatusBar`) showed the same loop;
+the sheets now match it either way.
