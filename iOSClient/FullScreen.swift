@@ -195,6 +195,17 @@ extension EnvironmentValues {
     }
 }
 
+struct HarnessHidesStatusBarKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    var harnessHidesStatusBar: Bool {
+        get { self[HarnessHidesStatusBarKey.self] }
+        set { self[HarnessHidesStatusBarKey.self] = newValue }
+    }
+}
+
 // MARK: - The system's own overlays
 
 /// While hidden: no status bar, the home indicator fades (`persistentSystemOverlays`, UIKit's
@@ -210,6 +221,14 @@ struct FullScreenSystem: ViewModifier {
             .background { if hidden { Color.clear.statusBarHidden(true) } }
             .persistentSystemOverlays(hidden ? .hidden : .automatic)
             .defersSystemGestures(on: hidden ? .leading : [])
+    }
+}
+
+struct SheetStatusBar: ViewModifier {
+    let hidden: Bool
+
+    func body(content: Content) -> some View {
+        content.background { if hidden { Color.clear.statusBarHidden(true) } }
     }
 }
 

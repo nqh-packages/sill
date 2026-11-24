@@ -86,7 +86,7 @@ pnpm exec e2e run --target ipad --tag ipad      # smoke, pad-pencilkit-chrome, s
 pnpm exec e2e run --target phone --tag phone    # phone-workspace, control-center
 pnpm exec e2e run --target ipad tests/connect-screen.e2e.ts   # one file
 ```
-Locators match whole strings and fail on two matches: use `.first()` where a label repeats (feature files name them), `getByRole('button', { name })` for a row whose value is part of its label (`Quality, Auto`). `await screen.debug()` prints the tree. The switcher test fails today on a product bug (features/unified-switcher.md).
+Locators match whole strings and fail on two matches: use `.first()` where a label repeats (feature files name them), `getByRole('button', { name })` for a row whose value is part of its label (`Quality, Auto`). `await screen.debug()` prints the tree.
 
 ### Lane 3 — Local interactive & pure checks
 - Pure logic & state transitions: `Tests/checks/tactile-workspace/run.sh` (workspace state machine) and `Tests/checks/run-all.sh` (full CI pure-check suite).
